@@ -66,8 +66,8 @@ if($method == 'rate_comment_caleg') {
  * @param user_email
  */
 if($method == 'create_comment') {
-	$qf = "insert into comment (title, content, caleg_id, user_email, created) values ('%s', '%s', '%s', '%s', %d)";
-	$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email'], time()));
+	$qf = "insert into comment (title, content, caleg_id, user_email, created, updated) values ('%s', '%s', '%s', '%s', %d, %d)";
+	$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email'], time(), time()));
 
 	exit(json_encode(array('status' => $result)));
 }
@@ -143,8 +143,8 @@ function generate_comments($caleg_id, $force = false) {
 	
 	for($i = 0; $i < 20; $i++) {
 		$comment = $comments[rand(0, count($comments) - 1)];
-		$qf = "insert into comment (title, content, user_email, caleg_id, created) values ('%s', '%s', '%s', '%s', %d)";
-		$result = mysql_query(sprintf($qf, $comment[0], $comment[1], rand_email(), $caleg_id, time()));
+		$qf = "insert into comment (title, content, user_email, caleg_id, created, updated) values ('%s', '%s', '%s', '%s', %d, %d)";
+		$result = mysql_query(sprintf($qf, $comment[0], $comment[1], rand_email(), $caleg_id, time(), time()));
 	}
 }
 
