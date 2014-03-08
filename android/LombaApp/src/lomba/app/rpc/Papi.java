@@ -1,5 +1,6 @@
 package lomba.app.rpc;
 
+import android.util.Log;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -20,20 +21,74 @@ public class Papi {
 		public String kind;
 	}
 
+	public static class IdNama {
+		public String id;
+		public String nama;
+	}
+
+	public static class Caleg {
+		public String agama;
+		public IdNama dapil;
+		public String foto_url;
+		public String id;
+		public String jenis_kelamin;
+		public String jumlah_anak;
+		public String kab_kota_tinggal;
+		public String kecamatan_tinggal;
+		public String kelurahan_tinggal;
+		public String lembaga;
+		public String nama;
+		public String nama_pasangan;
+		public IdNama partai;
+		public IdNama provinsi;
+		public String provinsi_tinggal;
+		public String status_perkawinan;
+		public int tahun;
+		public String tanggal_lahir;
+		public String tempat_lahir;
+		public int urutan;
+	}
+
 	public interface Clbk<R> {
 		void success(R r);
 		void failed(Throwable ex);
 	}
 
 	public static void geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
+		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682
 		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				final JSONObject data = response.optJSONObject("data");
 				final JSONObject r = data.optJSONObject("results");
+				final JSONObject a = r.optJSONObject("areas");
 
-				final Area[] areas = new Gson().fromJson(r.toString(), Area[].class);
+				Log.d(TAG, "areas: " + a.toString());
+				final Area[] areas = new Gson().fromJson(a.toString(), Area[].class);
+				clbk.success(areas);
+			}
+
+			@Override
+			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+				clbk.failed(e);
+			}
+		});
+	}
+
+	public static void candidate_caleg(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
+		Log.d(TAG, "@@candidate_caleg dapil=" + dapil + " lembaga=" + lembaga + " partai=" + partai);
+		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
+		client.get("http://api.pemiluapi.org/candidate/api/caleg", new RequestParams("apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler("utf-8") {
+			@Override
+			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
+				final JSONObject data = response.optJSONObject("data");
+				final JSONObject r = data.optJSONObject("results");
+				final JSONObject a = r.optJSONObject("caleg");
+
+				Log.d(TAG, "caleg(s): " + a.toString());
+
+				final Caleg[] areas = new Gson().fromJson(r.toString(), Caleg[].class);
 				clbk.success(areas);
 			}
 
