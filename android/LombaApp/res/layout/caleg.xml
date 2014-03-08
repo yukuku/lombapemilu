@@ -1,9 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.jfeinstein.jazzyviewpager.JazzyViewPager
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/jazzy">
+        >
 
-</com.jfeinstein.jazzyviewpager.JazzyViewPager>
+    <com.jfeinstein.jazzyviewpager.JazzyViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/jazzy"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:layout_marginRight="8dp"
+                  android:layout_centerVertical="true">
+
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/samping_datadiri"
+                     android:background="@drawable/samping_bg"
+                     android:layout_marginTop="8dp"
+                     android:layout_marginBottom="8dp"
+                     android:id="@+id/bDataDiri"/>
+
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/samping_datadiri"
+                     android:background="@drawable/samping_bg"
+                     android:layout_marginTop="8dp"
+                     android:layout_marginBottom="8dp"
+                     android:id="@+id/bDataDiri"/>
+
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/samping_datadiri"
+                     android:background="@drawable/samping_bg"
+                     android:layout_marginTop="8dp"
+                     android:layout_marginBottom="8dp"
+                     android:id="@+id/bDataDiri"/>
+
+    </LinearLayout>
+</RelativeLayout>

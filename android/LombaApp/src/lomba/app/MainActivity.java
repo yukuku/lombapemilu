@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,12 +12,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
+import lomba.app.rpc.Papi;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -26,6 +33,7 @@ public class MainActivity extends Activity {
 	DrawerAdapter adapter;
 	int selection;
 	int oldSelection = -1;
+	List<Papi.Partai> partais;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +74,38 @@ public class MainActivity extends Activity {
 		if (savedInstanceState == null) {
 			updateContent();
 		}
+
+		loadPartai();
+	}
+
+	void loadPartai() {
+		Papi.candidate_partai(new Papi.Clbk<Papi.Partai[]>() {
+			@Override
+			public void success(final Papi.Partai[] partais) {
+				MainActivity.this.partais = new ArrayList<>();
+				for (final Papi.Partai partai : partais) {
+					MainActivity.this.partais.add(partai);
+				}
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void failed(final Throwable ex) {
+				// load againnn
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						SystemClock.sleep(2000);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								loadPartai();
+							}
+						});
+					}
+				}).start();
+			}
+		});
 	}
 
 	@Override
@@ -96,13 +136,9 @@ public class MainActivity extends Activity {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, BerandaFragment.class.getName()));
 				tx.commit();
-			} else if (selection >= 1 && selection <= 10) {
+			} else if (selection >= 1 && selection <= 15) {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, CalegListFragment.create("" + selection));
-				tx.commit();
-			} else if (selection >= 11 && selection <= 12) {
-				FragmentTransaction tx = getFragmentManager().beginTransaction();
-				tx.replace(R.id.main, CalegListFragment.create("" + (selection + 3)));
 				tx.commit();
 			}
 			oldSelection = selection;
@@ -121,7 +157,18 @@ public class MainActivity extends Activity {
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView textView = V.get(view, R.id.tPartai);
-			textView.setText("Kata-kataa");
+			ImageView imgPartai = V.get(view, R.id.imgPartai);
+
+
+			String t = position == 0? "Beranda": partais.get(position - 1).nama;
+			if (position == 0) {
+				Picasso.with(MainActivity.this).load(R.drawable.beranda).into(imgPartai);
+			} else {
+				Picasso.with(MainActivity.this).load(getResources().getIdentifier("partai_" + (position - 1), "drawable", getPackageName())).into(imgPartai);
+			}
+
+			textView.setText(t);
+
 			if (selection == position) {
 				view.setBackgroundColor(0xffb7793b);
 			} else {
@@ -131,7 +178,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return 16;
+			return 1 + (partais == null? 0: partais.size());
 		}
 	}
 }
