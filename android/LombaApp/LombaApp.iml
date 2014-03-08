@@ -20,7 +20,6 @@
     <orderEntry type="library" name="google-gson" level="project" />
     <orderEntry type="library" name="picasso-2.2.0" level="project" />
     <orderEntry type="module" module-name="Afw" />
-    <orderEntry type="module" module-name="google-play-services_lib" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -30,6 +29,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="google-play-services_lib" />
   </component>
 </module>
 
