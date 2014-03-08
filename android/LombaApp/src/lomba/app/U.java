@@ -38,6 +38,11 @@ public class U {
 		}
 	}
 
+	public static String lower(String s) {
+		if (s == null) return null;
+		return s.toLowerCase();
+	}
+
 	public static <T> T unser(byte[] bytes) {
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);

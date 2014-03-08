@@ -4,12 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import lomba.app.rpc.Papi;
 import yuku.afw.V;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CalegActivity extends Activity {
 	public static final String TAG = CalegActivity.class.getSimpleName();
@@ -26,6 +33,12 @@ public class CalegActivity extends Activity {
 		return res;
 	}
 
+	static ThreadLocal<DateFormat> dp = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd");
+		}
+	};
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -93,6 +106,29 @@ public class CalegActivity extends Activity {
 
 	View datadiri(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_datadiri, container, false);
+		TextView tUsia = V.get(res, R.id.tUsia);
+		TextView tAgama = V.get(res, R.id.tAgama);
+		TextView tGender = V.get(res, R.id.tGender);
+		TextView tKota = V.get(res, R.id.tKota);
+
+		int umur = 0;
+		if (info.tanggal_lahir != null) {
+			try {
+				final Date d = dp.get().parse(info.tanggal_lahir);
+				int lahir = d.getYear();
+				int kini = new Date().getYear();
+				umur = kini - lahir;
+			} catch (ParseException e) {
+				Log.e(TAG, "e", e);
+			}
+		}
+		tUsia.setText(umur == 0? "––": ("" + umur));
+
+		tKota.setText(U.lower(info.tempat_lahir));
+		tGender.setText(U.lower(info.jenis_kelamin));
+
+		tAgama.setText(U.lower(info.agama));
+
 		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		return res;
 	}
