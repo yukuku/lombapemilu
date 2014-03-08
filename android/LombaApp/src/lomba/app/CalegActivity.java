@@ -21,6 +21,8 @@ import lomba.app.widget.RatingView2;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,6 +40,7 @@ public class CalegActivity extends Activity {
 	InfoAdapter adapter;
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
+	private MessageDigest md5;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -323,9 +326,17 @@ public class CalegActivity extends Activity {
 	}
 
 	String grava(String email) {
-		byte[] bb = email.trim().toLowerCase().getBytes();
+		if (md5 == null) {
+			try {
+				md5 = MessageDigest.getInstance("md5");
+			} catch (NoSuchAlgorithmException e) {
+				Log.e(TAG, "e", e);
+			}
+		}
+
+		byte[] bb = md5.digest(email.trim().toLowerCase().getBytes());
 		StringBuilder sb = new StringBuilder();
-		for (byte b: bb) {
+		for (byte b : bb) {
 			if (b >= 0 && b < 16) sb.append("0").append(Integer.toHexString(b));
 			else sb.append(Integer.toHexString(b & 0xff));
 		}
@@ -339,7 +350,7 @@ public class CalegActivity extends Activity {
 	String[] pisah(String r) {
 		m.reset(r);
 		if (m.find()) {
-			return new String[] {m.group(1).replace("SEKARANG", "KINI"), m.group(2)};
+			return new String[] {m.group(1).replace("SEKARANG", "KINI"), U.toTitleCase(m.group(2))};
 		} else {
 			return new String[] {"", r};
 		}

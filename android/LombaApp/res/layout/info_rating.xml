@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:background="#09c"
-              android:layout_height="match_parent">
-    <ListView android:layout_marginTop="20dp" android:paddingLeft="20dp" android:paddingRight="20dp"
-              android:scrollbars="none"
-              android:divider="@null" android:layout_width="match_parent" android:layout_height="match_parent"
-              android:dividerHeight="20dp"
-              android:id="@+id/comment_list" />
-
-</LinearLayout>
+<ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:paddingTop="20dp"
+        android:background="#09c"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:divider="@null"
+        android:overScrollMode="never"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="20dp"
+        android:id="@+id/comment_list"/>

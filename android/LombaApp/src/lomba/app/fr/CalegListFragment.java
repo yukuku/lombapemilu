@@ -15,6 +15,7 @@ import lomba.app.R;
 import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
+import lomba.app.widget.RatingView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -88,8 +89,14 @@ public class CalegListFragment extends Fragment {
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView tNama = V.get(view, R.id.tNama);
 			ImageView imgFoto = V.get(view, R.id.imgFoto);
+			RatingView rating = V.get(view, R.id.rating);
+			TextView tRatingCount = V.get(view, R.id.tRatingCount);
 
 			Papi.Caleg caleg = calegs.get(position);
+
+			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);
+			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
+
 			tNama.setText(U.bagusinNama(caleg.nama));
 			Picasso.with(CalegListFragment.this.getActivity()).load(U.bc(192, 192, caleg.foto_url)).into(imgFoto);
 		}

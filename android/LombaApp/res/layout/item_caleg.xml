@@ -4,15 +4,46 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="96dp">
-    <lomba.app.widget.FontTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="NAMA CALEGGGG"
-            android:textSize="18dp"
+
+    <LinearLayout
             android:paddingLeft="8dp"
-            android:gravity="center_vertical"
-            android:id="@+id/tNama"
-            android:layout_weight="1"/>
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+
+
+        <lomba.app.widget.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="NAMA CALEGGGG"
+                android:textSize="20dp"
+                android:gravity="center_vertical"
+                android:id="@+id/tNama"/>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:gravity="center_vertical"
+                      android:layout_marginTop="8dp">
+
+            <view android:layout_width="65dp"
+                  android:layout_height="13dp"
+                  class="lomba.app.widget.RatingView"
+                  android:id="@+id/rating"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="(123)"
+                    android:layout_marginLeft="8dp"
+                    android:id="@+id/tRatingCount"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <ImageView android:layout_width="96dp"
                android:layout_height="96dp"
