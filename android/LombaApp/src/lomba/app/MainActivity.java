@@ -1,5 +1,6 @@
 package lomba.app;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -8,6 +9,7 @@ import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.SpannableString;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;
+import lomba.app.widget.FontSpan;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
@@ -60,7 +63,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onDrawerOpened(final View drawerView) {
 				super.onDrawerOpened(drawerView);
-				getActionBar().setTitle(R.string.app_name);
+				setAbtitle(getString(R.string.app_name));
 			}
 
 			@Override
@@ -78,6 +81,17 @@ public class MainActivity extends Activity {
 		}
 
 		loadPartai();
+
+		setAbtitle(getString(R.string.app_name));
+	}
+
+	void setAbtitle(String t) {
+		SpannableString s = new SpannableString(t);
+		s.setSpan(new FontSpan(F.reg()), 0, s.length(), 0);
+
+		ActionBar actionBar = getActionBar();
+		actionBar.setTitle(s);
+
 	}
 
 	void loadPartai() {
@@ -146,10 +160,14 @@ public class MainActivity extends Activity {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, BerandaFragment.class.getName()));
 				tx.commit();
+
+				setAbtitle(getString(R.string.app_name));
 			} else if (selection >= 1 && selection <= 15) {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, CalegListFragment.create("" + selection));
 				tx.commit();
+
+				setAbtitle(partais.get(selection - 1).nama);
 			}
 			oldSelection = selection;
 			adapter.notifyDataSetChanged();
@@ -160,15 +178,24 @@ public class MainActivity extends Activity {
 		final float density = getResources().getDisplayMetrics().density;
 
 		@Override
+		public int getViewTypeCount() {
+			return 2;
+		}
+
+		@Override
+		public int getItemViewType(final int position) {
+			return position == 0? 0: 1;
+		}
+
+		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(R.layout.item_partai, parent, false);
+			return getLayoutInflater().inflate(getItemViewType(position) == 0? R.layout.item_partai_beranda: R.layout.item_partai, parent, false);
 		}
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView textView = V.get(view, R.id.tPartai);
 			ImageView imgPartai = V.get(view, R.id.imgPartai);
-
 
 			String t = position == 0? "Beranda": partais.get(position - 1).nama;
 			if (position == 0) {
@@ -180,7 +207,7 @@ public class MainActivity extends Activity {
 			textView.setText(t);
 
 			if (selection == position) {
-				view.setBackgroundColor(0xffb7793b);
+				view.setBackgroundColor(0xffcccccc);
 			} else {
 				view.setBackgroundColor(0);
 			}

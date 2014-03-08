@@ -41,6 +41,12 @@ public class CalegActivity extends Activity {
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
 	private MessageDigest md5;
+	private ImageButton bP1;
+	private ImageButton bP2;
+	private ImageButton bP3;
+	private ImageButton bP4;
+	private ImageButton bP5;
+	private ImageButton bP6;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -84,51 +90,60 @@ public class CalegActivity extends Activity {
 			}
 		});
 
-		View bP1 = V.get(this, R.id.bP1);
-		View bP2 = V.get(this, R.id.bP2);
-		View bP3 = V.get(this, R.id.bP3);
-		View bP4 = V.get(this, R.id.bP4);
-		View bP5 = V.get(this, R.id.bP5);
-		View bP6 = V.get(this, R.id.bP6);
+		bP1 = V.get(this, R.id.bP1);
+		bP2 = V.get(this, R.id.bP2);
+		bP3 = V.get(this, R.id.bP3);
+		bP4 = V.get(this, R.id.bP4);
+		bP5 = V.get(this, R.id.bP5);
+		bP6 = V.get(this, R.id.bP6);
 
 		bP1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				jazzy.setCurrentItem(0);
+				gotopage(0);
 			}
 		});
 		bP2.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				jazzy.setCurrentItem(1);
+				gotopage(1);
 			}
 		});
 		bP3.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				jazzy.setCurrentItem(2);
+				gotopage(2);
 			}
 		});
 		bP4.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				jazzy.setCurrentItem(3);
+				gotopage(3);
 			}
 		});
 		bP5.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				jazzy.setCurrentItem(4);
+				gotopage(4);
 			}
 		});
 		bP6.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				jazzy.setCurrentItem(5);
+				gotopage(5);
 			}
 		});
 
 		loadLengkap();
+	}
+
+	void gotopage(int p) {
+		jazzy.setCurrentItem(p);
+		ImageButton[] bb = {bP1, bP2, bP3, bP4, bP5, bP6};
+		for (int i = 0; i < bb.length; i++) {
+			final ImageButton b = bb[i];
+			b.setAlpha(i==p? 1.0f: 0.5f);
+		}
 	}
 
 	void loadLengkap() {
@@ -183,7 +198,7 @@ public class CalegActivity extends Activity {
 				Log.e(TAG, "e", e);
 			}
 		}
-		tUsia.setText(umur == 0? "––": ("" + umur));
+		tUsia.setText(umur == 0? "––": ("" + umur + " thn"));
 
 		tKota.setText(U.lower(info.tempat_lahir));
 		tGender.setText("L".equals(info.jenis_kelamin)? "laki-laki": "perempuan");
