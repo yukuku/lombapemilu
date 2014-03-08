@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -250,7 +251,7 @@ public class CalegActivity extends Activity {
 		}
 		String hasil = sb.toString();
 
-		return "http://www.gravatar.com/avatar/" + hasil + "?s=200";
+		return "http://www.gravatar.com/avatar/" + hasil + "?s=80&d=identicon";
 	}
 
 	class CommentAdapter extends EasyAdapter {
@@ -265,6 +266,10 @@ public class CalegActivity extends Activity {
 		@Override
 		public void bindView(View view, int position, ViewGroup parent) {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
+			TextView commentTitle = V.get(view, R.id.comment_title);
+			TextView commentContent = V.get(view, R.id.comment_content);
+			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
+			commentContent.setText(comments[position].content);
 			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
 		}
 
@@ -275,6 +280,7 @@ public class CalegActivity extends Activity {
 
 		public void setData(Papi.Comment[] comments) {
 			this.comments = comments;
+			notifyDataSetChanged();
 		}
 	}
 
@@ -304,7 +310,6 @@ public class CalegActivity extends Activity {
 
 		View rating(ViewGroup container) {
 			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
-			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
 			ListView commentLs = V.get(res, R.id.comment_list);
 			View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
@@ -329,7 +334,7 @@ public class CalegActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return 7;
+			return 6;
 		}
 
 		@Override

@@ -13,7 +13,7 @@ if(empty($_GET['debug'])) {
 }
 
 function rand_email() {
-	return substr(uniqid(rand(), true), 0, 20) . '@gmail.com';
+	return E::$emails[rand(0, count(E::$emails) -1)] . '@gmail.com';
 }
 
 /**
@@ -116,6 +116,9 @@ function generate_caleg_ratings($caleg_id, $force = true) {
 	$comment_count = mt_rand(5, mt_getrandmax() - 1) / mt_getrandmax() * 20;
 	for($i = 0; $i < $comment_count; $i++) {
 		$rate = mt_rand(1, mt_getrandmax() - 1) / mt_getrandmax() * 2 + (rand_clg_id($caleg_id)%4);
+		if($rate < 1) {
+			$rate = 1;
+		}
 		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
 		mysql_query(sprintf($qf, $caleg_id, rand_email(), floor(number_format($rate, 1) * 2) / 2));
 	}
@@ -139,8 +142,9 @@ function generate_comments($caleg_id, $force = false) {
 	}
 	
 	for($i = 0; $i < 20; $i++) {
+		$comment = $comments[rand(0, count($comments) - 1)];
 		$qf = "insert into comment (title, content, user_email, caleg_id, created) values ('%s', '%s', '%s', '%s', %d)";
-		$result = mysql_query(sprintf($qf, "Judul", $comments[rand(0, count($comments) - 1)], rand_email(), $caleg_id, time()));
+		$result = mysql_query(sprintf($qf, $comment[0], $comment[1], rand_email(), $caleg_id, time()));
 	}
 }
 
@@ -324,13 +328,58 @@ create table comment_rating (
 
 class C {
 public static $comments = array(
-	'Saya kenal beliau secara pribadi, orangnya lugas dan jujur',
-	'Sangat rekomended! Baik dan sederhana!',
-	'Anaknya banyak, semoga bisa mengatur rakyat sebaik mengatur anak',
-	'Semoga menang pak, kami sekeluarga mendukung.',
-	'Maju terus!', "Dengan pendidikan yang sangat tinggi, saya yakin anda dapat menjadi anggota DPR yang berkualitas!",
-	'Dengan begitu banyaknya pemberitaan tentang bapak di media - media besar, seperti media ayam penyet bahwa bapak berkorupsi, saya tidak akan memilih bapak',
-	'Semoga bapak berhati nurani dan dapat mencintai rakyat', 'Maju terus bu, jangan biarkan orang lain memandang rendah ibu karena ibu seorang wanita',
-	'Doa kami beserta bapak, semoga sukses!'
+	array('Bagus!', 'Saya kenal beliau secara pribadi, orangnya lugas dan jujur'),
+	array('Pilihlah beliau', 'Sangat rekomended! Baik dan sederhana!'),
+	array('Harapan kita semua.', 'Anaknya banyak, semoga bisa mengatur rakyat sebaik mengatur anak'),
+	array('Kami puas', 'Semoga menang pak, kami sekeluarga mendukung.'),
+	array('Majulah!', 'Maju terus!'), array('Berpendidikan', "Dengan pendidikan yang sangat tinggi, saya yakin anda dapat menjadi anggota DPR yang berkualitas!"),
+	array('Jangan dipilih!!!', 'Dengan begitu banyaknya pemberitaan tentang bapak di media - media besar, seperti media ayam jago bahwa bapak berkorupsi, saya tidak akan memilih bapak'),
+	array('Jempol', 'Semoga bapak berhati nurani dan dapat mencintai rakyat'), array('Kami dukung sepenuhnya!!!!', 'Maju terus bu, jangan biarkan orang lain memandang rendah ibu karena ibu seorang wanita'),
+	array('Semoga sukses', 'Doa kami beserta bapak, semoga sukses!')
 );
+};
+
+class E {
+	public static $emails = array(
+			"Ababua",
+			"abacay",
+			"canine",
+			"caliber",
+			"blades",
+			"dollop",
+			"eraser",
+			"sunder",
+			"hunter",
+			"flaunt",
+			"blackcurrant",
+			"yukuku",
+			"nescafe",
+			"coffee",
+			"thailand",
+			"indonesia",
+			"germany",
+			"poland",
+			"russian",
+			"hourglass",
+			"chicken",
+			"abduct",
+			"eardrop",
+			"eardrum",
+			"habitual",
+			"harlem",
+			"thunder",
+			"strike",
+			"hammer",
+			"tablet",
+			"chocolate",
+			"tissue",
+			"serviette",
+			"hamburger",
+			"design",
+			"computer",
+			"ablaze",
+			"blazing",
+			"hamper",
+			"blasted",
+	);
 };
