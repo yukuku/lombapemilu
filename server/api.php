@@ -98,6 +98,10 @@ if($method == 'get_caleg_rating') {
 	}
 }
 
+function rand_clg_id($caleg_id) {
+	return base_convert(substr(md5($caleg_id), 0, 4), 16, 10);
+}
+
 /**
  * @param caleg_id
  */
@@ -109,9 +113,9 @@ function generate_caleg_ratings($caleg_id, $force = true) {
 		}
 	}
 	
-	$comment_count = mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax() * 20;
+	$comment_count = mt_rand(5, mt_getrandmax() - 1) / mt_getrandmax() * 20;
 	for($i = 0; $i < $comment_count; $i++) {
-		$rate = mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax() * 5;
+		$rate = mt_rand(1, mt_getrandmax() - 1) / mt_getrandmax() * 2 + (rand_clg_id($caleg_id)%4);
 		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
 		mysql_query(sprintf($qf, $caleg_id, rand_email(), floor(number_format($rate, 1) * 2) / 2));
 	}

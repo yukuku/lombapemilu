@@ -98,6 +98,30 @@ public class Papi {
 		void failed(Throwable ex);
 	}
 
+	public static class Comment {
+		public int id;
+		public String title;
+		public String user_email;
+		public String content;
+	}
+
+	public static void comments(String calegId, final Clbk<Comment[]> clbk) {
+		client.get(BASE, new RequestParams("m", "get_comments", "caleg_id", calegId), new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
+				Log.d(TAG, "response: " + response.toString());
+				Comment[] comments = new Gson().fromJson(response.toString(), Comment[].class);
+				clbk.success(comments);
+			}
+
+			@Override
+			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+				clbk.failed(e);
+			}
+;		});
+
+	}
+
 	public static void geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
 		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682

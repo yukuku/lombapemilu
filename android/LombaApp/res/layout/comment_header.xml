@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <lomba.app.widget.FontTextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                   android:layout_marginTop="20dp"
+                                   android:textSize="20sp"
+                                   android:textStyle="bold"
+                                   android:gravity="center_horizontal"
+
+                                   android:textColor="#fff"
+                                   android:text="Beri rating"/>
+
+    <lomba.app.widget.RatingView2 android:layout_gravity="center_horizontal" android:layout_marginTop="10dp" android:layout_width="168dp" android:layout_height="25dp" android:id="@+id/rating" />
+    <lomba.app.widget.FontTextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                   android:gravity="center_horizontal"
+                                   android:textSize="20sp"
+                                   android:layout_marginTop="40dp"
+                                   android:textColor="#fff"
+                                   android:text="Total rating"/>
+    <lomba.app.widget.FontTextView android:layout_height="wrap_content" android:layout_width="match_parent"
+                                   android:textSize="36sp"
+                                   android:textColor="#fff"
+                                   android:textStyle="bold"
+                                   android:gravity="center_horizontal"
+                                   android:id="@+id/total_rating" android:text="3.8"/>
+    <lomba.app.widget.FontTextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                   android:gravity="center_horizontal"
+                                   android:textSize="18sp"
+                                   android:textColor="#80FFFFFF"
+                                   android:id="@+id/total_voter" android:text="(100 rating)"/>
+</LinearLayout>

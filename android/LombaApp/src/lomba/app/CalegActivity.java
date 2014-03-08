@@ -12,13 +12,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
 import lomba.app.rpc.Papi;
+import lomba.app.widget.FontTextView;
+import lomba.app.widget.RatingView;
+import lomba.app.widget.RatingView2;
 import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +40,7 @@ public class CalegActivity extends Activity {
 	String id;
 	InfoAdapter adapter;
 	Papi.Caleg info;
+	private CommentAdapter commentsAdapter;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -48,6 +56,8 @@ public class CalegActivity extends Activity {
 		}
 	};
 
+	Papi.Comment[] comments;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,8 +67,22 @@ public class CalegActivity extends Activity {
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
 
+		commentsAdapter = new CommentAdapter();
+
 		this.id = getIntent().getStringExtra("id");
 		this.info = U.unser(getIntent().getByteArrayExtra("dt"));
+
+		Papi.comments(info.id, new Papi.Clbk<Papi.Comment[]>() {
+			@Override
+			public void success(Papi.Comment[] comments) {
+				commentsAdapter.setData(comments);
+			}
+
+			@Override
+			public void failed(Throwable ex) {
+
+			}
+		});
 
 		View bP1 = V.get(this, R.id.bP1);
 		View bP2 = V.get(this, R.id.bP2);
@@ -290,6 +314,17 @@ public class CalegActivity extends Activity {
 		return res;
 	}
 
+	String grava(String email) {
+		byte[] bb = email.trim().toLowerCase().getBytes();
+		StringBuilder sb = new StringBuilder();
+		for (byte b: bb) {
+			if (b >= 0 && b < 16) sb.append("0").append(Integer.toHexString(b));
+			else sb.append(Integer.toHexString(b & 0xff));
+		}
+		String hasil = sb.toString();
+
+		return "http://www.gravatar.com/avatar/" + hasil + "?s=200";
+	}
 
 	static Matcher m = Pattern.compile("([0-9]+(?:-[0-9]+|-SEKARANG)?)(?:,?\\s*)(.*)").matcher("");
 
@@ -302,6 +337,31 @@ public class CalegActivity extends Activity {
 		}
 	}
 
+	class CommentAdapter extends EasyAdapter {
+
+		private Papi.Comment[] comments;
+
+		@Override
+		public View newView(int position, ViewGroup parent) {
+			return getLayoutInflater().inflate(R.layout.comment_row, parent, false);
+		}
+
+		@Override
+		public void bindView(View view, int position, ViewGroup parent) {
+			ImageView commentProfile = V.get(view, R.id.gravatar_url);
+			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
+		}
+
+		@Override
+		public int getCount() {
+			return comments == null ? 0 : comments.length;
+		}
+
+		public void setData(Papi.Comment[] comments) {
+			this.comments = comments;
+		}
+	}
+>>>>>>> 8327b066f6ee81284f07aed89ae423e333288bfc
 
 	class InfoAdapter extends PagerAdapter {
 		@Override
@@ -329,6 +389,21 @@ public class CalegActivity extends Activity {
 
 		View rating(ViewGroup container) {
 			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
+			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+			ListView commentLs = V.get(res, R.id.comment_list);
+			View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
+			commentLs.addHeaderView(headerView);
+
+			FontTextView rate = V.get(headerView, R.id.total_rating);
+			FontTextView voter = V.get(headerView, R.id.total_voter);
+			RatingView2 rv = V.get(headerView, R.id.rating);
+			rv.setRating(info.rating.avg);
+			rate.setText(String.format("%.1f", info.rating.avg));
+			voter.setText("(" + info.rating.count + " rating)");
+
+			commentLs.setAdapter(commentsAdapter);
+
 			return res;
 		}
 
