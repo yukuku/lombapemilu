@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
 			if (position == 0) {
 				Picasso.with(MainActivity.this).load(R.drawable.beranda).into(imgPartai);
 			} else {
-				Picasso.with(MainActivity.this).load(getResources().getIdentifier("partai_" + (position - 1), "drawable", getPackageName())).into(imgPartai);
+				Picasso.with(MainActivity.this).load(getResources().getIdentifier("partai_" + (position), "drawable", getPackageName())).into(imgPartai);
 			}
 
 			textView.setText(t);

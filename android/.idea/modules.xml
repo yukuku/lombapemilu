@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/external/Afw/Afw.iml" filepath="$PROJECT_DIR$/external/Afw/Afw.iml" />
       <module fileurl="file://$PROJECT_DIR$/LombaApp/LombaApp.iml" filepath="$PROJECT_DIR$/LombaApp/LombaApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/external/google-play-services_lib/google-play-services_lib.iml" filepath="$PROJECT_DIR$/external/google-play-services_lib/google-play-services_lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../whatsline/external/google-play-services_lib/google-play-services_lib.iml" filepath="$PROJECT_DIR$/../../whatsline/external/google-play-services_lib/google-play-services_lib.iml" />
     </modules>
   </component>
