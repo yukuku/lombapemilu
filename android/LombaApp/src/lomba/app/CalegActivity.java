@@ -19,13 +19,10 @@ import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.FontTextView;
-import lomba.app.widget.RatingView;
 import lomba.app.widget.RatingView2;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -361,7 +358,6 @@ public class CalegActivity extends Activity {
 			this.comments = comments;
 		}
 	}
->>>>>>> 8327b066f6ee81284f07aed89ae423e333288bfc
 
 	class InfoAdapter extends PagerAdapter {
 		@Override
