@@ -21,6 +21,12 @@
                   android:layout_marginRight="15dp"
                   android:layout_toLeftOf="@+id/thumbs_down"/>
 
+        <lomba.app.widget.FontTextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                       android:layout_toLeftOf="@+id/thumbs_up"
+                                       android:layout_marginRight="15dp"
+                                       android:textSize="22sp" android:textColor="@android:color/white" android:layout_centerVertical="true"
+                                       android:id="@+id/sum_comment_rating"/>
+
     </RelativeLayout>
     <lomba.app.widget.FontTextView android:textSize="18sp" android:textStyle="bold" android:id="@+id/comment_title"
                                    android:layout_marginRight="40dp"

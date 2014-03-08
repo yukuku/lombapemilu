@@ -17,7 +17,7 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://192.168.13.144/lomba_git/server/api.php";
+	static String BASE = "http://192.168.13.146/lomba_git/server/api.php";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
@@ -109,13 +109,16 @@ public class Papi {
 		public String user_email;
 		public String content;
 		public String is_up;
+		public int sum;
 	}
 
 	public static void rateComment(String email, int id, int is_up) {
+		Log.d(TAG, BASE + "?m=rate_comment&user_email=" + email + "&comment_id=" + id + "&is_up=" + is_up);
 		client.get(BASE, new RequestParams("m", "rate_comment", "user_email", email, "comment_id", id, "is_up", is_up), new JsonHttpResponseHandler());
 	}
 
 	public static void comments(String calegId, String user_email, final Clbk<Comment[]> clbk) {
+		Log.d(TAG, BASE + "?m=get_comments&caleg_id=" + calegId + "&user_email=" + user_email);
 		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId, "user_email", user_email), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {

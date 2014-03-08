@@ -453,6 +453,7 @@ public class CalegActivity extends Activity {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
 			TextView commentTitle = V.get(view, R.id.comment_title);
 			TextView commentContent = V.get(view, R.id.comment_content);
+			TextView commentRate = V.get(view, R.id.sum_comment_rating);
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 
@@ -462,7 +463,7 @@ public class CalegActivity extends Activity {
 				thumbsUp.setChecked(true);
 			}
 
-			if ("0".equals(comments[position].is_up)) {
+			if ("-1".equals(comments[position].is_up)) {
 				thumbsDown.setChecked(true);
 			}
 
@@ -480,7 +481,7 @@ public class CalegActivity extends Activity {
 				@Override
 				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 					if(isChecked) {
-						Papi.rateComment(accountsByType[0].name, comments[position].id, 0);
+						Papi.rateComment(accountsByType[0].name, comments[position].id, -1);
 						thumbsUp.setChecked(false);
 					}
 				}
@@ -488,6 +489,7 @@ public class CalegActivity extends Activity {
 
 			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
 			commentContent.setText(comments[position].content);
+			commentRate.setText(String.valueOf(comments[position].sum));
 			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
 		}
 
