@@ -6,6 +6,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Papi {
@@ -60,11 +61,12 @@ public class Papi {
 		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
+				Log.d(TAG, "response: " + response.toString());
+
 				final JSONObject data = response.optJSONObject("data");
 				final JSONObject r = data.optJSONObject("results");
-				final JSONObject a = r.optJSONObject("areas");
+				final JSONArray a = r.optJSONArray("areas");
 
-				Log.d(TAG, "areas: " + a.toString());
 				final Area[] areas = new Gson().fromJson(a.toString(), Area[].class);
 				clbk.success(areas);
 			}
@@ -84,12 +86,12 @@ public class Papi {
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				final JSONObject data = response.optJSONObject("data");
 				final JSONObject r = data.optJSONObject("results");
-				final JSONObject a = r.optJSONObject("caleg");
+				final JSONArray a = r.optJSONArray("caleg");
 
 				Log.d(TAG, "caleg(s): " + a.toString());
 
-				final Caleg[] areas = new Gson().fromJson(r.toString(), Caleg[].class);
-				clbk.success(areas);
+				final Caleg[] calegs = new Gson().fromJson(r.toString(), Caleg[].class);
+				clbk.success(calegs);
 			}
 
 			@Override

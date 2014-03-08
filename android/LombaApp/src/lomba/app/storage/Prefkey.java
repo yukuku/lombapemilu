@@ -6,5 +6,6 @@ public enum Prefkey {
 	loc_lat,
 	loc_lng,
 
-
+	// dapil yang aktif
+	dapil_dpr,
 }

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lomba Pemilu</string>
+    <string name="desc_drawer_open">Open drawer</string>
+    <string name="desc_drawer_close">Close drawer</string>
 </resources>
