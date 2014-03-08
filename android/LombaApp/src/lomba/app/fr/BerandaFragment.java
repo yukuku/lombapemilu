@@ -45,7 +45,7 @@ public class BerandaFragment extends Fragment {
 			clickable.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					startActivity(CalegActivity.create("3201-00-0000-0103"));
+					startActivity(CalegActivity.create("3201-00-0000-0103", null));
 				}
 			});
 

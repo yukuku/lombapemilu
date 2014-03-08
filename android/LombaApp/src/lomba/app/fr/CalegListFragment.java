@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import lomba.app.CalegActivity;
 import lomba.app.R;
+import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
 import yuku.afw.V;
@@ -51,6 +54,13 @@ public class CalegListFragment extends Fragment {
 		emptyView = V.get(res, android.R.id.empty);
 		lsCaleg.setEmptyView(emptyView);
 		lsCaleg.setAdapter(adapter = new CalegAdapter());
+		lsCaleg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				Papi.Caleg caleg = calegs.get(position);
+				startActivity(CalegActivity.create(caleg.id, U.ser(caleg)));
+			}
+		});
 
 		Papi.candidate_caleg2(Preferences.getString(Prefkey.dapil_dpr), "DPR", partai, new Papi.Clbk<Papi.Caleg[]>() {
 			@Override
@@ -80,7 +90,7 @@ public class CalegListFragment extends Fragment {
 			ImageView imgFoto = V.get(view, R.id.imgFoto);
 
 			Papi.Caleg caleg = calegs.get(position);
-			tNama.setText(caleg.nama);
+			tNama.setText(U.bagusinNama(caleg.nama));
 			Picasso.with(CalegListFragment.this.getActivity()).load(caleg.foto_url).into(imgFoto);
 		}
 

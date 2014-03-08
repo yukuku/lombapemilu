@@ -13,34 +13,75 @@
 
     <LinearLayout android:layout_width="wrap_content"
                   android:orientation="vertical"
-                  android:layout_height="wrap_content"
+                  android:layout_height="match_parent"
                   android:layout_alignParentRight="true"
-                  android:layout_marginRight="8dp"
-                  android:layout_centerVertical="true">
+                  android:paddingRight="8dp"
+                  android:paddingLeft="8dp"
+                  android:gravity="center_vertical"
+                  android:background="#4000">
 
-        <ImageButton android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:src="@drawable/samping_datadiri"
-                     android:background="@drawable/samping_bg"
-                     android:layout_marginTop="8dp"
-                     android:layout_marginBottom="8dp"
-                     android:id="@+id/bDataDiri"/>
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_datadiri"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP1"
+                android:scaleType="fitXY"/>
 
-        <ImageButton android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:src="@drawable/samping_datadiri"
-                     android:background="@drawable/samping_bg"
-                     android:layout_marginTop="8dp"
-                     android:layout_marginBottom="8dp"
-                     android:id="@+id/bDataDiri"/>
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_keluarga"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP2"
+                android:scaleType="fitXY"/>
 
-        <ImageButton android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:src="@drawable/samping_datadiri"
-                     android:background="@drawable/samping_bg"
-                     android:layout_marginTop="8dp"
-                     android:layout_marginBottom="8dp"
-                     android:id="@+id/bDataDiri"/>
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_tempattinggal"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP3"
+                android:scaleType="fitXY"/>
+
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_pendidikan"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP4"
+                android:scaleType="fitXY"/>
+
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_pekerjaan"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP5"
+                android:scaleType="fitXY"/>
+
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_organisasi"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP6"
+                android:scaleType="fitXY"/>
+
+        <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/samping_organisasi"
+                android:background="@drawable/samping_bg"
+                android:id="@+id/bP7"
+                android:scaleType="fitXY"/>
 
     </LinearLayout>
 </RelativeLayout>
