@@ -10,6 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
@@ -186,7 +188,7 @@ public class Papi {
 
 
 				if (caleg.riwayat_pendidikan == null || caleg.riwayat_pendidikan.length == 0) {
-					caleg.riwayat_pendidikan = new IdRingkasan[] {
+					caleg.riwayat_pendidikan = ubek(new IdRingkasan[] {
 					new IdRingkasan(1, "1957-1963, SD, SEKOLAH RAKYAT NEGERI, ACEH"),
 					new IdRingkasan(2, "1963-1966, SLTP, SMP NEGERI 1, BANDA ACEH"),
 					new IdRingkasan(3, "1963-1966 SLTP I NEGERI 1 BANDA ACEH"),
@@ -195,29 +197,29 @@ public class Papi {
 					new IdRingkasan(6, "1969-1971, FAKULTAS PUBLISTIK UNIVERSITAS PADJAJARAN, BANDUNG"),
 					new IdRingkasan(7, "1972-1984 STUDI ILMU KOMUNIKASI, ILMU POLITIK DAN SOSIOLOGI, WESTFAELISCHE - WILHELMS-UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN"),
 					new IdRingkasan(8, "1983 S3, DR. PHIL. UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN"),
-					};
+					});
 				}
 
 				if (caleg.riwayat_pekerjaan == null || caleg.riwayat_pekerjaan.length == 0) {
-					caleg.riwayat_pekerjaan = new IdRingkasan[] {
+					caleg.riwayat_pekerjaan = ubek(new IdRingkasan[] {
 					new IdRingkasan(1, "1998-1998, FKP DPR RI, ANGGOTA TIM AHLI, JAKARTA"),
 					new IdRingkasan(2, "1998-1998, MPR RI, TIM AHLI, JAKARTA"),
 					new IdRingkasan(3, "2000-2005, TIM PENASEHAT PRESIDEN URUSAN ACEH ANGGOTA, JAKARTA"),
 					new IdRingkasan(4, "2000-2002, KEMENTRIAN POLKAM, PENASEHAT, JAKARTA"),
 					new IdRingkasan(5, "2005-2007, PEMERINTAHAN, TIM AHLI DPR RI, JAKARTA"),
 					new IdRingkasan(6, "2002-2005, PEMERINTAHAN, DUTA BESAR MESIR, MESIR"),
-					};
+					});
 				}
 
 				if (caleg.riwayat_organisasi == null || caleg.riwayat_organisasi.length == 0) {
-					caleg.riwayat_organisasi = new IdRingkasan[] {
+					caleg.riwayat_organisasi = ubek(new IdRingkasan[] {
 					new IdRingkasan(1,"2013-SEKARANG, PARTAI NASDEM, KETUA DEWAN PAKAR DPP PARTAI NASDEM, JAKARTA"),
 					new IdRingkasan(2,"2010-SEKARANG, ORMAS NASIONAL DEMOKRAT, ANGGOTA DEWAN PERTIMBANGAN, JAKARTA"),
 					new IdRingkasan(3,"2007-SEKARANG, PENGURUS FORUM DUTA BESAR RI, JAKARTA"),
 					new IdRingkasan(4,"2009-2013, FISIP UI, KETUA DEWAN GURU BESAR JAKARTA"),
 					new IdRingkasan(5,"2010-2013, KOMITE PROFESOR UNTUK PERPUSTAKAAN UI, KETUA, JAKARTA"),
 					new IdRingkasan(6,"2011-2014, PERHIMPUNAN ALUMNI JERMAN, WAKIL KETUA DEWAN KEHORMATAN"),
-					};
+					});
 				}
 
 				clbk.success(caleg);
@@ -228,6 +230,16 @@ public class Papi {
 				clbk.failed(e);
 			}
 		});
+	}
+
+	private static IdRingkasan[] ubek(final IdRingkasan[] idRingkasans) {
+		List<IdRingkasan> res = new ArrayList<>();
+		for (final IdRingkasan idRingkasan : idRingkasans) {
+			if (Math.random() < 0.75f) {
+				res.add(idRingkasan);
+			}
+		}
+		return res.toArray(new IdRingkasan[res.size()]);
 	}
 
 	public static void candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {

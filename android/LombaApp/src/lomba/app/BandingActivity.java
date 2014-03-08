@@ -14,6 +14,8 @@ import yuku.afw.V;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 public class BandingActivity extends Activity {
@@ -42,6 +44,8 @@ public class BandingActivity extends Activity {
 
 	ImageView imgFoto1;
 	ImageView imgFoto2;
+	TextView tNama1;
+	TextView tNama2;
 	TextView tAgama1;
 	TextView tAgama2;
 	TextView tGender1;
@@ -56,6 +60,13 @@ public class BandingActivity extends Activity {
 	TextView tAnak2;
 	TextView tLokasiJuga1;
 	TextView tLokasiJuga2;
+
+	TextView tPendidikan1;
+	TextView tPendidikan2;
+	TextView tPekerjaan1;
+	TextView tPekerjaan2;
+	TextView tOrganisasi1;
+	TextView tOrganisasi2;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -72,6 +83,8 @@ public class BandingActivity extends Activity {
 
 		imgFoto1 = V.get(this, R.id.imgFoto1);
 		imgFoto2 = V.get(this, R.id.imgFoto2);
+		tNama1 = V.get(this, R.id.tNama1);
+		tNama2 = V.get(this, R.id.tNama2);
 		tAgama1 = V.get(this, R.id.tAgama1);
 		tAgama2 = V.get(this, R.id.tAgama2);
 		tGender1 = V.get(this, R.id.tGender1);
@@ -87,6 +100,13 @@ public class BandingActivity extends Activity {
 		tLokasiJuga1 = V.get(this, R.id.tLokasiJuga1);
 		tLokasiJuga2 = V.get(this, R.id.tLokasiJuga2);
 
+		tPendidikan1 = V.get(this, R.id.tPendidikan1);
+		tPendidikan2 = V.get(this, R.id.tPendidikan2);
+		tPekerjaan1 = V.get(this, R.id.tPekerjaan1);
+		tPekerjaan2 = V.get(this, R.id.tPekerjaan2);
+		tOrganisasi1 = V.get(this, R.id.tOrganisasi1);
+		tOrganisasi2 = V.get(this, R.id.tOrganisasi2);
+
 
 		loadLengkap();
 		loadLengkap2();
@@ -98,6 +118,9 @@ public class BandingActivity extends Activity {
 	void display() {
 		Picasso.with(this).load(U.bc(280, 340, info1.foto_url)).into(imgFoto1);
 		Picasso.with(this).load(U.bc(280, 340, info2.foto_url)).into(imgFoto2);
+
+		tNama1.setText(U.bagusinNama(info1.nama));
+		tNama2.setText(U.bagusinNama(info2.nama));
 
 		tAgama1.setText(U.lower(info1.agama));
 		tAgama2.setText(U.lower(info2.agama));
@@ -159,7 +182,35 @@ public class BandingActivity extends Activity {
 		tLokasiJuga1.setText(U.toTitleCase(CalegActivity.gabung(info1)));
 		tLokasiJuga2.setText(U.toTitleCase(CalegActivity.gabung(info2)));
 
+		tPendidikan1.setText(sum(info1.riwayat_pendidikan));
+		tPendidikan2.setText(sum(info2.riwayat_pendidikan));
+		tPekerjaan1.setText(sum(info1.riwayat_pekerjaan));
+		tPekerjaan2.setText(sum(info2.riwayat_pekerjaan));
+		tOrganisasi1.setText(sum(info1.riwayat_organisasi));
+		tOrganisasi2.setText(sum(info2.riwayat_organisasi));
+	}
 
+	private String sum(final Papi.IdRingkasan[] idringkasans) {
+		StringBuilder sb = new StringBuilder();
+		if (idringkasans != null) {
+
+			Papi.IdRingkasan[] dua = idringkasans.clone();
+			Arrays.sort(dua, new Comparator<Papi.IdRingkasan>() {
+				@Override
+				public int compare(final Papi.IdRingkasan lhs, final Papi.IdRingkasan rhs) {
+					return rhs.ringkasan.compareTo(lhs.ringkasan);
+				}
+			});
+
+			for (int i = 0; i < dua.length; i++) {
+				final Papi.IdRingkasan row = dua[i];
+				if (sb.length() != 0) {
+					sb.append('\n');
+				}
+				sb.append(U.toTitleCase(row.ringkasan));
+			}
+		}
+		return sb.toString();
 	}
 
 	void loadLengkap2() {
