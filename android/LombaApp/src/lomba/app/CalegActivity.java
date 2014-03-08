@@ -37,6 +37,58 @@ public class CalegActivity extends Activity {
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
 
 		this.id = getIntent().getStringExtra("id");
+
+
+		View bP1 = V.get(this, R.id.bP1);
+		View bP2 = V.get(this, R.id.bP2);
+		View bP3 = V.get(this, R.id.bP3);
+		View bP4 = V.get(this, R.id.bP4);
+		View bP5 = V.get(this, R.id.bP5);
+		View bP6 = V.get(this, R.id.bP6);
+		View bP7 = V.get(this, R.id.bP7);
+
+		bP1.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(0);
+			}
+		});
+		bP2.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(1);
+			}
+		});
+		bP3.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(2);
+			}
+		});
+		bP4.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(3);
+			}
+		});
+		bP5.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(4);
+			}
+		});
+		bP6.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(5);
+			}
+		});
+		bP7.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				jazzy.setCurrentItem(6);
+			}
+		});
 	}
 
 	class InfoAdapter extends PagerAdapter {
@@ -65,7 +117,7 @@ public class CalegActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return 6;
+			return 7;
 		}
 
 		@Override

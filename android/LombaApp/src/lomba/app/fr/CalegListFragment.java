@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import lomba.app.R;
+import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
 import yuku.afw.V;
@@ -80,7 +81,7 @@ public class CalegListFragment extends Fragment {
 			ImageView imgFoto = V.get(view, R.id.imgFoto);
 
 			Papi.Caleg caleg = calegs.get(position);
-			tNama.setText(caleg.nama);
+			tNama.setText(U.bagusinNama(caleg.nama));
 			Picasso.with(CalegListFragment.this.getActivity()).load(caleg.foto_url).into(imgFoto);
 		}
 
