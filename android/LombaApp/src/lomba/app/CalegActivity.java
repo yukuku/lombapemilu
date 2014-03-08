@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
+import lomba.app.rpc.Papi;
 import yuku.afw.V;
 
 public class CalegActivity extends Activity {
@@ -19,10 +20,12 @@ public class CalegActivity extends Activity {
 	JazzyViewPager jazzy;
 	String id;
 	InfoAdapter adapter;
+	Papi.Caleg info;
 
-	public static Intent create(String id) {
+	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
 		res.putExtra("id", id);
+		res.putExtra("dt", dt);
 		return res;
 	}
 
@@ -37,7 +40,7 @@ public class CalegActivity extends Activity {
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
 
 		this.id = getIntent().getStringExtra("id");
-
+		this.info = (Papi.Caleg) U.unser(getIntent().getByteArrayExtra("dt"));
 
 		View bP1 = V.get(this, R.id.bP1);
 		View bP2 = V.get(this, R.id.bP2);

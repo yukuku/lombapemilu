@@ -9,6 +9,8 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
@@ -24,12 +26,12 @@ public class Papi {
 		public String kind;
 	}
 
-	public static class IdNama {
+	public static class IdNama implements Serializable {
 		public String id;
 		public String nama;
 	}
 
-	public static class Caleg {
+	public static class Caleg implements Serializable {
 		public String agama;
 		public IdNama dapil;
 		public String foto_url;
