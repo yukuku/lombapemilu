@@ -3,7 +3,7 @@
 <ListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:paddingTop="20dp"
-        android:background="#09c"
+        android:background="@color/pg_bg_5"
         android:clipToPadding="false"
         android:scrollbars="none"
         android:divider="@null"

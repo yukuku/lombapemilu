@@ -3,7 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#09c"
+            android:background="@color/pg_bg_4"
         >
 
     <LinearLayout
@@ -13,8 +13,8 @@
             >
 
         <ImageView
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:src="@drawable/organisasibesar"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="32dp"/>
@@ -26,7 +26,7 @@
                 android:layout_marginRight="32dp"
                 android:layout_marginLeft="32dp"
                 android:textColor="#fff"
-                android:text="ORGANISASI"
+                android:text="Organisasi"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal"

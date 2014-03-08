@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -89,6 +90,23 @@ public class CalegActivity extends Activity {
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
 		accountsByType = AccountManager.get(this).getAccountsByType("com.google");
+
+		jazzy.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+
+			}
+
+			@Override
+			public void onPageSelected(final int position) {
+				updikon(position);
+			}
+
+			@Override
+			public void onPageScrollStateChanged(final int state) {
+
+			}
+		});
 
 		commentsAdapter = new CommentAdapter();
 
@@ -174,6 +192,10 @@ public class CalegActivity extends Activity {
 
 	void gotopage(int p) {
 		jazzy.setCurrentItem(p);
+		updikon(p);
+	}
+
+	private void updikon(final int p) {
 		ImageButton[] bb = {bP1, bP2, bP3, bP4, bP5, bP6};
 		for (int i = 0; i < bb.length; i++) {
 			final ImageButton b = bb[i];

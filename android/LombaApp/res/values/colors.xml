@@ -3,4 +3,12 @@
     <color name="drawer_list_selector">#ccc</color>
     <color name="samping_pressed">#8fff</color>
     <color name="banding_bg">#09c</color>
+
+    <color name="pg_bg_0">#09c</color>
+    <color name="pg_bg_1">#b33</color>
+    <color name="pg_bg_2">#c90</color>
+    <color name="pg_bg_3">#690</color>
+    <color name="pg_bg_4">#93c</color>
+    <color name="pg_bg_5">#f80</color>
+
 </resources>
