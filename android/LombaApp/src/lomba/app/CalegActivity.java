@@ -461,8 +461,18 @@ public class CalegActivity extends Activity {
 
 			FontTextView rate = V.get(headerView, R.id.total_rating);
 			FontTextView voter = V.get(headerView, R.id.total_voter);
-			RatingView2 rv = V.get(headerView, R.id.rating);
+			final RatingView2 rv = V.get(headerView, R.id.rating);
 			rv.setRating(info.rating.avg);
+			rv.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					final float lastdown = rv.getLastdown();
+					int r = (int)(lastdown * 5) + 1;
+					if (r < 1) r = 1;
+					if (r > 5) r = 5;
+					rv.setRating(r);
+				}
+			});
 			rate.setText(String.format("%.1f", info.rating.avg));
 			voter.setText("(" + info.rating.count + " rating)");
 
