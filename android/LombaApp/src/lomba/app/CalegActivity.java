@@ -122,6 +122,8 @@ public class CalegActivity extends Activity {
 			}
 		});
 
+		gotopage(0);
+
 		loadLengkap();
 		loadLengkap2();
 	}
@@ -158,7 +160,7 @@ public class CalegActivity extends Activity {
 		ImageButton[] bb = {bP1, bP2, bP3, bP4, bP5, bP6};
 		for (int i = 0; i < bb.length; i++) {
 			final ImageButton b = bb[i];
-			b.setAlpha(i==p? 1.0f: 0.5f);
+			b.setAlpha(i==p? 1.0f: 0.4f);
 		}
 	}
 
@@ -221,7 +223,15 @@ public class CalegActivity extends Activity {
 
 		tAgama.setText(U.lower(info.agama));
 
-		tPartai.setText(info.partai.nama);
+		SpannableStringBuilder sb = new SpannableStringBuilder();
+		sb.append(info.partai.nama);
+		sb.setSpan(new ForegroundColorSpan(0xffffffff), 0, sb.length(), 0);
+		sb.append(" no. urut ");
+		int sbl = sb.length();
+		sb.append("" + info.urutan);
+		sb.setSpan(new ForegroundColorSpan(0xffffffff), sbl, sb.length(), 0);
+		tPartai.setText(sb);
+
 		imgPartai.setImageResource(getResources().getIdentifier("partai_" + (info.partai.id), "drawable", getPackageName()));
 
 		tNama.setText(U.bagusinNama(info.nama));

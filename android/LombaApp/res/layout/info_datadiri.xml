@@ -48,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
                 android:text="Partai Nasdem"
-                android:textColor="#fff"
                 android:layout_marginLeft="8dp"
                 android:id="@+id/tPartai"/>
 

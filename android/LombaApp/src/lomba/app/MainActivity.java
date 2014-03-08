@@ -160,17 +160,20 @@ public class MainActivity extends Activity {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, BerandaFragment.class.getName()));
 				tx.commit();
-
-				setAbtitle(getString(R.string.app_name));
 			} else if (selection >= 1 && selection <= 15) {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, CalegListFragment.create("" + selection));
 				tx.commit();
-
-				setAbtitle(partais.get(selection - 1).nama);
 			}
 			oldSelection = selection;
 			adapter.notifyDataSetChanged();
+		}
+
+		if (selection == 0) {
+			setAbtitle(getString(R.string.app_name));
+		}
+		if (selection >= 1 && selection <= 15) {
+			setAbtitle(partais.get(selection - 1).nama);
 		}
 	}
 
