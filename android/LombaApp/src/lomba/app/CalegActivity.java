@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,12 +145,26 @@ public class CalegActivity extends Activity {
 		View res = getLayoutInflater().inflate(R.layout.info_keluarga, container, false);
 		TextView tStatus = V.get(res, R.id.tStatus);
 		TextView tAnak = V.get(res, R.id.tAnak);
+		TextView tDengan = V.get(res, R.id.tDengan);
 		TextView tLokasi = V.get(res, R.id.tLokasi);
 		ImageView imgStatus = V.get(res, R.id.imgStatus);
 		LinearLayout anakcontainer = V.get(res, R.id.anakcontainer);
 
 		tStatus.setText(U.bagusinNama(info.status_perkawinan));
-		imgStatus.setImageResource(("KAWIN".equals(info.status_perkawinan) || "MENIKAH".equals(info.status_perkawinan))? R.drawable.kawin: ("L".equals(info.jenis_kelamin)? R.drawable.belumkawin1: R.drawable.belumkawin2));
+		final boolean nikah = "KAWIN".equals(info.status_perkawinan) || "MENIKAH".equals(info.status_perkawinan);
+		imgStatus.setImageResource(nikah? R.drawable.kawin: ("L".equals(info.jenis_kelamin)? R.drawable.belumkawin1: R.drawable.belumkawin2));
+
+		if (nikah) {
+			tDengan.setVisibility(View.VISIBLE);
+			SpannableStringBuilder sb = new SpannableStringBuilder();
+			sb.append("dengan ");
+			int sbl = sb.length();
+			sb.append(U.bagusinNama(info.nama_pasangan));
+			sb.setSpan(new ForegroundColorSpan(0xffffffff), sbl, sb.length(), 0);
+			tDengan.setText(sb);
+		} else {
+			tDengan.setVisibility(View.GONE);
+		}
 
 		int anak = 0;
 		try {
@@ -181,7 +197,7 @@ public class CalegActivity extends Activity {
 			sb.append(info.provinsi_tinggal);
 		}
 
-		tLokasi.setText(sb);
+		tLokasi.setText(U.toTitleCase(sb.toString()));
 
 		return res;
 	}

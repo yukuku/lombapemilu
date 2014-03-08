@@ -12,7 +12,7 @@
             android:id="@+id/imgStatus"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/kawin"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="24dp"/>
 
     <lomba.app.widget.FontTextView
             android:layout_width="wrap_content"
@@ -31,16 +31,18 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="32dp"
             android:layout_marginLeft="32dp"
-            android:text="dengan XYZ NYS AIUDHIAHDOIUAHD"
+            android:text="dengan XYZ NYS AIUDHIAHDOIUAHD 7yad8a diua"
             android:id="@+id/tDengan"
             android:textSize="18dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="62dp"
             android:id="@+id/anakcontainer"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_gravity="center_horizontal">
 
 
@@ -62,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/tempat"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="24dp"/>
 
 
     <lomba.app.widget.FontTextView
