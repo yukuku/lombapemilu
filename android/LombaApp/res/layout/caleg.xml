@@ -46,7 +46,6 @@
         <ImageButton
                 android:src="@drawable/samping_rating"
                 android:id="@+id/bP6"
-                android:alpha="0.5"
                 style="@style/SampingBg"/>
     </LinearLayout>
 </RelativeLayout>

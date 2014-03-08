@@ -7,6 +7,7 @@ public class F {
 
 	static Typeface reg;
 	static Typeface thin;
+	static Typeface bold;
 
 	public static Typeface reg() {
 		if (reg == null) {
@@ -20,6 +21,13 @@ public class F {
 			thin = Typeface.createFromAsset(App.context.getAssets(), "fonts/alethin.ttf");
 		}
 		return thin;
+	}
+
+	public static Typeface bold() {
+		if (bold == null) {
+			bold = Typeface.createFromAsset(App.context.getAssets(), "fonts/alebold.ttf");
+		}
+		return bold;
 	}
 
 }
