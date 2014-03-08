@@ -453,7 +453,7 @@ public class CalegActivity extends Activity {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
 			TextView commentTitle = V.get(view, R.id.comment_title);
 			TextView commentContent = V.get(view, R.id.comment_content);
-			TextView commentRate = V.get(view, R.id.sum_comment_rating);
+			final TextView commentRate = V.get(view, R.id.sum_comment_rating);
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 

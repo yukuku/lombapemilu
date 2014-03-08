@@ -81,7 +81,7 @@ function get_caleg_rating($caleg_id) {
 	$return = mysql_fetch_assoc($result);
 	
 	if(empty($return['avg'])) {
-		generate_caleg_ratings($caleg_id, true);
+		generate_comments($caleg_id);
 	} else {
 		return $return;
 	}
@@ -105,24 +105,25 @@ function rand_clg_id($caleg_id) {
 /**
  * @param caleg_id
  */
-function generate_caleg_ratings($caleg_id, $force = true) {
-	if($force === false) {
-		$res = mysql_query("select * from caleg_rating where caleg_id = '" . $caleg_id . "' limit 10");
-		if(mysql_num_rows($res) >= 0) {
-			return;
-		}
-	}
+// function generate_caleg_ratings($caleg_id, $force = false) {
+// 	if($force === false) {
+// 		$res = mysql_query("select * from caleg_rating where caleg_id = '" . $caleg_id . "' limit 10");
+// 		if(mysql_num_rows($res) >= 10) {
+// 			return;
+// 		}
+// 	}
 	
-	$comment_count = mt_rand(5, mt_getrandmax() - 1) / mt_getrandmax() * 20;
-	for($i = 0; $i < $comment_count; $i++) {
-		$rate = mt_rand(1, mt_getrandmax() - 1) / mt_getrandmax() * 2 + (rand_clg_id($caleg_id)%4);
-		if($rate < 1) {
-			$rate = 1;
-		}
-		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
-		mysql_query(sprintf($qf, $caleg_id, rand_email(), floor(number_format($rate, 1) * 2) / 2));
-	}
-}
+// 	$comment_count = mt_rand(5, mt_getrandmax() - 1) / mt_getrandmax() * 10;
+// 	for($i = 0; $i < $comment_count; $i++) {
+// 		$rate = mt_rand(1, mt_getrandmax() - 1) / mt_getrandmax() * 2 + (rand_clg_id($caleg_id)%5);
+// 		if($rate > 5) $rate = 5;
+// 		if($rate < 1) {
+// 			$rate = 1;
+// 		}
+// 		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
+// 		mysql_query(sprintf($qf, $caleg_id, rand_email(), floor(number_format($rate, 1) * 2) / 2));
+// 	}
+// }
 
 if($method == 'generate_caleg_ratings') {
 	generate_caleg_ratings($_GET['caleg_id']);
@@ -135,16 +136,27 @@ function generate_comments($caleg_id, $force = false) {
 	$comments = C::$comments;
 	
 	if($force === false) {
-		$res = mysql_query("select * from comment where caleg_id = '" . $caleg_id . "' limit 1");
-		if(mysql_num_rows($res) > 0) {
+		$res = mysql_query("select * from comment where caleg_id = '" . $caleg_id . "' limit 50");
+		if(mysql_num_rows($res) >= 50) {
 			return;
 		}
 	}
-	
-	for($i = 0; $i < 20; $i++) {
+
+	$comment_count = mt_rand(5, mt_getrandmax() - 1) / mt_getrandmax() * 50;
+	for($i = 0; $i < $comment_count; $i++) {
+		$rate = mt_rand(1, mt_getrandmax() - 1) / mt_getrandmax() * 2 + (rand_clg_id($caleg_id)%5);
+		if($rate > 5) $rate = 5;
+		if($rate < 1) {
+			$rate = 1;
+		}
+		
+		$email = rand_email();
 		$comment = $comments[rand(0, count($comments) - 1)];
 		$qf = "insert into comment (title, content, user_email, caleg_id, created, updated) values ('%s', '%s', '%s', '%s', %d, %d)";
-		$result = mysql_query(sprintf($qf, $comment[0], $comment[1], rand_email(), $caleg_id, time(), time()));
+		$result = mysql_query(sprintf($qf, $comment[0], $comment[1], $email, $caleg_id, time(), time()));
+		
+		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
+		mysql_query(sprintf($qf, $caleg_id, $email, floor(number_format($rate, 1) * 2) / 2));
 	}
 }
 
@@ -163,7 +175,7 @@ if($method == 'rate_comment') {
 	
 	//up
 	if(mysql_num_rows($result) > 0) {
-		if($_GET['is_up'] == '0' || $_GET['is_up'] == '1') {
+		if($_GET['is_up'] == '-1' || $_GET['is_up'] == '1') {
 			$qf = "update comment_rating set is_up = %d where user_email = '%s' and comment_id = %d";
 			mysql_query(sprintf($qf, $_GET['is_up'], $_GET['user_email'], $_GET['comment_id']));	
 		} else {
@@ -244,7 +256,7 @@ if($method == 'get_calegs_by_dapil') {
 	$return = array();
 	foreach($calegs as $caleg) {
 		if(!empty($_GET['generate_ratings'])) {
-			generate_caleg_ratings($caleg->id);
+			generate_comments($caleg->id);
 		}
 		
 		$caleg_ids[] = $caleg->id;
@@ -293,7 +305,7 @@ if($method == 'get_beranda') {
 			//generet rating
 			foreach($results as $r) {
 				$caleg_ids[] = $r->id;
-				generate_comments($r->id, true);
+				generate_comments($r->id);
 			}
 			break;
 		}
