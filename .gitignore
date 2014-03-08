@@ -1,0 +1,24 @@
+# Google Android
+bin/
+gen/
+xtend-gen/
+local.properties
+
+# Mac
+.DS_Store
+
+# Windows
+desktop.ini
+
+# IntelliJ
+android/.idea/workspace.xml
+android/out/
+android/.idea/artifacts/
+
+# web
+*.pyc
+appengine-generated
+*.class
+
+.idea/workspace.xml
+.idea/dictionaries
