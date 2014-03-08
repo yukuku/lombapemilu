@@ -208,15 +208,15 @@ public class CalegActivity extends Activity {
 		public Object instantiateItem(ViewGroup container, final int position) {
 			View res;
 
-			if (position == 3) {
+			if (position == 2) {
 				res = pendidikan(container);
 			} else if (position == 1) {
 				res = keluarga(container);
-			} else if (position == 5) {
-				res = organisasi(container);
 			} else if (position == 4) {
+				res = organisasi(container);
+			} else if (position == 3) {
 				res = pekerjaan(container);
-			} else if (position == 6) {
+			} else if (position == 5) {
 				res = rating(container);
 			} else {
 				res = datadiri(container);
@@ -229,7 +229,6 @@ public class CalegActivity extends Activity {
 
 		View rating(ViewGroup container) {
 			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
-			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 			return res;
 		}
 

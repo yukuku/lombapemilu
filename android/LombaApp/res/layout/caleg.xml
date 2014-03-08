@@ -29,28 +29,23 @@
                 style="@style/SampingBg"/>
 
         <ImageButton
-                android:src="@drawable/samping_tempattinggal"
+                android:src="@drawable/samping_pendidikan"
                 android:id="@+id/bP3"
                 style="@style/SampingBg"/>
 
         <ImageButton
-                android:src="@drawable/samping_pendidikan"
+                android:src="@drawable/samping_pekerjaan"
                 android:id="@+id/bP4"
                 style="@style/SampingBg"/>
 
         <ImageButton
-                android:src="@drawable/samping_pekerjaan"
+                android:src="@drawable/samping_organisasi"
                 android:id="@+id/bP5"
                 style="@style/SampingBg"/>
 
         <ImageButton
                 android:src="@drawable/samping_organisasi"
                 android:id="@+id/bP6"
-                style="@style/SampingBg"/>
-
-        <ImageButton
-                android:src="@drawable/samping_organisasi"
-                android:id="@+id/bP7"
                 style="@style/SampingBg"/>
     </LinearLayout>
 </RelativeLayout>
