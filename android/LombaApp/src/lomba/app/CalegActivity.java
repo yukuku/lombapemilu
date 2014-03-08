@@ -1,7 +1,11 @@
 package lomba.app;
 
-import android.app.Activity;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.*;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
@@ -9,6 +13,7 @@ import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -16,6 +21,8 @@ import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
 import lomba.app.rpc.Papi;
+import lomba.app.widget.FontButton;
+import lomba.app.widget.FontEditTextView;
 import lomba.app.widget.FontTextView;
 import lomba.app.widget.RatingView2;
 import yuku.afw.V;
@@ -41,6 +48,8 @@ public class CalegActivity extends Activity {
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
 	private MessageDigest md5;
+	private static Account[] accountsByType;
+	private PostCommentFragment postCommentFragment;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -66,6 +75,7 @@ public class CalegActivity extends Activity {
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
+		accountsByType = AccountManager.get(this).getAccountsByType("com.google");
 
 		commentsAdapter = new CommentAdapter();
 
@@ -467,10 +477,12 @@ public class CalegActivity extends Activity {
 				@Override
 				public void onClick(final View v) {
 					final float lastdown = rv.getLastdown();
-					int r = (int)(lastdown * 5) + 1;
+					int r = (int) (lastdown * 5) + 1;
 					if (r < 1) r = 1;
 					if (r > 5) r = 5;
 					rv.setRating(r);
+					showDialog();
+
 				}
 			});
 			rate.setText(String.format("%.1f", info.rating.avg));
@@ -499,5 +511,66 @@ public class CalegActivity extends Activity {
 				return view == obj;
 			}
 		}
+	}
+
+	public class PostCommentFragment extends DialogFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme_Holo_Light_Dialog);
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View v = inflater.inflate(R.layout.post_comment_dialog, container, false);
+			ImageView ownPhoto = V.get(v, R.id.reviewer_img);
+			FontTextView ownEmail = V.get(v, R.id.email);
+			final FontEditTextView judulK = V.get(v, R.id.judul_k);
+			final FontEditTextView isiK = V.get(v, R.id.isi_k);
+			final RatingView2 ratingV = V.get(v, R.id.post_rating);
+			FontButton submitB = V.get(v, R.id.submit);
+
+			submitB.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountsByType[0].name, new Papi.Clbk<Object>() {
+
+						@Override
+						public void success(Object o) {
+
+							loadLengkap2();
+							postCommentFragment.dismissAllowingStateLoss();
+
+						}
+
+						@Override
+						public void failed(Throwable ex) {
+
+						}
+					});
+				}
+			});
+
+			Picasso.with(CalegActivity.this).load(grava(accountsByType[0].name)).into(ownPhoto);
+			ownEmail.setText(accountsByType[0].name);
+			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
+
+			return v;
+		}
+	}
+	void showDialog() {
+		// DialogFragment.show() will take care of adding the fragment
+		// in a transaction.  We also want to remove any currently showing
+		// dialog, so make our own transaction and take care of that here.
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+		if (prev != null) {
+			ft.remove(prev);
+		}
+		ft.addToBackStack(null);
+
+		// Create and show the dialog.
+		postCommentFragment = new PostCommentFragment();
+		postCommentFragment.show(ft, "dialog");
 	}
 }
