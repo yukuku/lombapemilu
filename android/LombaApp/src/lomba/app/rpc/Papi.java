@@ -122,7 +122,17 @@ public class Papi {
 				clbk.failed(e);
 			}
 ;		});
+	}
 
+	public static void postComment(String caleg_id, double rating, String title, String content, String email, final Clbk<Object> clbk) {
+		Log.d(TAG, "postComment calegId=" + caleg_id + " rating=" + rating + " title=" + title + " content=" + content + " user_email=" + email);
+		client.get(BASE, new RequestParams("m", "rate_comment_caleg", "caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONObject response) {
+				super.onSuccess(response);
+				clbk.success(response);
+			}
+		});
 	}
 
 	public static void geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {

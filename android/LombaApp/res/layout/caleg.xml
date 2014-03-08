@@ -48,4 +48,5 @@
                 android:id="@+id/bP6"
                 style="@style/SampingBg"/>
     </LinearLayout>
+
 </RelativeLayout>
