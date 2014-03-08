@@ -11,7 +11,6 @@
                                    android:textSize="20sp"
                                    android:textStyle="bold"
                                    android:gravity="center_horizontal"
-
                                    android:textColor="#fff"
                                    android:text="Beri rating"/>
 
@@ -21,7 +20,7 @@
                                    android:textSize="20sp"
                                    android:layout_marginTop="40dp"
                                    android:textColor="#fff"
-                                   android:text="Total rating"/>
+                                   android:text="Rating rata-rata"/>
     <lomba.app.widget.FontTextView android:layout_height="wrap_content" android:layout_width="match_parent"
                                    android:textSize="36sp"
                                    android:textColor="#fff"
