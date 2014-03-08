@@ -2,4 +2,5 @@
 <resources>
     <color name="drawer_list_selector">#ccc</color>
     <color name="samping_pressed">#8fff</color>
+    <color name="banding_bg">#09c</color>
 </resources>

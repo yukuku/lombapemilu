@@ -16,9 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
@@ -172,7 +177,7 @@ public class CalegActivity extends Activity {
 		ImageButton[] bb = {bP1, bP2, bP3, bP4, bP5, bP6};
 		for (int i = 0; i < bb.length; i++) {
 			final ImageButton b = bb[i];
-			b.setAlpha(i==p? 1.0f: 0.4f);
+			b.setAlpha(i == p? 1.0f: 0.4f);
 		}
 	}
 
@@ -291,6 +296,12 @@ public class CalegActivity extends Activity {
 			anakcontainer.addView(img);
 		}
 
+		tLokasi.setText(U.toTitleCase(gabung(info)));
+
+		return res;
+	}
+
+	public static String gabung(Papi.Caleg info) {
 		StringBuilder sb = new StringBuilder();
 		if (info.kelurahan_tinggal != null) {
 			if (sb.length() != 0) sb.append(", ");
@@ -308,10 +319,7 @@ public class CalegActivity extends Activity {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.provinsi_tinggal);
 		}
-
-		tLokasi.setText(U.toTitleCase(sb.toString()));
-
-		return res;
+		return sb.toString();
 	}
 
 	View organisasi(final ViewGroup container) {
@@ -426,12 +434,13 @@ public class CalegActivity extends Activity {
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 
-			thumbsUp.setChecked(false); thumbsDown.setChecked(false);
-			if("1".equals(comments[position].is_up)) {
+			thumbsUp.setChecked(false);
+			thumbsDown.setChecked(false);
+			if ("1".equals(comments[position].is_up)) {
 				thumbsUp.setChecked(true);
 			}
 
-			if("0".equals(comments[position].is_up)) {
+			if ("0".equals(comments[position].is_up)) {
 				thumbsDown.setChecked(true);
 			}
 
@@ -462,7 +471,7 @@ public class CalegActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return comments == null ? 0 : comments.length;
+			return comments == null? 0: comments.length;
 		}
 
 		public void setData(Papi.Comment[] comments) {

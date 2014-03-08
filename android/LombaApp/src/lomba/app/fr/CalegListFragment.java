@@ -2,13 +2,18 @@ package lomba.app.fr;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import lomba.app.BandingActivity;
 import lomba.app.CalegActivity;
 import lomba.app.R;
 import lomba.app.U;
@@ -20,7 +25,9 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by yuku on 2014-3-8.
@@ -30,6 +37,7 @@ public class CalegListFragment extends Fragment {
 
 	CalegAdapter adapter;
 
+	Set<Integer> pili = new HashSet<>();
 	List<Papi.Caleg> calegs;
 	ImageView loading;
 	String partai;
@@ -67,6 +75,35 @@ public class CalegListFragment extends Fragment {
 			}
 		});
 
+		lsCaleg.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				if (pili.contains(position)) pili.remove(position);
+				else pili.add(position);
+
+				if (pili.size() == 2) {
+					final Integer[] poss = pili.toArray(new Integer[0]);
+
+					Papi.Caleg caleg1 = calegs.get(poss[0]);
+					Papi.Caleg caleg2 = calegs.get(poss[1]);
+					startActivity(BandingActivity.create(caleg1.id, U.ser(caleg1), caleg2.id, U.ser(caleg2)));
+
+					pili.clear();
+				}
+
+				adapter.notifyDataSetChanged();
+				return true;
+			}
+		});
+
+		loadCaleg();
+
+		return res;
+	}
+
+	Handler h = new Handler();
+
+	private void loadCaleg() {
 		loading.startAnimation(anim);
 		Papi.candidate_caleg2(Preferences.getString(Prefkey.dapil_dpr), "DPR", partai, new Papi.Clbk<Papi.Caleg[]>() {
 			@Override
@@ -81,10 +118,15 @@ public class CalegListFragment extends Fragment {
 			public void failed(final Throwable ex) {
 				loading.clearAnimation();
 				loading.setVisibility(View.GONE);
+
+				h.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						loadCaleg();
+					}
+				}, 2000);
 			}
 		});
-
-		return res;
 	}
 
 	class CalegAdapter extends EasyAdapter {
@@ -99,9 +141,11 @@ public class CalegListFragment extends Fragment {
 			ImageView imgFoto = V.get(view, R.id.imgFoto);
 			RatingView rating = V.get(view, R.id.rating);
 			TextView tRatingCount = V.get(view, R.id.tRatingCount);
+			View imgCentang = V.get(view, R.id.imgCentang);
 
 			Papi.Caleg caleg = calegs.get(position);
 
+			imgCentang.setVisibility(pili.contains(position)? View.VISIBLE: View.INVISIBLE);
 			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
 

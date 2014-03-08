@@ -46,14 +46,14 @@ if($method == 'rate_comment_caleg') {
 		$qf = "update caleg_rating set rating = %f where caleg_id = '%s' and user_email = '%s'";
 		$result = mysql_query(sprintf($qf, $_GET['rating'], $_GET['caleg_id'], $_GET['user_email']));
 		
-		$qf = "update comment set title = '%s', content = '%s' where caleg_id = '%s' and user_email = '%s'";
-		$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email']));
+		$qf = "update comment set title = '%s', content = '%s', updated = %d where caleg_id = '%s' and user_email = '%s'";
+		$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], time(), $_GET['caleg_id'], $_GET['user_email']));
 	} else {
 		$qf = "insert into caleg_rating(caleg_id, user_email, rating) values('%s', '%s', %f)";
 		$result = mysql_query(sprintf($qf, $_GET['caleg_id'], $_GET['user_email'], $_GET['rating']));
 		
-		$qf = "insert into comment (title, content, caleg_id, user_email, created) values ('%s', '%s', '%s', '%s', %d)";
-		$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email'], time()));
+		$qf = "insert into comment (title, content, caleg_id, user_email, created, updated) values ('%s', '%s', '%s', '%s', %d, %d)";
+		$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email'], time(), time()));
 	}
 	
 	exit(json_encode(array('status' => $result)));
@@ -203,7 +203,7 @@ if($method == 'generate_rate_comments') {
 if($method == 'get_comments') {
 	$qf = 
 		"select comment.*, comment_rating.is_up from comment left outer join comment_rating on " .
-		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email and comment_rating.user_email = '%s' where caleg_id = '%s' order by created desc";
+		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email and comment_rating.user_email = '%s' where caleg_id = '%s' order by updated desc";
 	$results = mysql_query(sprintf($qf, $_GET['user_email'], $_GET['caleg_id']));
 	$return = array();
 	while($row = mysql_fetch_assoc($results)) {

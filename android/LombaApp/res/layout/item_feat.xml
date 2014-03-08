@@ -12,7 +12,6 @@
                                    android:layout_height="wrap_content"
                                    android:text="Featured Caleg"
                                    android:id="@+id/tJudul"
-                                   android:tag="thin"
                                    android:textSize="22dp"
                                    android:layout_marginLeft="16dp"/>
 
@@ -41,6 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tDesc"
+                    android:tag="bold"
                     android:text="Dra Ayam Bawang SH SSM SMS SMSMS"
                     android:textSize="20dp"
                     />
