@@ -22,3 +22,8 @@ appengine-generated
 
 .idea/workspace.xml
 .idea/dictionaries
+
+# eclipse
+.buildpath
+.settings
+.project
