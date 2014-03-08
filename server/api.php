@@ -153,6 +153,33 @@ if($method == 'generate_comments') {
 }
 
 /**
+ * @param comment_id
+ * @param is_up 0 or 1 or -1 to delete record
+ * @param user_email
+ */
+if($method == 'rate_comment') {
+	$qf = "select * from comment_rating where comment_id = %d and user_email = '%s'";
+	$result = mysql_query(sprintf($qf, $_GET['comment_id'], $_GET['user_email']));
+	
+	//up
+	if(mysql_num_rows($result) > 0) {
+		if($_GET['is_up'] == '0' || $_GET['is_up'] == '1') {
+			$qf = "update comment_rating set is_up = %d where user_email = '%s' and comment_id = %d";
+			mysql_query(sprintf($qf, $_GET['is_up'], $_GET['user_email'], $_GET['comment_id']));	
+		} else {
+			$qf = "delete from comment_rating where comment_id = %d and user_email = '%s'";
+			mysql_query(sprintf($qf, $_GET['comment_id'], $_GET['user_email']));
+		}
+	}
+	
+	//ins
+	else {
+		$qf = "insert into comment_rating (comment_id, user_email, is_up) values (%d, '%s', %d)";
+		mysql_query(sprintf($qf, $_GET['comment_id'], $_GET['user_email'], $_GET['is_up']));
+	}
+}
+
+/**
  * @param caleg_id
  */
 if($method == 'generate_rate_comments') {
@@ -176,8 +203,8 @@ if($method == 'generate_rate_comments') {
 if($method == 'get_comments') {
 	$qf = 
 		"select comment.*, comment_rating.is_up from comment left outer join comment_rating on " .
-		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email where caleg_id = '%s' order by created desc";
-	$results = mysql_query(sprintf($qf, $_GET['caleg_id']));
+		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email and comment_rating.user_email = '%s' where caleg_id = '%s' order by created desc";
+	$results = mysql_query(sprintf($qf, $_GET['user_email'], $_GET['caleg_id']));
 	$return = array();
 	while($row = mysql_fetch_assoc($results)) {
 		$return[] = $row;
@@ -187,13 +214,15 @@ if($method == 'get_comments') {
 }
 
 /**
+ * @param string partai
  * @param string dapil
+ * 
  */
 if($method == 'get_calegs_by_dapil') {
-	$cache_key = md5($_GET['dapil']);
+	$cache_key = md5($_GET['dapil'] . "|" . $_GET['partai']);
 	$cache_path = getcwd() . '/cache/get_calegs_by_dapil_' . $cache_key;
 	if(!is_file($cache_path)) {
-		$content = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=' . $_GET['dapil']);
+		$content = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&partai=' . $_GET['partai'] . "&dapil=" . $_GET['dapil']);
 		file_put_contents($cache_path, $content);
 	} else {
 		$content = file_get_contents($cache_path);

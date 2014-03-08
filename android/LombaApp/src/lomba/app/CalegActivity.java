@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.*;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
@@ -140,7 +142,7 @@ public class CalegActivity extends Activity {
 
 	void loadLengkap2() {
 
-		Papi.comments(info.id, new Papi.Clbk<Papi.Comment[]>() {
+		Papi.comments(info.id, accountsByType[0].name, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
@@ -417,7 +419,7 @@ public class CalegActivity extends Activity {
 		}
 
 		@Override
-		public void bindView(View view, int position, ViewGroup parent) {
+		public void bindView(View view, final int position, ViewGroup parent) {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
 			TextView commentTitle = V.get(view, R.id.comment_title);
 			TextView commentContent = V.get(view, R.id.comment_content);
@@ -436,14 +438,20 @@ public class CalegActivity extends Activity {
 			thumbsUp.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) thumbsDown.setChecked(false);
+					if(isChecked) {
+						Papi.rateComment(accountsByType[0].name, comments[position].id, 1);
+						thumbsDown.setChecked(false);
+					}
 				}
 			});
 
 			thumbsDown.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) thumbsUp.setChecked(false);
+					if(isChecked) {
+						Papi.rateComment(accountsByType[0].name, comments[position].id, 0);
+						thumbsUp.setChecked(false);
+					}
 				}
 			});
 
@@ -512,7 +520,6 @@ public class CalegActivity extends Activity {
 			});
 			rate.setText(String.format("%.1f", info.rating.avg));
 			voter.setText("(" + info.rating.count + " rating)");
-
 			commentLs.setAdapter(commentsAdapter);
 
 			return res;
@@ -558,6 +565,9 @@ public class CalegActivity extends Activity {
 			submitB.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
+					FontButton fb = (FontButton) view;
+					fb.setText("Mengirim...");
+					fb.setClickable(false);
 					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountsByType[0].name, new Papi.Clbk<Object>() {
 
 						@Override
