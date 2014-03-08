@@ -1,6 +1,8 @@
 package lomba.app;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import lomba.app.fr.BerandaFragment;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
@@ -21,6 +24,7 @@ public class MainActivity extends Activity {
 	ListView navList;
 	DrawerAdapter adapter;
 	int selection;
+	int oldSelection = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				selection = position;
+				drawer.closeDrawer(GravityCompat.START);
 				adapter.notifyDataSetChanged();
 			}
 		});
@@ -55,6 +60,10 @@ public class MainActivity extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+
+		if (savedInstanceState == null) {
+			updateContent();
+		}
 	}
 
 	@Override
@@ -77,6 +86,18 @@ public class MainActivity extends Activity {
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void updateContent() {
+		if (selection != oldSelection) {
+			if (selection == 0) {
+				FragmentTransaction tx = getFragmentManager().beginTransaction();
+				tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, BerandaFragment.class.getName()));
+				tx.commit();
+			}
+			oldSelection = selection;
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	class DrawerAdapter extends EasyAdapter {

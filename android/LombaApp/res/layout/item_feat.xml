@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingTop="16dp"
+              android:paddingLeft="8dp"
+              android:descendantFocusability="blocksDescendants"
+              android:paddingRight="8dp">
+    <lomba.app.widget.FontTextView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:text="Featured Caleg"
+                                   android:id="@+id/tJudul"
+                                   android:textSize="22dp"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:background="@drawable/note_bg"
+                  android:layout_marginTop="8dp"
+                  android:id="@+id/clickable"
+                  android:focusable="false"
+                  android:layout_marginBottom="16dp">
+
+        <ImageView android:layout_width="120dp"
+                   android:layout_height="160dp"
+                   android:id="@+id/imgFoto"
+                   android:src="#800"/>
+
+        <lomba.app.widget.FontTextView android:layout_width="wrap_content"
+                                       android:layout_height="wrap_content"
+                                       android:id="@+id/tDesc"
+                                       android:text="In publishing and graphic design, lorem ipsum is a placeholder text commonly used to demonstrate the graphic elements of a document or visual presentation."
+                                       android:textSize="14dp"
+                                       android:layout_marginLeft="16dp"
+                />
+
+    </LinearLayout>
+</LinearLayout>
