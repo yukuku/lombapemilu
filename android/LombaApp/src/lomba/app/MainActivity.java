@@ -23,6 +23,8 @@ import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -82,6 +84,14 @@ public class MainActivity extends Activity {
 		Papi.candidate_partai(new Papi.Clbk<Papi.Partai[]>() {
 			@Override
 			public void success(final Papi.Partai[] partais) {
+
+				Arrays.sort(partais, new Comparator<Papi.Partai>() {
+					@Override
+					public int compare(final Papi.Partai lhs, final Papi.Partai rhs) {
+						return lhs.id - rhs.id;
+					}
+				});
+
 				MainActivity.this.partais = new ArrayList<>();
 				for (final Papi.Partai partai : partais) {
 					MainActivity.this.partais.add(partai);

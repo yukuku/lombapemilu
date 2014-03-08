@@ -14,6 +14,8 @@ public class U {
 	public static final String TAG = U.class.getSimpleName();
 
 	public static String bagusinNama(String s) {
+		if (s == null) return null;
+
 		final String[] split = s.split(" ");
 		for (int i = 0; i < split.length; i++) {
 			String k = split[i];
@@ -57,5 +59,27 @@ public class U {
 
 	public static String bc(int w, int h, String u) {
 		return "http://pemilu-backend.appspot.com/remote/image_bottom_crop?w=" + w + "&h=" + h + "&url=" + Uri.encode(u);
+	}
+
+	public static String toTitleCase(String input) {
+		if (input == null) return null;
+
+		StringBuilder titleCase = new StringBuilder();
+		boolean nextTitleCase = true;
+
+		for (char c : input.toCharArray()) {
+			if (Character.isSpaceChar(c)) {
+				nextTitleCase = true;
+			} else if (nextTitleCase) {
+				c = Character.toTitleCase(c);
+				nextTitleCase = false;
+			} else {
+				c = Character.toLowerCase(c);
+			}
+
+			titleCase.append(c);
+		}
+
+		return titleCase.toString();
 	}
 }
