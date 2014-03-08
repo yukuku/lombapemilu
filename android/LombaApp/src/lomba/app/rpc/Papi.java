@@ -112,7 +112,7 @@ public class Papi {
 	}
 
 	public static void comments(String calegId, final Clbk<Comment[]> clbk) {
-		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId), new JsonHttpResponseHandler() {
+		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
 				Log.d(TAG, "response: " + response.toString());
@@ -121,27 +121,34 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
-;		});
+
+			;
+		});
 	}
 
 	public static void postComment(String caleg_id, double rating, String title, String content, String email, final Clbk<Object> clbk) {
 		Log.d(TAG, "postComment calegId=" + caleg_id + " rating=" + rating + " title=" + title + " content=" + content + " user_email=" + email);
-		client.get(BASE, new RequestParams("m", "rate_comment_caleg", "caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new JsonHttpResponseHandler() {
+		client.get(BASE, new RequestParams("m", "rate_comment_caleg", "caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(JSONObject response) {
 				super.onSuccess(response);
 				clbk.success(response);
 			}
+
+			public void onSegalaFailure(final Throwable e) {
+				clbk.failed(e);
+			}
+
 		});
 	}
 
 	public static void geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
 		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682
-		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler("utf-8") {
+		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				Log.d(TAG, "response: " + response.toString());
@@ -155,7 +162,7 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
 		});
@@ -164,7 +171,7 @@ public class Papi {
 	public static void candidate_caleg(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
 		Log.d(TAG, "@@candidate_caleg dapil=" + dapil + " lembaga=" + lembaga + " partai=" + partai);
 		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
-		client.get("http://api.pemiluapi.org/candidate/api/caleg", new RequestParams("apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler("utf-8") {
+		client.get("http://api.pemiluapi.org/candidate/api/caleg", new RequestParams("apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				final JSONObject data = response.optJSONObject("data");
@@ -178,7 +185,7 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
 		});
@@ -186,7 +193,7 @@ public class Papi {
 
 	public static void candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
 		Log.d(TAG, "@@candidate_caleg_detail id=" + id);
-		client.get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new JsonHttpResponseHandler("utf-8") {
+		client.get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				final JSONObject data = response.optJSONObject("data");
@@ -239,9 +246,10 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
+
 		});
 	}
 
@@ -258,7 +266,7 @@ public class Papi {
 	public static void candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
 		Log.d(TAG, "@@candidate_caleg dapil=" + dapil + " lembaga=" + lembaga + " partai=" + partai);
 		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
-		client.get(BASE, new RequestParams("m", "get_calegs_by_dapil", "apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler("utf-8") {
+		client.get(BASE, new RequestParams("m", "get_calegs_by_dapil", "apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
 				Log.d(TAG, "response array len: " + response.length());
@@ -268,16 +276,17 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
+
 		});
 	}
 
 	public static void candidate_partai(final Clbk<Partai[]> clbk) {
 		Log.d(TAG, "@@candidate_partai");
 		// http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e
-		client.get("http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e", new JsonHttpResponseHandler() {
+		client.get("http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e", new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				final JSONObject data = response.optJSONObject("data");
@@ -291,17 +300,68 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
+
 		});
+	}
+
+	static abstract class JsonHttpResponseHandler2 extends JsonHttpResponseHandler {
+		JsonHttpResponseHandler2(String encoding) {
+			super(encoding);
+		}
+
+		abstract void onSegalaFailure(Throwable e);
+
+		@Override
+		public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			super.onFailure(e, errorResponse);
+			onSegalaFailure(e);
+		}
+
+		@Override
+		public void onFailure(final Throwable e, final JSONArray errorResponse) {
+			super.onFailure(e, errorResponse);
+			onSegalaFailure(e);
+		}
+
+		@Override
+		public void onFailure(final int statusCode, final Throwable e, final JSONArray errorResponse) {
+			super.onFailure(statusCode, e, errorResponse);
+			onSegalaFailure(e);
+		}
+
+		@Override
+		public void onFailure(final int statusCode, final Throwable e, final JSONObject errorResponse) {
+			super.onFailure(statusCode, e, errorResponse);
+			onSegalaFailure(e);
+		}
+
+		@Override
+		public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
+			super.onFailure(statusCode, headers, responseString, throwable);
+			onSegalaFailure(throwable);
+		}
+
+		@Override
+		public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
+			super.onFailure(statusCode, headers, throwable, errorResponse);
+			onSegalaFailure(throwable);
+		}
+
+		@Override
+		public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONArray errorResponse) {
+			super.onFailure(statusCode, headers, throwable, errorResponse);
+			onSegalaFailure(throwable);
+		}
 	}
 
 
 	public static void get_beranda(double lat, double lng, final Clbk<Beranda> clbk) {
 		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
 		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
-		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng), new JsonHttpResponseHandler() {
+		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				Log.d(TAG, "response: " + response.toString());
@@ -311,7 +371,7 @@ public class Papi {
 			}
 
 			@Override
-			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
 			}
 		});
