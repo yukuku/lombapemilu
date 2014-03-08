@@ -2,13 +2,13 @@ package lomba.app.fr;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import lomba.app.CalegActivity;
 import lomba.app.R;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
@@ -45,7 +45,7 @@ public class BerandaFragment extends Fragment {
 			clickable.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					Log.d(TAG, "DIKLIK");
+					startActivity(CalegActivity.create("3201-00-0000-0103"));
 				}
 			});
 

@@ -21,7 +21,15 @@
     <orderEntry type="library" name="picasso-2.2.0" level="project" />
     <orderEntry type="module" module-name="Afw" />
     <orderEntry type="module" module-name="google-play-services_lib" />
-    <orderEntry type="module" module-name="jazzyviewpager" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/nineoldandroids-2.4.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
