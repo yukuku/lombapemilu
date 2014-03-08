@@ -34,21 +34,42 @@ if($method == 'has_rated') {
 /**
  * @param caleg_id
  * @param user_email
+ * @param title
+ * @param content
  * @param rating
  */
-if($method == 'rate_caleg') {
+if($method == 'rate_comment_caleg') {
 	//ck ud rt blom
 	$result = mysql_query("select rating from caleg_rating where caleg_id = '" . $_GET['caleg_id'] . "' and user_email = '" . $_GET['user_email'] . "'");
-
+	
 	if(mysql_num_rows($result) > 0) {
 		$qf = "update caleg_rating set rating = %f where caleg_id = '%s' and user_email = '%s'";
 		$result = mysql_query(sprintf($qf, $_GET['rating'], $_GET['caleg_id'], $_GET['user_email']));
-		exit(json_encode(array('status' => $result)));
 	} else {
 		$qf = "insert into caleg_rating(caleg_id, user_email, rating) values('%s', '%s', %f)";
 		$result = mysql_query(sprintf($qf, $_GET['caleg_id'], $_GET['user_email'], $_GET['rating']));
-		exit(json_encode(array('status' => $result)));
 	}
+	
+	//komen
+	if(!empty($_GET['title']) && !empty($_GET['content'])) {
+		$qf = "insert into comment (title, content, caleg_id, user_email, created) values ('%s', '%s', '%s', '%s', %d)";
+		$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email'], time()));
+	}
+
+	exit(json_encode(array('status' => $result)));
+}
+
+/**
+ * @param title
+ * @param content
+ * @param caleg_id
+ * @param user_email
+ */
+if($method == 'create_comment') {
+	$qf = "insert into comment (title, content, caleg_id, user_email, created) values ('%s', '%s', '%s', '%s', %d)";
+	$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], $_GET['user_email'], time()));
+
+	exit(json_encode(array('status' => $result)));
 }
 
 /**
@@ -83,17 +104,6 @@ function generate_caleg_ratings($caleg_id) {
 
 if($method == 'generate_caleg_ratings') {
 	generate_caleg_ratings($_GET['caleg_id']);
-}
-
-/**
- * @param title
- * @param content
- * @param caleg_id
- */
-if($method == 'create_comment') {
-	$qf = "insert into comment (title, content, caleg_id, created) values ('%s', '%s', '%s', %d)";	
-	$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], $_GET['caleg_id'], time()));
-	exit(json_encode(array('status' => $result)));
 }
 
 /**
@@ -173,8 +183,15 @@ if($method == 'get_calegs_by_dapil') {
 	while($result = mysql_fetch_assoc($results)) {
 		$caleg_ratings[$result['caleg_id']] = $result['avg'];
 	}
+	foreach($calegs as $caleg) {
+		if(!empty($caleg_ratings[$caleg->id])) {
+			$caleg->rating = $caleg_ratings[$caleg->id];
+		} else {
+			$caleg->rating = 0;
+		}
+	}
 	
-	exit(json_encode($caleg_ratings));
+	exit(json_encode($calegs));
 }
 
 /**
