@@ -37,7 +37,7 @@
 
 
             <lomba.app.widget.FontTextView
-                    android:tag="bold"
+                    android:layout_marginTop="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tDesc"

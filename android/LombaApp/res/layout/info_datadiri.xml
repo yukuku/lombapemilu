@@ -6,12 +6,19 @@
               android:layout_height="match_parent"
               android:background="#09c">
 
-    <ImageView
-            android:layout_width="160dp"
-            android:layout_height="200dp"
-            android:id="@+id/imgFoto"
-            android:layout_marginTop="32dp"
-            android:layout_gravity="center_horizontal"/>
+    <FrameLayout android:layout_width="168dp"
+                 android:layout_height="208dp"
+                 android:background="@drawable/bingkai"
+                 android:layout_marginTop="32dp"
+                 android:layout_gravity="center_horizontal">
+
+        <ImageView
+                android:layout_width="160dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:id="@+id/imgFoto"/>
+
+    </FrameLayout>
 
     <lomba.app.widget.FontTextView
             android:layout_width="wrap_content"

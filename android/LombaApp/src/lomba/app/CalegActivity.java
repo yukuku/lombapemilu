@@ -26,6 +26,8 @@ import yuku.afw.widget.EasyAdapter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -133,7 +135,9 @@ public class CalegActivity extends Activity {
 			@Override
 			public void success(final Papi.Caleg caleg) {
 				Log.d(TAG, "@@success diperbarui");
-				CalegActivity.this.info = caleg;
+				CalegActivity.this.info.riwayat_pendidikan = caleg.riwayat_pendidikan;
+				CalegActivity.this.info.riwayat_pekerjaan = caleg.riwayat_pekerjaan;
+				CalegActivity.this.info.riwayat_organisasi = caleg.riwayat_organisasi;
 				adapter.notifyDataSetChanged();
 			}
 
@@ -281,15 +285,24 @@ public class CalegActivity extends Activity {
 
 	private void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
 		if (idringkasans != null) {
-			for (int i = 0; i < idringkasans.length; i++) {
-				final Papi.IdRingkasan row = idringkasans[i];
+
+			Papi.IdRingkasan[] dua = idringkasans.clone();
+			Arrays.sort(dua, new Comparator<Papi.IdRingkasan>() {
+				@Override
+				public int compare(final Papi.IdRingkasan lhs, final Papi.IdRingkasan rhs) {
+					return rhs.ringkasan.compareTo(lhs.ringkasan);
+				}
+			});
+
+			for (int i = 0; i < dua.length; i++) {
+				final Papi.IdRingkasan row = dua[i];
 				final View v = getLayoutInflater().inflate(R.layout.item_riwayat, wadah, false);
 				TextView tTahun = V.get(v, R.id.tTahun);
 				TextView tKet = V.get(v, R.id.tKet);
 				ImageView imgBenang = V.get(v, R.id.imgBenang);
 
 				if (i == 0) imgBenang.setBackgroundResource(R.drawable.timelineatas);
-				if (i == idringkasans.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
+				if (i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
 
 				final String[] pisah = pisah(row.ringkasan);
 				tTahun.setText(pisah[0]);
@@ -385,7 +398,6 @@ public class CalegActivity extends Activity {
 
 		View rating(ViewGroup container) {
 			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
-			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
 			ListView commentLs = V.get(res, R.id.comment_list);
 			View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
@@ -410,7 +422,7 @@ public class CalegActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return 7;
+			return 6;
 		}
 
 		@Override
