@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="#09c">
+              android:background="@color/pg_bg_0">
 
     <FrameLayout android:layout_width="168dp"
                  android:layout_height="208dp"
