@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import lomba.app.App;
 import lomba.app.CalegActivity;
 import lomba.app.R;
 import lomba.app.U;
@@ -83,15 +84,19 @@ public class BerandaFragment extends Fragment {
 			TextView tDesc = V.get(view, R.id.tDesc);
 			RatingView rating = V.get(view, R.id.rating);
 			TextView tRatingCount = V.get(view, R.id.tRatingCount);
+			ImageView imgPartai = V.get(view, R.id.imgPartai);
+			TextView tPartai = V.get(view, R.id.tPartai);
 
 			tJudul.setText(new String[] {"Featured Caleg", "Most Popular Caleg", "Highest Rated Caleg"}[position]);
 
 			final Papi.Caleg caleg = new Papi.Caleg[] {beranda.featured, beranda.most_commented, beranda.top_rated}[position];
 
-			Picasso.with(getActivity()).load(caleg.foto_url).into(imgFoto);
-			tDesc.setText(caleg.nama);
+			Picasso.with(getActivity()).load(U.bc(240, 320, caleg.foto_url)).into(imgFoto);
+			tDesc.setText(U.bagusinNama(caleg.nama));
 			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
+			imgPartai.setImageResource(getResources().getIdentifier("partai_" + (caleg.partai.id), "drawable", App.context.getPackageName()));
+			tPartai.setText(caleg.partai.nama);
 
 			View clickable = V.get(view, R.id.clickable);
 			clickable.setOnClickListener(new View.OnClickListener() {

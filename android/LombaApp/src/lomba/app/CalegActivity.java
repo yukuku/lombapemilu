@@ -140,7 +140,7 @@ public class CalegActivity extends Activity {
 
 		tNama.setText(U.bagusinNama(info.nama));
 
-		Picasso.with(this).load(info.foto_url).into(imgFoto);
+		Picasso.with(this).load(U.bc(320, 400, info.foto_url)).into(imgFoto);
 
 		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		return res;

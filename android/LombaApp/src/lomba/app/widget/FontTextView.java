@@ -26,6 +26,11 @@ public class FontTextView extends TextView {
 
 	void init() {
 		if (isInEditMode()) return;
-		setTypeface(F.reg());
+
+		if ("thin".equals(getTag())) {
+			setTypeface(F.thin());
+		} else {
+			setTypeface(F.reg());
+		}
 	}
 }
