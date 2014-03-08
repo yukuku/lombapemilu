@@ -15,7 +15,7 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://192.168.43.238/lomba_git/server/api.php";
+	static String BASE = "http://192.168.13.144/lomba_git/server/api.php";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 
@@ -29,6 +29,11 @@ public class Papi {
 	public static class IdNama implements Serializable {
 		public String id;
 		public String nama;
+	}
+
+	public static class Rating implements Serializable {
+		public int count;
+		public float avg;
 	}
 
 	public static class Caleg implements Serializable {
@@ -52,6 +57,8 @@ public class Papi {
 		public String tanggal_lahir;
 		public String tempat_lahir;
 		public int urutan;
+
+		public Rating rating;
 	}
 
 	public static class Partai {
@@ -62,6 +69,12 @@ public class Papi {
 		public String url_logo_medium;
 		public String url_logo_small;
 		public String url_situs;
+	}
+
+	public static class Beranda {
+		public Caleg top_rated;
+		public Caleg most_commented;
+		public Caleg featured;
 	}
 
 	public interface Clbk<R> {
@@ -148,6 +161,26 @@ public class Papi {
 
 				final Partai[] partais = new Gson().fromJson(a.toString(), Partai[].class);
 				clbk.success(partais);
+			}
+
+			@Override
+			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+				clbk.failed(e);
+			}
+		});
+	}
+
+
+	public static void get_beranda(double lat, double lng, final Clbk<Beranda> clbk) {
+		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
+		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
+		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng), new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
+				Log.d(TAG, "response: " + response.toString());
+
+				final Beranda beranda = new Gson().fromJson(response.toString(), Beranda.class);
+				clbk.success(beranda);
 			}
 
 			@Override
