@@ -3,6 +3,7 @@ package lomba.app.widget;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import lomba.app.R;
 
@@ -22,6 +23,12 @@ public class RatingView2 extends View {
 
 	static Bitmap base;
 	static Bitmap over;
+
+	public float getLastdown() {
+		return lastdown;
+	}
+
+	float lastdown = 0.0f;
 
 	Rect src = new Rect();
 	RectF dst = new RectF();
@@ -48,6 +55,15 @@ public class RatingView2 extends View {
 		if (over == null) {
 			over = BitmapFactory.decodeResource(getResources(), R.drawable.rating_over2);
 		}
+	}
+
+	@Override
+	public boolean onTouchEvent(final MotionEvent event) {
+		if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+			lastdown = event.getX() / getWidth();
+		}
+
+		return super.onTouchEvent(event);
 	}
 
 	@Override
