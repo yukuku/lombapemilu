@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.*;
 import com.squareup.picasso.Picasso;
+import lomba.app.BandingActivity;
 import lomba.app.CalegActivity;
 import lomba.app.R;
 import lomba.app.U;
@@ -64,6 +65,16 @@ public class CalegListFragment extends Fragment {
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				Papi.Caleg caleg = calegs.get(position);
 				startActivity(CalegActivity.create(caleg.id, U.ser(caleg)));
+			}
+		});
+
+		lsCaleg.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				Papi.Caleg caleg1 = calegs.get(position);
+				Papi.Caleg caleg2 = calegs.get(position == calegs.size() - 1? (position - 1): (position + 1));
+				startActivity(BandingActivity.create(caleg1.id, U.ser(caleg1), caleg2.id, U.ser(caleg2)));
+				return true;
 			}
 		});
 

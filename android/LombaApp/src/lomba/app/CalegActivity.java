@@ -11,7 +11,14 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
@@ -279,6 +286,12 @@ public class CalegActivity extends Activity {
 			anakcontainer.addView(img);
 		}
 
+		tLokasi.setText(U.toTitleCase(gabung(info)));
+
+		return res;
+	}
+
+	public static String gabung(Papi.Caleg info) {
 		StringBuilder sb = new StringBuilder();
 		if (info.kelurahan_tinggal != null) {
 			if (sb.length() != 0) sb.append(", ");
@@ -296,10 +309,7 @@ public class CalegActivity extends Activity {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.provinsi_tinggal);
 		}
-
-		tLokasi.setText(U.toTitleCase(sb.toString()));
-
-		return res;
+		return sb.toString();
 	}
 
 	View organisasi(final ViewGroup container) {
