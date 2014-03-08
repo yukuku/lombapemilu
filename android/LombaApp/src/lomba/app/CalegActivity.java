@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
@@ -60,7 +61,6 @@ public class CalegActivity extends Activity {
 		View bP4 = V.get(this, R.id.bP4);
 		View bP5 = V.get(this, R.id.bP5);
 		View bP6 = V.get(this, R.id.bP6);
-		View bP7 = V.get(this, R.id.bP7);
 
 		bP1.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -96,12 +96,6 @@ public class CalegActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				jazzy.setCurrentItem(5);
-			}
-		});
-		bP7.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				jazzy.setCurrentItem(6);
 			}
 		});
 	}
@@ -142,25 +136,68 @@ public class CalegActivity extends Activity {
 
 		Picasso.with(this).load(U.bc(320, 400, info.foto_url)).into(imgFoto);
 
-		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		return res;
+	}
+
+	View keluarga(final ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_keluarga, container, false);
+		TextView tStatus = V.get(res, R.id.tStatus);
+		TextView tAnak = V.get(res, R.id.tAnak);
+		TextView tLokasi = V.get(res, R.id.tLokasi);
+		ImageView imgStatus = V.get(res, R.id.imgStatus);
+		LinearLayout anakcontainer = V.get(res, R.id.anakcontainer);
+
+		tStatus.setText(U.bagusinNama(info.status_perkawinan));
+		imgStatus.setImageResource(("KAWIN".equals(info.status_perkawinan) || "MENIKAH".equals(info.status_perkawinan))? R.drawable.kawin: ("L".equals(info.jenis_kelamin)? R.drawable.belumkawin1: R.drawable.belumkawin2));
+
+		int anak = 0;
+		try {
+			anak = Integer.parseInt(info.jumlah_anak);
+		} catch (NumberFormatException e) {}
+
+		tAnak.setText(info.jumlah_anak == null? "(Tidak ada data)": anak == 0? "Tidak ada anak": (anak + " anak"));
+
+		for (int i = 0; i < anak; i++) {
+			ImageView img = new ImageView(this);
+			img.setImageResource(R.drawable.anak);
+			anakcontainer.addView(img);
+		}
+
+		StringBuilder sb = new StringBuilder();
+		if (info.kelurahan_tinggal != null) {
+			if (sb.length() != 0) sb.append(", ");
+			sb.append(info.kelurahan_tinggal);
+		}
+		if (info.kecamatan_tinggal != null) {
+			if (sb.length() != 0) sb.append(", ");
+			sb.append(info.kecamatan_tinggal);
+		}
+		if (info.kab_kota_tinggal != null) {
+			if (sb.length() != 0) sb.append(", ");
+			sb.append(info.kab_kota_tinggal);
+		}
+		if (info.provinsi_tinggal != null) {
+			if (sb.length() != 0) sb.append(", ");
+			sb.append(info.provinsi_tinggal);
+		}
+
+		tLokasi.setText(sb);
+
 		return res;
 	}
 
 	View organisasi(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_organisasi, container, false);
-		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		return res;
 	}
 
 	View pendidikan(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_pendidikan, container, false);
-		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		return res;
 	}
 
 	View pekerjaan(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_pekerjaan, container, false);
-		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		return res;
 	}
 
@@ -173,6 +210,8 @@ public class CalegActivity extends Activity {
 
 			if (position == 3) {
 				res = pendidikan(container);
+			} else if (position == 1) {
+				res = keluarga(container);
 			} else if (position == 5) {
 				res = organisasi(container);
 			} else if (position == 4) {
@@ -182,6 +221,7 @@ public class CalegActivity extends Activity {
 			}
 
 			jazzy.setObjectForPosition(res, position);
+			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 			return res;
 		}
 
