@@ -71,7 +71,7 @@
                         android:textSize="20dp"
                         android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
                         android:id="@+id/tNama1"
-                        android:textStyle="bold"
+                        android:tag="bold"
                         android:gravity="center_horizontal"
                         android:textColor="#fff"/>
 
@@ -82,7 +82,7 @@
                         android:layout_marginLeft="32dp"
                         android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
                         android:id="@+id/tNama2"
-                        android:textStyle="bold"
+                        android:tag="bold"
                         android:gravity="center_horizontal"
                         android:textColor="#fff"/>
 
@@ -168,6 +168,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24dp"
                         android:text="Keluarga"
+                        android:tag="bold"
                         android:padding="8dp"
                         android:gravity="center_horizontal"
                         android:textColor="#fff"
@@ -239,6 +240,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24dp"
                         android:text="Pendidikan"
+                        android:tag="bold"
                         android:padding="8dp"
                         android:gravity="center_horizontal"
                         android:textColor="#fff"
@@ -272,6 +274,7 @@
                 <lomba.app.widget.FontTextView
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
+                        android:tag="bold"
                         android:textSize="24dp"
                         android:text="Pekerjaan"
                         android:padding="8dp"
@@ -309,6 +312,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24dp"
                         android:text="Organisasi"
+                        android:tag="bold"
                         android:padding="8dp"
                         android:gravity="center_horizontal"
                         android:textColor="#fff"

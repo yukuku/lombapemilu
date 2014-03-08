@@ -205,7 +205,7 @@ public class BandingActivity extends Activity {
 			for (int i = 0; i < dua.length; i++) {
 				final Papi.IdRingkasan row = dua[i];
 				if (sb.length() != 0) {
-					sb.append('\n');
+					sb.append("\n\n");
 				}
 				sb.append(U.toTitleCase(row.ringkasan));
 			}

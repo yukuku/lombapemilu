@@ -20,6 +20,9 @@ public class Papi {
 	static String BASE = "http://192.168.13.144/lomba_git/server/api.php";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
+	static {
+		client.setMaxRetriesAndTimeout(1, 10000);
+	}
 
 	public static class Area {
 		public String id;
