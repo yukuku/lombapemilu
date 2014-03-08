@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -17,6 +21,8 @@ public class SplashActivity extends Activity {
 	int cekbrpkali = 0;
 	TextView tStatus;
 	Button bRetry;
+	ImageView iProgress;
+
 
 	Runnable ceklokasi = new Runnable() {
 		@Override
@@ -57,8 +63,9 @@ public class SplashActivity extends Activity {
 					for (final Papi.Area area : areas) {
 						if ("DPR".equals(area.lembaga)) {
 							Preferences.setString(Prefkey.dapil_dpr, area.id);
-
-							tStatus.setText("Daerah pemilihan:\n" + area.nama);
+							iProgress.clearAnimation();
+							iProgress.setImageResource(R.drawable.ic_action_accept);
+							tStatus.setText(Html.fromHtml("Daerah pemilihan:<br><b>" + area.nama + "</b>"));
 
 							h.postDelayed(masukmain, 2000);
 						}
@@ -78,6 +85,17 @@ public class SplashActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.splash);
+		iProgress = V.get(this, R.id.progressBar);
+		iProgress.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				RotateAnimation anim = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+				anim.setRepeatCount(999);
+				anim.setDuration(1000);
+				iProgress.startAnimation(anim);
+			}
+
+		}, 100);
 		tStatus = V.get(this, R.id.tStatus);
 		bRetry = V.get(this, R.id.bRetry);
 		bRetry.setOnClickListener(new View.OnClickListener() {
@@ -92,4 +110,3 @@ public class SplashActivity extends Activity {
 		h.postDelayed(ceklokasi, 2000);
 	}
 }
-
