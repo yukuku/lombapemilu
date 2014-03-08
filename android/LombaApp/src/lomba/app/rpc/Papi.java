@@ -103,6 +103,7 @@ public class Papi {
 		public String title;
 		public String user_email;
 		public String content;
+		public String is_up;
 	}
 
 	public static void comments(String calegId, final Clbk<Comment[]> clbk) {

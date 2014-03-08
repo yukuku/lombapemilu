@@ -11,10 +11,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
@@ -362,6 +359,18 @@ public class CalegActivity extends Activity {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
 			TextView commentTitle = V.get(view, R.id.comment_title);
 			TextView commentContent = V.get(view, R.id.comment_content);
+			CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
+			CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
+
+			thumbsUp.setChecked(false); thumbsDown.setChecked(false);
+			if("1".equals(comments[position].is_up)) {
+				thumbsUp.setChecked(true);
+			}
+
+			if("0".equals(comments[position].is_up)) {
+				thumbsDown.setChecked(true);
+			}
+
 			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
 			commentContent.setText(comments[position].content);
 			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
