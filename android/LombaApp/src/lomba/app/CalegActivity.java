@@ -7,9 +7,11 @@ import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
+import com.squareup.picasso.Picasso;
 import lomba.app.rpc.Papi;
 import yuku.afw.V;
 
@@ -110,6 +112,10 @@ public class CalegActivity extends Activity {
 		TextView tAgama = V.get(res, R.id.tAgama);
 		TextView tGender = V.get(res, R.id.tGender);
 		TextView tKota = V.get(res, R.id.tKota);
+		TextView tNama = V.get(res, R.id.tNama);
+		TextView tPartai = V.get(res, R.id.tPartai);
+		ImageView imgPartai = V.get(res, R.id.imgPartai);
+		ImageView imgFoto = V.get(res, R.id.imgFoto);
 
 		int umur = 0;
 		if (info.tanggal_lahir != null) {
@@ -125,9 +131,16 @@ public class CalegActivity extends Activity {
 		tUsia.setText(umur == 0? "––": ("" + umur));
 
 		tKota.setText(U.lower(info.tempat_lahir));
-		tGender.setText(U.lower(info.jenis_kelamin));
+		tGender.setText("L".equals(info.jenis_kelamin)? "laki-laki": "perempuan");
 
 		tAgama.setText(U.lower(info.agama));
+
+		tPartai.setText(info.partai.nama);
+		imgPartai.setImageResource(getResources().getIdentifier("partai_" + (info.partai.id), "drawable", getPackageName()));
+
+		tNama.setText(U.bagusinNama(info.nama));
+
+		Picasso.with(this).load(info.foto_url).into(imgFoto);
 
 		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		return res;
