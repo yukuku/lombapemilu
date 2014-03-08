@@ -48,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
                 android:text="Partai Nasdem"
-                android:textColor="#fff"
                 android:layout_marginLeft="8dp"
                 android:id="@+id/tPartai"/>
 
@@ -81,7 +80,8 @@
                     android:id="@+id/tGender"
                     android:text="laki-laki"
                     android:textColor="#fff"
-                    android:layout_marginTop="12dp"/>
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
 
@@ -106,7 +106,8 @@
                     android:id="@+id/tKota"
                     android:text="bangdung"
                     android:textColor="#fff"
-                    android:layout_marginTop="12dp"/>
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
 
@@ -138,7 +139,8 @@
                     android:id="@+id/tUsia"
                     android:textColor="#fff"
                     android:layout_marginTop="12dp"
-                    android:text="66th"/>
+                    android:text="66th"
+                    android:layout_gravity="center_horizontal"/>
 
 
         </LinearLayout>
@@ -164,7 +166,8 @@
                     android:id="@+id/tAgama"
                     android:text="islam"
                     android:textColor="#fff"
-                    android:layout_marginTop="12dp"/>
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"/>
 
 
         </LinearLayout>
