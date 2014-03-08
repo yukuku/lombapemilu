@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="96dp">
+    <lomba.app.widget.FontTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="NAMA CALEGGGG"
+            android:textSize="18dp"
+            android:paddingLeft="8dp"
+            android:gravity="center_vertical"
+            android:id="@+id/tNama"
+            android:layout_weight="1"/>
+
+    <ImageView android:layout_width="96dp"
+               android:layout_height="96dp"
+               android:layout_weight="0"
+               android:id="@+id/imgFoto"
+               android:src="#008"/>
+
+</LinearLayout>

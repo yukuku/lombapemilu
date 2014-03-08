@@ -24,6 +24,7 @@ public class FontButton extends Button {
 	}
 
 	void init() {
+		if (isInEditMode()) return;
 		setTypeface(F.reg());
 	}
 }

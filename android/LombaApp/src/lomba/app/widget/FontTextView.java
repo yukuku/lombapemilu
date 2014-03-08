@@ -25,6 +25,7 @@ public class FontTextView extends TextView {
 	}
 
 	void init() {
+		if (isInEditMode()) return;
 		setTypeface(F.reg());
 	}
 }

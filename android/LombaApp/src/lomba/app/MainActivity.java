@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import lomba.app.fr.BerandaFragment;
+import lomba.app.fr.CalegListFragment;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
@@ -41,6 +42,7 @@ public class MainActivity extends Activity {
 				selection = position;
 				drawer.closeDrawer(GravityCompat.START);
 				adapter.notifyDataSetChanged();
+				updateContent();
 			}
 		});
 
@@ -93,6 +95,14 @@ public class MainActivity extends Activity {
 			if (selection == 0) {
 				FragmentTransaction tx = getFragmentManager().beginTransaction();
 				tx.replace(R.id.main, Fragment.instantiate(MainActivity.this, BerandaFragment.class.getName()));
+				tx.commit();
+			} else if (selection >= 1 && selection <= 10) {
+				FragmentTransaction tx = getFragmentManager().beginTransaction();
+				tx.replace(R.id.main, CalegListFragment.create("" + selection));
+				tx.commit();
+			} else if (selection >= 11 && selection <= 12) {
+				FragmentTransaction tx = getFragmentManager().beginTransaction();
+				tx.replace(R.id.main, CalegListFragment.create("" + (selection + 3)));
 				tx.commit();
 			}
 			oldSelection = selection;
