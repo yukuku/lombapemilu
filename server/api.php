@@ -76,9 +76,16 @@ if($method == 'create_comment') {
  * @param caleg_id
  */
 function get_caleg_rating($caleg_id) {
-	$qf = "select avg(rating) as avg from caleg_rating where caleg_id = %d";
-	$result = mysql_query(sprintf($qf, $_GET['caleg_id']));
+	$qf = "select avg(rating) as avg from caleg_rating where caleg_id = '%s'";
+	$result = mysql_query(sprintf($qf, $caleg_id));
 	$return = mysql_fetch_assoc($result);
+	
+	if(empty($return['avg'])) {
+		generate_caleg_ratings($caleg_id);
+	} else {
+		return $return;
+	}
+	
 	
 }
 
@@ -94,8 +101,15 @@ if($method == 'get_caleg_rating') {
 /**
  * @param caleg_id
  */
-function generate_caleg_ratings($caleg_id) {
-	for($i = 0; $i < 200; $i++) {
+function generate_caleg_ratings($caleg_id, $force = false) {
+	if($force === false) {
+		$res = mysql_query("select * from caleg_rating where caleg_id = '" . $caleg_id . "' limit 10");
+		if(mysql_num_rows($res) >= 0) {
+			return;
+		}
+	}
+	
+	for($i = 0; $i < 10; $i++) {
 		$rate = mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax() * 5;
 		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
 		mysql_query(sprintf($qf, $caleg_id, rand_email(), floor(number_format($rate, 1) * 2) / 2));
@@ -109,12 +123,24 @@ if($method == 'generate_caleg_ratings') {
 /**
  * @param caleg_id
  */
-if($method == 'generate_comments') {
-	$comments = array("Wah ganteng euy calegnya", "Hebat nih kayaknya pendidikannya", "Jomblo ga ya, naksir nih");
-	for($i = 0; $i < 20; $i++) {
-		$qf = "insert into comment (title, content, user_email, caleg_id, created) values ('%s', '%s', '%s', '%s', %d)";	
-		$result = mysql_query(sprintf($qf, "Judul", $comments[rand(0, 2)], rand_email(), $_GET['caleg_id'], time()));
+function generate_comments($caleg_id, $force = false) {
+	$comments = C::$comments;
+	
+	if($force === false) {
+		$res = mysql_query("select * from comment where caleg_id = '" . $caleg_id . "' limit 1");
+		if(mysql_num_rows($res) > 0) {
+			return;
+		}
 	}
+	
+	for($i = 0; $i < 20; $i++) {
+		$qf = "insert into comment (title, content, user_email, caleg_id, created) values ('%s', '%s', '%s', '%s', %d)";
+		$result = mysql_query(sprintf($qf, "Judul", $comments[rand(0, count($comments) - 1)], rand_email(), $caleg_id, time()));
+	}
+}
+
+if($method == 'generate_comments') {
+	generate_comments($_GET['caleg_id']);
 }
 
 /**
@@ -141,7 +167,7 @@ if($method == 'generate_rate_comments') {
 if($method == 'get_comments') {
 	$qf = 
 		"select comment.*, comment_rating.is_up from comment left outer join comment_rating on " .
-		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email where caleg_id = %d";
+		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email where caleg_id = '%s'";
 	$results = mysql_query(sprintf($qf, $_GET['caleg_id']));
 	$return = array();
 	while($row = mysql_fetch_assoc($results)) {
@@ -195,6 +221,78 @@ if($method == 'get_calegs_by_dapil') {
 }
 
 /**
+ * @param $lat
+ * @param $lng
+ */
+if($method == 'get_beranda') {
+	$cache_key = md5($_GET['lat'] . '|' . $_GET['lng']);
+	$cache_path = getcwd() . '/cache/get_beranda_' . $cache_key;
+
+	if(!is_file($cache_path)) {
+		$content = file_get_contents('http://api.pemiluapi.org/geographic/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&lembaga=DPR&lat=' . $_GET['lat'] . '&long=' . $_GET['lng']);
+		file_put_contents($cache_path, $content);
+	} else {
+		$content = file_get_contents($cache_path);
+	}
+	
+	$_results = json_decode($content);
+	$results = array();
+	$caleg_ids = array();
+	foreach($_results->data->results as $result) {
+		if($result->kind == 'Dapil') {
+			$results = $result->caleg;
+			
+			//generet rating
+			foreach($results as $r) {
+				$caleg_ids[] = $r->id;
+				generate_caleg_ratings($r->id);
+				generate_comments($r->id);
+			}
+			break;
+		}
+	}
+	
+	//avg
+	$qf = 
+		"select t.caleg_id, max(avg_rate) as mar from " . 
+		"( select caleg_id, avg(rating) as avg_rate from caleg_rating group by (caleg_id) ) t " . 
+		"where caleg_id in ('%s') " .
+		"group by (caleg_id) order by mar desc";
+	$results1 = mysql_query(sprintf($qf, join("', '", $caleg_ids)));
+	$max_avg = mysql_fetch_assoc($results1);
+	foreach($results as $r) {
+		if($r->id == $max_avg['caleg_id']) {
+			$r->rating = $max_avg['mar'];
+			$max_avg = $r;
+			break;
+		}
+	}
+
+	//most komen
+	$qf = 
+		"select caleg_id, count(*) as cnt from comment where caleg_id in ('%s') group by (caleg_id) ";
+	$results2 = mysql_query(sprintf($qf, join("', '", $caleg_ids)));
+	$most_cmtd = mysql_fetch_assoc($results2);
+	foreach($results as $r) {
+		if($r->id == $most_cmtd['caleg_id']) {
+			$most_cmtd = $r;
+			$rating = get_caleg_rating($r->id);
+			$most_cmtd->rating = $rating['avg'];
+			break;
+		}
+	}
+
+	//featured
+	$featured = $results[rand(0, count($results) - 1)];
+	$rate = get_caleg_rating($featured->id);
+	$featured->rating = $rate['avg'];
+	
+	print_r(array(
+		'top_rated' => $max_avg, 'most_commented' => $most_cmtd, 'featured' => $featured
+	));
+}
+
+/**
  * create table caleg_rating(
 	id int(11) primary key auto_increment,
 	caleg_id int(11) not null,
@@ -219,4 +317,15 @@ create table comment_rating (
 )
  */
 
-
+class C {
+public static $comments = array(
+	'Saya kenal beliau secara pribadi, orangnya lugas dan jujur',
+	'Sangat rekomended! Baik dan sederhana!',
+	'Anaknya banyak, semoga bisa mengatur rakyat sebaik mengatur anak',
+	'Semoga menang pak, kami sekeluarga mendukung.',
+	'Maju terus!', "Dengan pendidikan yang sangat tinggi, saya yakin anda dapat menjadi anggota DPR yang berkualitas!",
+	'Dengan begitu banyaknya pemberitaan tentang bapak di media - media besar, seperti media ayam penyet bahwa bapak berkorupsi, saya tidak akan memilih bapak',
+	'Semoga bapak berhati nurani dan dapat mencintai rakyat', 'Maju terus bu, jangan biarkan orang lain memandang rendah ibu karena ibu seorang wanita',
+	'Doa kami beserta bapak, semoga sukses!'
+);
+};
