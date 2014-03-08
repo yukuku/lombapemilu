@@ -125,6 +125,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16dp"
                             android:text="(123)"
+                            android:textColor="#fff"
                             android:layout_marginLeft="8dp"
                             android:id="@+id/tRatingCount1"/>
 
@@ -144,6 +145,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16dp"
                             android:text="(123)"
+                            android:textColor="#fff"
                             android:layout_marginLeft="8dp"
                             android:id="@+id/tRatingCount2"/>
 

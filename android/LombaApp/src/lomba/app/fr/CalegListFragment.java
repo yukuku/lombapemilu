@@ -78,6 +78,8 @@ public class CalegListFragment extends Fragment {
 					startActivity(BandingActivity.create(caleg1.id, U.ser(caleg1), caleg2.id, U.ser(caleg2)));
 
 					pili.clear();
+
+					adapter.notifyDataSetChanged();
 				} else {
 
 					Papi.Caleg caleg = calegs.get(position);

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
@@ -316,48 +317,50 @@ public class Papi {
 			super(encoding);
 		}
 
+		AtomicBoolean udagagal = new AtomicBoolean();
+
 		abstract void onSegalaFailure(Throwable e);
 
 		@Override
 		public void onFailure(final Throwable e, final JSONObject errorResponse) {
 			super.onFailure(e, errorResponse);
-			onSegalaFailure(e);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
 		}
 
 		@Override
 		public void onFailure(final Throwable e, final JSONArray errorResponse) {
 			super.onFailure(e, errorResponse);
-			onSegalaFailure(e);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
 		}
 
 		@Override
 		public void onFailure(final int statusCode, final Throwable e, final JSONArray errorResponse) {
 			super.onFailure(statusCode, e, errorResponse);
-			onSegalaFailure(e);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
 		}
 
 		@Override
 		public void onFailure(final int statusCode, final Throwable e, final JSONObject errorResponse) {
 			super.onFailure(statusCode, e, errorResponse);
-			onSegalaFailure(e);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
 		}
 
 		@Override
 		public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
 			super.onFailure(statusCode, headers, responseString, throwable);
-			onSegalaFailure(throwable);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(throwable);
 		}
 
 		@Override
 		public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
 			super.onFailure(statusCode, headers, throwable, errorResponse);
-			onSegalaFailure(throwable);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(throwable);
 		}
 
 		@Override
 		public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONArray errorResponse) {
 			super.onFailure(statusCode, headers, throwable, errorResponse);
-			onSegalaFailure(throwable);
+			if (udagagal.compareAndSet(false, true)) onSegalaFailure(throwable);
 		}
 	}
 
