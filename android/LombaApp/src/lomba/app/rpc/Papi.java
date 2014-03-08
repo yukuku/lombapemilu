@@ -69,6 +69,7 @@ public class Papi {
 		public String url_logo_medium;
 		public String url_logo_small;
 		public String url_situs;
+		public int id;
 	}
 
 	public static class Beranda {
