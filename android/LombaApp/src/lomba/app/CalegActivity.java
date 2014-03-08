@@ -177,11 +177,19 @@ public class CalegActivity extends Activity {
 				res = organisasi(container);
 			} else if (position == 4) {
 				res = pekerjaan(container);
+			} else if (position == 6) {
+				res = rating(container);
 			} else {
 				res = datadiri(container);
 			}
 
 			jazzy.setObjectForPosition(res, position);
+			return res;
+		}
+
+		View rating(ViewGroup container) {
+			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
+			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 			return res;
 		}
 

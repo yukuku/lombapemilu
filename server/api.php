@@ -109,7 +109,8 @@ function generate_caleg_ratings($caleg_id, $force = true) {
 		}
 	}
 	
-	for($i = 0; $i < 10; $i++) {
+	$comment_count = mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax() * 20;
+	for($i = 0; $i < $comment_count; $i++) {
 		$rate = mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax() * 5;
 		$qf = "insert into caleg_rating (caleg_id, user_email, rating) values('%s', '%s', %f)";
 		mysql_query(sprintf($qf, $caleg_id, rand_email(), floor(number_format($rate, 1) * 2) / 2));
@@ -202,18 +203,18 @@ if($method == 'get_calegs_by_dapil') {
 		$caleg_ids[] = $caleg->id;
 	}
 	
-	$qf = "select caleg_id, avg(rating) as avg from caleg_rating where caleg_id in %s group by (caleg_id) ";
+	$qf = "select caleg_id, count(rating) as count, avg(rating) as avg from caleg_rating where caleg_id in %s group by (caleg_id) ";
 	$results = mysql_query(sprintf($qf, "('" . join("', '", $caleg_ids) . "')"));
 	$caleg_ratings = array();
 	
 	while($result = mysql_fetch_assoc($results)) {
-		$caleg_ratings[$result['caleg_id']] = $result['avg'];
+		$caleg_ratings[$result['caleg_id']] = $result;
 	}
 	foreach($calegs as $caleg) {
 		if(!empty($caleg_ratings[$caleg->id])) {
 			$caleg->rating = $caleg_ratings[$caleg->id];
 		} else {
-			$caleg->rating = 0;
+			$caleg->rating = array('count' => 0, 'avg' => 0);
 		}
 	}
 	
