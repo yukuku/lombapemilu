@@ -91,7 +91,7 @@ public class CalegListFragment extends Fragment {
 
 			Papi.Caleg caleg = calegs.get(position);
 			tNama.setText(U.bagusinNama(caleg.nama));
-			Picasso.with(CalegListFragment.this.getActivity()).load(caleg.foto_url).into(imgFoto);
+			Picasso.with(CalegListFragment.this.getActivity()).load(U.bc(192, 192, caleg.foto_url)).into(imgFoto);
 		}
 
 		@Override

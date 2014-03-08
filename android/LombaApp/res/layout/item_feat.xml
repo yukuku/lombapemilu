@@ -12,28 +12,78 @@
                                    android:layout_height="wrap_content"
                                    android:text="Featured Caleg"
                                    android:id="@+id/tJudul"
+                                   android:tag="thin"
                                    android:textSize="22dp"/>
 
-    <LinearLayout android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:background="@drawable/note_bg"
-                  android:layout_marginTop="8dp"
-                  android:id="@+id/clickable"
-                  android:focusable="false"
-                  android:layout_marginBottom="16dp">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/note_bg"
+            android:layout_marginTop="8dp"
+            android:id="@+id/clickable"
+            android:focusable="false"
+            android:layout_marginBottom="16dp">
 
         <ImageView android:layout_width="120dp"
                    android:layout_height="160dp"
                    android:id="@+id/imgFoto"
                    android:src="#800"/>
 
-        <lomba.app.widget.FontTextView android:layout_width="wrap_content"
-                                       android:layout_height="wrap_content"
-                                       android:id="@+id/tDesc"
-                                       android:text="In publishing and graphic design, lorem ipsum is a placeholder text commonly used to demonstrate the graphic elements of a document or visual presentation."
-                                       android:textSize="14dp"
-                                       android:layout_marginLeft="16dp"
-                />
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:paddingLeft="16dp">
+
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tDesc"
+                    android:text="Dra Ayam Bawang SH SSM SMS SMSMS"
+                    android:textSize="20dp"
+                    />
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:gravity="center_vertical"
+                          android:layout_marginTop="8dp">
+
+                <ImageView android:layout_width="24dp"
+                           android:layout_height="24dp"
+                           android:id="@+id/imgPartai"
+                           android:src="@drawable/partai_1"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:text="Partai Nasdem"
+                        android:layout_marginLeft="8dp"
+                        android:id="@+id/tPartai"/>
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:gravity="center_vertical"
+                          android:layout_marginTop="8dp">
+
+                <view android:layout_width="65dp"
+                      android:layout_height="13dp"
+                      class="lomba.app.widget.RatingView"
+                      android:id="@+id/rating"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:text="(123)"
+                        android:layout_marginLeft="8dp"
+                        android:id="@+id/tRatingCount"/>
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

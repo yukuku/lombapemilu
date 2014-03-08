@@ -1,5 +1,6 @@
 package lomba.app;
 
+import android.net.Uri;
 import android.text.TextUtils;
 
 import java.io.ByteArrayInputStream;
@@ -52,5 +53,9 @@ public class U {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String bc(int w, int h, String u) {
+		return "http://pemilu-backend.appspot.com/remote/image_bottom_crop?w=" + w + "&h=" + h + "&url=" + Uri.encode(u);
 	}
 }
