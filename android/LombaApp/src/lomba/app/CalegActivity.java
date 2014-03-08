@@ -2,13 +2,10 @@ package lomba.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import lomba.app.rpc.Papi;
@@ -40,7 +37,7 @@ public class CalegActivity extends Activity {
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
 
 		this.id = getIntent().getStringExtra("id");
-		this.info = (Papi.Caleg) U.unser(getIntent().getByteArrayExtra("dt"));
+		this.info = U.unser(getIntent().getByteArrayExtra("dt"));
 
 		View bP1 = V.get(this, R.id.bP1);
 		View bP2 = V.get(this, R.id.bP2);
@@ -94,21 +91,47 @@ public class CalegActivity extends Activity {
 		});
 	}
 
+	View datadiri(final ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_datadiri, container, false);
+		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		return res;
+	}
+
+	View organisasi(final ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_organisasi, container, false);
+		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		return res;
+	}
+
+	View pendidikan(final ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_pendidikan, container, false);
+		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		return res;
+	}
+
+	View pekerjaan(final ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_pekerjaan, container, false);
+		container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		return res;
+	}
+
+
+
 	class InfoAdapter extends PagerAdapter {
 		@Override
 		public Object instantiateItem(ViewGroup container, final int position) {
-			TextView res = new TextView(CalegActivity.this);
-			res.setGravity(Gravity.CENTER);
-			res.setTextSize(30);
-			res.setTextColor(Color.WHITE);
-			res.setText("Page " + position + " ID=" + id);
-			res.setPadding(30, 30, 30, 30);
-			int bg = Color.rgb((int) Math.floor(Math.random()*128)+64,
-			(int) Math.floor(Math.random()*128)+64,
-			(int) Math.floor(Math.random()*128)+64);
-			res.setBackgroundColor(bg);
+			View res;
 
-			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+			if (position == 3) {
+				res = pendidikan(container);
+			} else if (position == 5) {
+				res = organisasi(container);
+			} else if (position == 4) {
+				res = pekerjaan(container);
+			} else {
+				res = datadiri(container);
+			}
+
 			jazzy.setObjectForPosition(res, position);
 			return res;
 		}

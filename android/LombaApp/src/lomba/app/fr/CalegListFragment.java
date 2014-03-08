@@ -58,7 +58,7 @@ public class CalegListFragment extends Fragment {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				Papi.Caleg caleg = calegs.get(position);
-				CalegActivity.create(caleg.id, U.ser(caleg));
+				startActivity(CalegActivity.create(caleg.id, U.ser(caleg)));
 			}
 		});
 
