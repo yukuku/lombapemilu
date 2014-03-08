@@ -6,6 +6,8 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,13 +30,20 @@ public class BerandaFragment extends Fragment {
 	BerandaAdapter adapter;
 
 	Papi.Beranda beranda;
+	private ImageView loading;
+	private RotateAnimation anim;
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		this.inflater = inflater;
 		final View res = inflater.inflate(R.layout.fr_beranda, container, false);
 		ListView lsBeranda = V.get(res, R.id.lsBeranda);
+		loading = V.get(res, R.id.loading);
 		lsBeranda.setAdapter(adapter = new BerandaAdapter());
+
+		anim = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		anim.setRepeatCount(999);
+		anim.setDuration(1000);
 
 		loadBeranda();
 
@@ -43,16 +52,23 @@ public class BerandaFragment extends Fragment {
 
 
 	void loadBeranda() {
+		loading.setVisibility(View.VISIBLE);
+		loading.startAnimation(anim);
+
 		Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), new Papi.Clbk<Papi.Beranda>() {
 			@Override
 			public void success(final Papi.Beranda beranda) {
 				BerandaFragment.this.beranda = beranda;
 				adapter.notifyDataSetChanged();
+				loading.clearAnimation();
+				loading.setVisibility(View.GONE);
 			}
 
 			@Override
 			public void failed(final Throwable ex) {
 				// load againnn
+				loading.clearAnimation();
+				loading.setVisibility(View.GONE);
 				new Thread(new Runnable() {
 					@Override
 					public void run() {

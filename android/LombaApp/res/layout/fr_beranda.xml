@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:divider="@null"
-          android:dividerHeight="0dp"
-          android:id="@+id/lsBeranda">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:layout_height="match_parent"
+        >
+    <ImageView android:id="@+id/loading" android:layout_width="wrap_content" android:layout_height="match_parent"
+               android:layout_gravity="center" android:src="@drawable/ic_action_refresh"/>
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:id="@+id/lsBeranda">
 
-</ListView>
+    </ListView>
+</LinearLayout>

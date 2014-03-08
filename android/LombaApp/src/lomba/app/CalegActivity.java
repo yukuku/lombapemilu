@@ -78,18 +78,6 @@ public class CalegActivity extends Activity {
 		this.id = getIntent().getStringExtra("id");
 		this.info = U.unser(getIntent().getByteArrayExtra("dt"));
 
-		Papi.comments(info.id, new Papi.Clbk<Papi.Comment[]>() {
-			@Override
-			public void success(Papi.Comment[] comments) {
-				commentsAdapter.setData(comments);
-			}
-
-			@Override
-			public void failed(Throwable ex) {
-
-			}
-		});
-
 		bP1 = V.get(this, R.id.bP1);
 		bP2 = V.get(this, R.id.bP2);
 		bP3 = V.get(this, R.id.bP3);
@@ -135,6 +123,34 @@ public class CalegActivity extends Activity {
 		});
 
 		loadLengkap();
+		loadLengkap2();
+	}
+
+	void loadLengkap2() {
+
+		Papi.comments(info.id, new Papi.Clbk<Papi.Comment[]>() {
+			@Override
+			public void success(final Papi.Comment[] comments) {
+				commentsAdapter.setData(comments);
+			}
+
+			@Override
+			public void failed(final Throwable ex) {
+				// load againnn
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						SystemClock.sleep(2000);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								loadLengkap2();
+							}
+						});
+					}
+				}).start();
+			}
+		});
 	}
 
 	void gotopage(int p) {
@@ -385,8 +401,8 @@ public class CalegActivity extends Activity {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
 			TextView commentTitle = V.get(view, R.id.comment_title);
 			TextView commentContent = V.get(view, R.id.comment_content);
-			CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
-			CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
+			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
+			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 
 			thumbsUp.setChecked(false); thumbsDown.setChecked(false);
 			if("1".equals(comments[position].is_up)) {
@@ -396,6 +412,20 @@ public class CalegActivity extends Activity {
 			if("0".equals(comments[position].is_up)) {
 				thumbsDown.setChecked(true);
 			}
+
+			thumbsUp.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+					if(isChecked) thumbsDown.setChecked(false);
+				}
+			});
+
+			thumbsDown.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+					if(isChecked) thumbsUp.setChecked(false);
+				}
+			});
 
 			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
 			commentContent.setText(comments[position].content);

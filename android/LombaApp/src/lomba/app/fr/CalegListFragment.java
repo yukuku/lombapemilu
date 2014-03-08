@@ -5,10 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.*;
 import com.squareup.picasso.Picasso;
 import lomba.app.CalegActivity;
 import lomba.app.R;
@@ -32,9 +31,10 @@ public class CalegListFragment extends Fragment {
 	CalegAdapter adapter;
 
 	List<Papi.Caleg> calegs;
-	TextView emptyView;
+	ImageView loading;
 	String partai;
 	private LayoutInflater inflater;
+	private RotateAnimation anim;
 
 	public static CalegListFragment create(String partai) {
 		CalegListFragment res = new CalegListFragment();
@@ -52,8 +52,12 @@ public class CalegListFragment extends Fragment {
 		this.partai = getArguments().getString("partai");
 
 		lsCaleg = V.get(res, R.id.lsCaleg);
-		emptyView = V.get(res, android.R.id.empty);
-		lsCaleg.setEmptyView(emptyView);
+		loading = V.get(res, R.id.loading);
+		anim = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		anim.setDuration(1000);
+		anim.setRepeatCount(999);
+
+		lsCaleg.setEmptyView(loading);
 		lsCaleg.setAdapter(adapter = new CalegAdapter());
 		lsCaleg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -63,16 +67,20 @@ public class CalegListFragment extends Fragment {
 			}
 		});
 
+		loading.startAnimation(anim);
 		Papi.candidate_caleg2(Preferences.getString(Prefkey.dapil_dpr), "DPR", partai, new Papi.Clbk<Papi.Caleg[]>() {
 			@Override
 			public void success(final Papi.Caleg[] calegs) {
 				CalegListFragment.this.calegs = Arrays.asList(calegs);
 				adapter.notifyDataSetChanged();
+				loading.clearAnimation();
+				loading.setVisibility(View.GONE);
 			}
 
 			@Override
 			public void failed(final Throwable ex) {
-				emptyView.setText("Gagal memuat daftar caleg.");
+				loading.clearAnimation();
+				loading.setVisibility(View.GONE);
 			}
 		});
 
