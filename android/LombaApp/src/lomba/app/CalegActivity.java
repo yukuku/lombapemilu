@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -333,7 +334,7 @@ public class CalegActivity extends Activity {
 		}
 		String hasil = sb.toString();
 
-		return "http://www.gravatar.com/avatar/" + hasil + "?s=200";
+		return "http://www.gravatar.com/avatar/" + hasil + "?s=80&d=identicon";
 	}
 
 	static Matcher m = Pattern.compile("([0-9]+(?:-[0-9]+|-SEKARANG)?)(?:,?\\s*)(.*)").matcher("");
@@ -359,6 +360,10 @@ public class CalegActivity extends Activity {
 		@Override
 		public void bindView(View view, int position, ViewGroup parent) {
 			ImageView commentProfile = V.get(view, R.id.gravatar_url);
+			TextView commentTitle = V.get(view, R.id.comment_title);
+			TextView commentContent = V.get(view, R.id.comment_content);
+			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
+			commentContent.setText(comments[position].content);
 			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
 		}
 
@@ -369,6 +374,7 @@ public class CalegActivity extends Activity {
 
 		public void setData(Papi.Comment[] comments) {
 			this.comments = comments;
+			notifyDataSetChanged();
 		}
 	}
 

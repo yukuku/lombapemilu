@@ -106,9 +106,9 @@ public class Papi {
 	}
 
 	public static void comments(String calegId, final Clbk<Comment[]> clbk) {
-		client.get(BASE, new RequestParams("m", "get_comments", "caleg_id", calegId), new JsonHttpResponseHandler() {
+		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId), new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
+			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
 				Log.d(TAG, "response: " + response.toString());
 				Comment[] comments = new Gson().fromJson(response.toString(), Comment[].class);
 				clbk.success(comments);
