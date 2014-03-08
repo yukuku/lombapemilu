@@ -12,7 +12,7 @@
             android:id="@+id/imgStatus"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/kawin"
-            android:layout_marginTop="24dp"/>
+            android:layout_marginTop="32dp"/>
 
     <lomba.app.widget.FontTextView
             android:layout_width="wrap_content"

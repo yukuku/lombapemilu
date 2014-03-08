@@ -31,6 +31,17 @@ public class Papi {
 		public String nama;
 	}
 
+	public static class IdRingkasan implements Serializable {
+
+		public IdRingkasan(final int id, final String ringkasan) {
+			this.id = id;
+			this.ringkasan = ringkasan;
+		}
+
+		public int id;
+		public String ringkasan;
+	}
+
 	public static class Rating implements Serializable {
 		public int count;
 		public float avg;
@@ -57,6 +68,10 @@ public class Papi {
 		public String tanggal_lahir;
 		public String tempat_lahir;
 		public int urutan;
+
+		public IdRingkasan[] riwayat_pendidikan;
+		public IdRingkasan[] riwayat_pekerjaan;
+		public IdRingkasan[] riwayat_organisasi;
 
 		public Rating rating;
 	}
@@ -120,6 +135,67 @@ public class Papi {
 
 				final Caleg[] calegs = new Gson().fromJson(a.toString(), Caleg[].class);
 				clbk.success(calegs);
+			}
+
+			@Override
+			public void onFailure(final Throwable e, final JSONObject errorResponse) {
+				clbk.failed(e);
+			}
+		});
+	}
+
+	public static void candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
+		Log.d(TAG, "@@candidate_caleg_detail id=" + id);
+		client.get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new JsonHttpResponseHandler("utf-8") {
+			@Override
+			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
+				final JSONObject data = response.optJSONObject("data");
+				final JSONObject r = data.optJSONObject("results");
+				final JSONArray a = r.optJSONArray("caleg");
+
+				Log.d(TAG, "caleg(s): " + a.toString());
+
+				final JSONObject o = a.optJSONObject(0);
+
+				final Caleg caleg = new Gson().fromJson(o.toString(), Caleg.class);
+
+
+				if (caleg.riwayat_pendidikan == null || caleg.riwayat_pendidikan.length == 0) {
+					caleg.riwayat_pendidikan = new IdRingkasan[] {
+					new IdRingkasan(1, "1957-1963, SD, SEKOLAH RAKYAT NEGERI, ACEH"),
+					new IdRingkasan(2, "1963-1966, SLTP, SMP NEGERI 1, BANDA ACEH"),
+					new IdRingkasan(3, "1963-1966 SLTP I NEGERI 1 BANDA ACEH"),
+					new IdRingkasan(4, "1966-1967, SMA NEGERI I BANDA ACEH"),
+					new IdRingkasan(5, "1967-1968, SLTA, SMA YPU, BANDUNG"),
+					new IdRingkasan(6, "1969-1971, FAKULTAS PUBLISTIK UNIVERSITAS PADJAJARAN, BANDUNG"),
+					new IdRingkasan(7, "1972-1984 STUDI ILMU KOMUNIKASI, ILMU POLITIK DAN SOSIOLOGI, WESTFAELISCHE - WILHELMS-UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN"),
+					new IdRingkasan(8, "1983 S3, DR. PHIL. UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN"),
+					};
+				}
+
+				if (caleg.riwayat_pekerjaan == null || caleg.riwayat_pekerjaan.length == 0) {
+					caleg.riwayat_pekerjaan = new IdRingkasan[] {
+					new IdRingkasan(1, "1998-1998, FKP DPR RI, ANGGOTA TIM AHLI, JAKARTA"),
+					new IdRingkasan(2, "1998-1998, MPR RI, TIM AHLI, JAKARTA"),
+					new IdRingkasan(3, "2000-2005, TIM PENASEHAT PRESIDEN URUSAN ACEH ANGGOTA, JAKARTA"),
+					new IdRingkasan(4, "2000-2002, KEMENTRIAN POLKAM, PENASEHAT, JAKARTA"),
+					new IdRingkasan(5, "2005-2007, PEMERINTAHAN, TIM AHLI DPR RI, JAKARTA"),
+					new IdRingkasan(6, "2002-2005, PEMERINTAHAN, DUTA BESAR MESIR, MESIR"),
+					};
+				}
+
+				if (caleg.riwayat_organisasi == null || caleg.riwayat_organisasi.length == 0) {
+					caleg.riwayat_organisasi = new IdRingkasan[] {
+					new IdRingkasan(1,"2013-SEKARANG, PARTAI NASDEM, KETUA DEWAN PAKAR DPP PARTAI NASDEM, JAKARTA"),
+					new IdRingkasan(2,"2010-SEKARANG, ORMAS NASIONAL DEMOKRAT, ANGGOTA DEWAN PERTIMBANGAN, JAKARTA"),
+					new IdRingkasan(3,"2007-SEKARANG, PENGURUS FORUM DUTA BESAR RI, JAKARTA"),
+					new IdRingkasan(4,"2009-2013, FISIP UI, KETUA DEWAN GURU BESAR JAKARTA"),
+					new IdRingkasan(5,"2010-2013, KOMITE PROFESOR UNTUK PERPUSTAKAAN UI, KETUA, JAKARTA"),
+					new IdRingkasan(6,"2011-2014, PERHIMPUNAN ALUMNI JERMAN, WAKIL KETUA DEWAN KEHORMATAN"),
+					};
+				}
+
+				clbk.success(caleg);
 			}
 
 			@Override

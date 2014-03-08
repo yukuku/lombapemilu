@@ -1,62 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#9933cc">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#09c">
 
-    <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:id="@+id/imageView"
-            android:src="#4fff"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="32dp"/>
+        <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/samping_pekerjaan"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"/>
 
-    <lomba.app.widget.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginLeft="32dp"
-            android:text="PEKERJAAN"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="32dp"/>
+        <lomba.app.widget.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginLeft="32dp"
+                android:text="PEKERJAAN"
+                android:textColor="#fff"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="32dp"/>
 
-    <lomba.app.widget.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="16dp"
-            android:text="@string/test_org"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="16dp"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:orientation="vertical"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/wadah"
+                      android:layout_marginBottom="32dp"
+                      android:paddingLeft="16dp"
+                      android:paddingRight="32dp">
 
-
-    <lomba.app.widget.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="16dp"
-            android:text="@string/test_org"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="16dp"/>
-
-
-    <lomba.app.widget.FontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="16dp"
-            android:text="@string/test_org"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="16dp"/>
-
-
-</LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

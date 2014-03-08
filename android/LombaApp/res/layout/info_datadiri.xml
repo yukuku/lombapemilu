@@ -10,7 +10,7 @@
             android:layout_width="160dp"
             android:layout_height="200dp"
             android:id="@+id/imgFoto"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:layout_gravity="center_horizontal"/>
 
     <lomba.app.widget.FontTextView
@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
                 android:text="Partai Nasdem"
+                android:textColor="#fff"
                 android:layout_marginLeft="8dp"
                 android:id="@+id/tPartai"/>
 

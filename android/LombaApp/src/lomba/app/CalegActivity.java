@@ -3,6 +3,7 @@ package lomba.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -22,6 +23,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CalegActivity extends Activity {
 	public static final String TAG = CalegActivity.class.getSimpleName();
@@ -98,6 +101,36 @@ public class CalegActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				jazzy.setCurrentItem(5);
+			}
+		});
+
+		loadLengkap();
+	}
+
+	void loadLengkap() {
+		Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
+			@Override
+			public void success(final Papi.Caleg caleg) {
+				Log.d(TAG, "@@success diperbarui");
+				CalegActivity.this.info = caleg;
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void failed(final Throwable ex) {
+				// load againnn
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						SystemClock.sleep(2000);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								loadLengkap();
+							}
+						});
+					}
+				}).start();
 			}
 		});
 	}
@@ -204,19 +237,70 @@ public class CalegActivity extends Activity {
 
 	View organisasi(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_organisasi, container, false);
+
+
+		LinearLayout wadah = V.get(res, R.id.wadah);
+		final Papi.IdRingkasan[] idringkasans = info.riwayat_organisasi;
+
+		addrows(wadah, idringkasans);
+
 		return res;
 	}
 
 	View pendidikan(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_pendidikan, container, false);
+
+		LinearLayout wadah = V.get(res, R.id.wadah);
+		final Papi.IdRingkasan[] idringkasans = info.riwayat_pendidikan;
+
+		addrows(wadah, idringkasans);
+
 		return res;
+	}
+
+	private void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
+		if (idringkasans != null) {
+			for (int i = 0; i < idringkasans.length; i++) {
+				final Papi.IdRingkasan row = idringkasans[i];
+				final View v = getLayoutInflater().inflate(R.layout.item_riwayat, wadah, false);
+				TextView tTahun = V.get(v, R.id.tTahun);
+				TextView tKet = V.get(v, R.id.tKet);
+				ImageView imgBenang = V.get(v, R.id.imgBenang);
+
+				if (i == 0) imgBenang.setBackgroundResource(R.drawable.timelineatas);
+				if (i == idringkasans.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
+
+				final String[] pisah = pisah(row.ringkasan);
+				tTahun.setText(pisah[0]);
+				tKet.setText(pisah[1]);
+
+				wadah.addView(v);
+			}
+		}
 	}
 
 	View pekerjaan(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_pekerjaan, container, false);
+
+		LinearLayout wadah = V.get(res, R.id.wadah);
+		final Papi.IdRingkasan[] idringkasans = info.riwayat_pekerjaan;
+
+		addrows(wadah, idringkasans);
+
 		return res;
 	}
 
+
+	static Matcher m = Pattern.compile("([0-9]+(?:-[0-9]+|-SEKARANG)?)(?:,?\\s*)(.*)").matcher("");
+
+	String[] pisah(String r) {
+		m.reset(r);
+		if (m.find()) {
+			return new String[] {m.group(1).replace("SEKARANG", "KINI"), m.group(2)};
+		} else {
+			return new String[] {"", r};
+		}
+	}
 
 
 	class InfoAdapter extends PagerAdapter {
