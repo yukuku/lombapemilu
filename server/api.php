@@ -43,13 +43,13 @@ if($method == 'rate_comment_caleg') {
 	$result = mysql_query("select rating from caleg_rating where caleg_id = '" . $_GET['caleg_id'] . "' and user_email = '" . $_GET['user_email'] . "'");
 	
 	if(mysql_num_rows($result) > 0) {
-		$qf = "update caleg_rating set rating = %f where caleg_id = '%s' and user_email = '%s'";
+		$qf = "update caleg_rating set rating = %fd where caleg_id = '%s' and user_email = '%s'";
 		$result = mysql_query(sprintf($qf, $_GET['rating'], $_GET['caleg_id'], $_GET['user_email']));
 		
 		$qf = "update comment set title = '%s', content = '%s', updated = %d where caleg_id = '%s' and user_email = '%s'";
 		$result = mysql_query(sprintf($qf, $_GET['title'], $_GET['content'], time(), $_GET['caleg_id'], $_GET['user_email']));
 	} else {
-		$qf = "insert into caleg_rating(caleg_id, user_email, rating) values('%s', '%s', %f)";
+		$qf = "insert into caleg_rating(caleg_id, user_email, rating) values('%s', '%s', %d)";
 		$result = mysql_query(sprintf($qf, $_GET['caleg_id'], $_GET['user_email'], $_GET['rating']));
 		
 		$qf = "insert into comment (title, content, caleg_id, user_email, created, updated) values ('%s', '%s', '%s', '%s', %d, %d)";
@@ -149,7 +149,7 @@ function generate_comments($caleg_id, $force = false) {
 }
 
 if($method == 'generate_comments') {
-	generate_comments($_GET['caleg_id']);
+	generate_comments($_GET['caleg_id'], true);
 }
 
 /**
@@ -201,10 +201,20 @@ if($method == 'generate_rate_comments') {
  * @param sort_by | rating created
  */
 if($method == 'get_comments') {
-	$qf = 
-		"select comment.*, comment_rating.is_up from comment left outer join comment_rating on " .
-		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email and comment_rating.user_email = '%s' where caleg_id = '%s' order by updated desc";
-	$results = mysql_query(sprintf($qf, $_GET['user_email'], $_GET['caleg_id']));
+// 	$qf = 
+// 		"select comment.*, comment_rating.is_up from comment left outer join comment_rating on " .
+// 		"comment.id = comment_rating.comment_id and comment.user_email = comment_rating.user_email and comment_rating.user_email = '%s' where caleg_id = '%s' order by updated desc";
+
+	$qf =
+		"select * from comment left outer join " .
+		"(select comment_id, sum(is_up) as sum from comment_rating group by (comment_id)) t on " .
+		"comment.id = t.comment_id left outer join " . 
+		"(select comment_id, is_up from comment_rating where user_email = '%s') u on " .
+		"comment.id = u.comment_id where comment.caleg_id = '%s' order by comment.updated desc;";
+	
+	$results = 
+	mysql_query(sprintf($qf, $_GET['user_email'], $_GET['caleg_id']));
+	
 	$return = array();
 	while($row = mysql_fetch_assoc($results)) {
 		$return[] = $row;
@@ -283,8 +293,7 @@ if($method == 'get_beranda') {
 			//generet rating
 			foreach($results as $r) {
 				$caleg_ids[] = $r->id;
-				generate_caleg_ratings($r->id);
-				generate_comments($r->id);
+				generate_comments($r->id, true);
 			}
 			break;
 		}
