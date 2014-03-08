@@ -76,12 +76,12 @@ if($method == 'create_comment') {
  * @param caleg_id
  */
 function get_caleg_rating($caleg_id) {
-	$qf = "select avg(rating) as avg from caleg_rating where caleg_id = '%s'";
+	$qf = "select count(rating) as count, avg(rating) as avg from caleg_rating where caleg_id = '%s'";
 	$result = mysql_query(sprintf($qf, $caleg_id));
 	$return = mysql_fetch_assoc($result);
 	
 	if(empty($return['avg'])) {
-		generate_caleg_ratings($caleg_id);
+		generate_caleg_ratings($caleg_id, true);
 	} else {
 		return $return;
 	}
@@ -92,16 +92,16 @@ function get_caleg_rating($caleg_id) {
 if($method == 'get_caleg_rating') {
 	$return = get_caleg_rating($_GET['caleg_id']);
 	if(!empty($return['avg'])) {
-		exit(json_encode(array('avg' => $return['avg'])));
+		exit(json_encode($return));
 	} else {
-		exit(json_encode(array('avg' => 0)));
+		exit(json_encode(array('avg' => 0, 'count' => 0)));
 	}
 }
 
 /**
  * @param caleg_id
  */
-function generate_caleg_ratings($caleg_id, $force = false) {
+function generate_caleg_ratings($caleg_id, $force = true) {
 	if($force === false) {
 		$res = mysql_query("select * from caleg_rating where caleg_id = '" . $caleg_id . "' limit 10");
 		if(mysql_num_rows($res) >= 0) {
@@ -262,7 +262,7 @@ if($method == 'get_beranda') {
 	$max_avg = mysql_fetch_assoc($results1);
 	foreach($results as $r) {
 		if($r->id == $max_avg['caleg_id']) {
-			$r->rating = $max_avg['mar'];
+			$r->rating = get_caleg_rating($r->id);
 			$max_avg = $r;
 			break;
 		}
@@ -277,7 +277,7 @@ if($method == 'get_beranda') {
 		if($r->id == $most_cmtd['caleg_id']) {
 			$most_cmtd = $r;
 			$rating = get_caleg_rating($r->id);
-			$most_cmtd->rating = $rating['avg'];
+			$most_cmtd->rating = $rating;
 			break;
 		}
 	}
@@ -285,11 +285,11 @@ if($method == 'get_beranda') {
 	//featured
 	$featured = $results[rand(0, count($results) - 1)];
 	$rate = get_caleg_rating($featured->id);
-	$featured->rating = $rate['avg'];
+	$featured->rating = $rate;
 	
-	print_r(array(
+	exit(json_encode(array(
 		'top_rated' => $max_avg, 'most_commented' => $most_cmtd, 'featured' => $featured
-	));
+	)));
 }
 
 /**
