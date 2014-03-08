@@ -27,6 +27,8 @@ public class SplashActivity extends Activity {
 	Runnable ceklokasi = new Runnable() {
 		@Override
 		public void run() {
+			tStatus.setText("Mengecek daerah pemilihan");
+
 			cekbrpkali++;
 
 			if (cekbrpkali > 3) {
@@ -74,7 +76,7 @@ public class SplashActivity extends Activity {
 
 				@Override
 				public void failed(final Throwable ex) {
-					tStatus.setText("Gagal mendapatkan area");
+					tStatus.setText("Gagal mendapatkan daerah");
 					bRetry.setVisibility(View.VISIBLE);
 				}
 			});

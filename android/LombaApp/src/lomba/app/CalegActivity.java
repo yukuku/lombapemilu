@@ -160,7 +160,7 @@ public class CalegActivity extends Activity {
 		ImageButton[] bb = {bP1, bP2, bP3, bP4, bP5, bP6};
 		for (int i = 0; i < bb.length; i++) {
 			final ImageButton b = bb[i];
-			b.setAlpha(i==p? 1.0f: 0.4f);
+			b.setAlpha(i == p? 1.0f: 0.4f);
 		}
 	}
 
@@ -414,26 +414,27 @@ public class CalegActivity extends Activity {
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 
-			thumbsUp.setChecked(false); thumbsDown.setChecked(false);
-			if("1".equals(comments[position].is_up)) {
+			thumbsUp.setChecked(false);
+			thumbsDown.setChecked(false);
+			if ("1".equals(comments[position].is_up)) {
 				thumbsUp.setChecked(true);
 			}
 
-			if("0".equals(comments[position].is_up)) {
+			if ("0".equals(comments[position].is_up)) {
 				thumbsDown.setChecked(true);
 			}
 
 			thumbsUp.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) thumbsDown.setChecked(false);
+					if (isChecked) thumbsDown.setChecked(false);
 				}
 			});
 
 			thumbsDown.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
 				@Override
 				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) thumbsUp.setChecked(false);
+					if (isChecked) thumbsUp.setChecked(false);
 				}
 			});
 
@@ -444,7 +445,7 @@ public class CalegActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return comments == null ? 0 : comments.length;
+			return comments == null? 0: comments.length;
 		}
 
 		public void setData(Papi.Comment[] comments) {
@@ -492,7 +493,7 @@ public class CalegActivity extends Activity {
 				@Override
 				public void onClick(final View v) {
 					final float lastdown = rv.getLastdown();
-					int r = (int)(lastdown * 5) + 1;
+					int r = (int) (lastdown * 5) + 1;
 					if (r < 1) r = 1;
 					if (r > 5) r = 5;
 					rv.setRating(r);
