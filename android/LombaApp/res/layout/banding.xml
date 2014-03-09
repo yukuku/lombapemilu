@@ -42,6 +42,15 @@
                             android:layout_gravity="center"
                             android:id="@+id/imgFoto1"/>
 
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:id="@+id/tUrutan1"
+                            android:background="#8000"
+                            android:textColor="#fff"
+                            android:text="15"/>
+
                 </FrameLayout>
 
                 <FrameLayout android:layout_width="148dp"
@@ -55,6 +64,15 @@
                             android:layout_height="170dp"
                             android:layout_gravity="center"
                             android:id="@+id/imgFoto2"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:id="@+id/tUrutan2"
+                            android:background="#8000"
+                            android:textColor="#fff"
+                            android:text="15"/>
 
                 </FrameLayout>
             </LinearLayout>
@@ -87,6 +105,54 @@
                         android:textColor="#fff"/>
 
             </LinearLayout>
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+
+                <LinearLayout style="@style/BandingItem"
+                              android:gravity="center"
+                        >
+
+                    <view android:layout_width="65dp"
+                          android:layout_height="13dp"
+                          class="lomba.app.widget.RatingView"
+                          android:id="@+id/rating1"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="(123)"
+                            android:textColor="#fff"
+                            android:layout_marginLeft="8dp"
+                            android:id="@+id/tRatingCount1"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_marginLeft="32dp"
+                              android:gravity="center"
+                              style="@style/BandingItem">
+
+                    <view android:layout_width="65dp"
+                          android:layout_height="13dp"
+                          class="lomba.app.widget.RatingView"
+                          android:id="@+id/rating2"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="(123)"
+                            android:textColor="#fff"
+                            android:layout_marginLeft="8dp"
+                            android:id="@+id/tRatingCount2"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
             <LinearLayout android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
@@ -340,7 +406,6 @@
 
 
         </LinearLayout>
-
 
 
     </ScrollView>

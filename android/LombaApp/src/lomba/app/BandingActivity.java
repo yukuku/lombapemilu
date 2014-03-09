@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import lomba.app.rpc.Papi;
+import lomba.app.widget.RatingView;
 import yuku.afw.V;
 
 import java.text.DateFormat;
@@ -46,6 +47,14 @@ public class BandingActivity extends Activity {
 	ImageView imgFoto2;
 	TextView tNama1;
 	TextView tNama2;
+	TextView tUrutan1;
+	TextView tUrutan2;
+
+	RatingView rating1;
+	RatingView rating2;
+	TextView tRatingCount1;
+	TextView tRatingCount2;
+
 	TextView tAgama1;
 	TextView tAgama2;
 	TextView tGender1;
@@ -85,6 +94,14 @@ public class BandingActivity extends Activity {
 		imgFoto2 = V.get(this, R.id.imgFoto2);
 		tNama1 = V.get(this, R.id.tNama1);
 		tNama2 = V.get(this, R.id.tNama2);
+		tUrutan1 = V.get(this, R.id.tUrutan1);
+		tUrutan2 = V.get(this, R.id.tUrutan2);
+
+		rating1 = V.get(this, R.id.rating1);
+		rating2 = V.get(this, R.id.rating2);
+		tRatingCount1 = V.get(this, R.id.tRatingCount1);
+		tRatingCount2 = V.get(this, R.id.tRatingCount2);
+
 		tAgama1 = V.get(this, R.id.tAgama1);
 		tAgama2 = V.get(this, R.id.tAgama2);
 		tGender1 = V.get(this, R.id.tGender1);
@@ -121,6 +138,14 @@ public class BandingActivity extends Activity {
 
 		tNama1.setText(U.bagusinNama(info1.nama));
 		tNama2.setText(U.bagusinNama(info2.nama));
+
+		tUrutan1.setText("" + info1.urutan);
+		tUrutan2.setText("" + info2.urutan);
+
+		rating1.setRating(info1.rating == null? 0: info1.rating.avg);
+		rating2.setRating(info2.rating == null? 0: info2.rating.avg);
+		tRatingCount1.setText(info1.rating == null? "(0)": ("(" + info1.rating.count + ")"));
+		tRatingCount2.setText(info2.rating == null? "(0)": ("(" + info2.rating.count + ")"));
 
 		tAgama1.setText(U.lower(info1.agama));
 		tAgama2.setText(U.lower(info2.agama));

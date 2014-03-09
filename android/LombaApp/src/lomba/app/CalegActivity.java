@@ -547,7 +547,7 @@ public class CalegActivity extends Activity {
 					if (r < 1) r = 1;
 					if (r > 5) r = 5;
 					rv.setRating(r);
-					showDialog();
+					showDialogRating(r);
 
 				}
 			});
@@ -579,10 +579,16 @@ public class CalegActivity extends Activity {
 	}
 
 	public class PostCommentFragment extends DialogFragment {
+
+		private float rating;
+
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			setStyle(DialogFragment.STYLE_NO_FRAME, android.R.style.Theme_Holo_Light_Dialog);
+
+			final Bundle args = getArguments();
+			rating = args.getFloat("rating");
 		}
 
 		@Override
@@ -593,6 +599,7 @@ public class CalegActivity extends Activity {
 			final FontEditTextView judulK = V.get(v, R.id.judul_k);
 			final FontEditTextView isiK = V.get(v, R.id.isi_k);
 			final RatingView2 ratingV = V.get(v, R.id.post_rating);
+			ratingV.setRating(rating);
 			FontButton submitB = V.get(v, R.id.submit);
 
 			submitB.setOnClickListener(new View.OnClickListener() {
@@ -626,7 +633,7 @@ public class CalegActivity extends Activity {
 			return v;
 		}
 	}
-	void showDialog() {
+	void showDialogRating(float rating) {
 		// DialogFragment.show() will take care of adding the fragment
 		// in a transaction.  We also want to remove any currently showing
 		// dialog, so make our own transaction and take care of that here.
@@ -639,6 +646,10 @@ public class CalegActivity extends Activity {
 
 		// Create and show the dialog.
 		postCommentFragment = new PostCommentFragment();
+		final Bundle args = new Bundle();
+		args.putFloat("rating", rating);
+		postCommentFragment.setArguments(args);
 		postCommentFragment.show(ft, "dialog");
+
 	}
 }

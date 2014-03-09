@@ -70,8 +70,21 @@ public class CalegListFragment extends Fragment {
 		lsCaleg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				Papi.Caleg caleg = calegs.get(position);
-				startActivity(CalegActivity.create(caleg.id, U.ser(caleg)));
+				if (pili.size() == 1 && !pili.contains(position)) {
+					final Integer[] poss = pili.toArray(new Integer[0]);
+
+					Papi.Caleg caleg1 = calegs.get(poss[0]);
+					Papi.Caleg caleg2 = calegs.get(position);
+					startActivity(BandingActivity.create(caleg1.id, U.ser(caleg1), caleg2.id, U.ser(caleg2)));
+
+					pili.clear();
+
+					adapter.notifyDataSetChanged();
+				} else {
+
+					Papi.Caleg caleg = calegs.get(position);
+					startActivity(CalegActivity.create(caleg.id, U.ser(caleg)));
+				}
 			}
 		});
 
