@@ -305,7 +305,7 @@ if($method == 'get_beranda') {
 			//generet rating
 			foreach($results as $r) {
 				$caleg_ids[] = $r->id;
-				generate_comments($r->id);
+// 				generate_comments($r->id);
 			}
 			break;
 		}
@@ -329,7 +329,7 @@ if($method == 'get_beranda') {
 
 	//most komen
 	$qf = 
-		"select caleg_id, count(*) as cnt from comment where caleg_id in ('%s') group by (caleg_id) ";
+		"select caleg_id, count(*) from comment where caleg_id in ('%s') group by caleg_id order by count(*) desc limit 1";
 	$results2 = mysql_query(sprintf($qf, join("', '", $caleg_ids)));
 	$most_cmtd = mysql_fetch_assoc($results2);
 	foreach($results as $r) {
