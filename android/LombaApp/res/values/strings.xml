@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Caleg Store</string>
+    <string name="desc_drawer_open">Open drawer</string>
+    <string name="desc_drawer_close">Close drawer</string>
+    <string name="test_org"><b>2001-2005</b> Ketua DPD di Babang Bangsal</string>
+</resources>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/pg_bg_1">
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgStatus"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/kawin"
+            android:layout_marginTop="32dp"/>
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="AKWIN"
+            android:id="@+id/tStatus"
+            android:textSize="32dp"
+            android:layout_marginTop="16dp"
+            android:textColor="#fff"
+            android:layout_gravity="center_horizontal"/>
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="dengan XYZ NYS AIUDHIAHDOIUAHD 7yad8a diua"
+            android:id="@+id/tDengan"
+            android:textSize="18dp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="62dp"
+            android:id="@+id/anakcontainer"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal">
+
+
+    </LinearLayout>
+
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 anak"
+            android:id="@+id/tAnak"
+            android:textSize="20dp"
+            android:layout_marginTop="16dp"
+            android:textColor="#fff"
+            android:layout_gravity="center_horizontal"/>
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/tempat"
+            android:layout_marginTop="24dp"/>
+
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bala bala gung gung, Bala bala gung gung, Bala bala gung gung, Bala bala gung gung."
+            android:id="@+id/tLokasi"
+            android:textSize="20dp"
+            android:layout_marginTop="16dp"
+            android:textColor="#fff"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center_horizontal"/>
+
+
+</LinearLayout>

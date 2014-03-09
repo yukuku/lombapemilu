@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+    <com.jfeinstein.jazzyviewpager.JazzyViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/jazzy"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_height="match_parent"
+                  android:layout_alignParentRight="true"
+                  android:gravity="center_vertical"
+                  android:background="#4000">
+
+        <ImageButton
+                android:src="@drawable/samping_datadiri"
+                android:id="@+id/bP1"
+                style="@style/SampingBg"/>
+
+        <ImageButton
+                android:src="@drawable/samping_keluarga"
+                android:id="@+id/bP2"
+                style="@style/SampingBg"/>
+
+        <ImageButton
+                android:src="@drawable/samping_pendidikan"
+                android:id="@+id/bP3"
+                style="@style/SampingBg"/>
+
+        <ImageButton
+                android:src="@drawable/samping_pekerjaan"
+                android:id="@+id/bP4"
+                style="@style/SampingBg"/>
+
+        <ImageButton
+                android:src="@drawable/samping_organisasi"
+                android:id="@+id/bP5"
+                style="@style/SampingBg"/>
+
+        <ImageButton
+                android:src="@drawable/samping_rating"
+                android:id="@+id/bP6"
+                style="@style/SampingBg"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/pg_bg_0">
+
+    <FrameLayout android:layout_width="168dp"
+                 android:layout_height="208dp"
+                 android:background="@drawable/bingkai"
+                 android:layout_marginTop="32dp"
+                 android:layout_gravity="center_horizontal">
+
+        <ImageView
+                android:layout_width="160dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:id="@+id/imgFoto"/>
+
+    </FrameLayout>
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:tag="bold"
+            android:layout_marginRight="32dp"
+            android:layout_marginLeft="32dp"
+            android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
+            android:id="@+id/tNama"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:textColor="#fff"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:gravity="center_vertical"
+                  android:layout_marginTop="8dp">
+
+        <ImageView android:layout_width="24dp"
+                   android:layout_height="24dp"
+                   android:layout_marginLeft="32dp"
+                   android:id="@+id/imgPartai"
+                   android:src="@drawable/partai_1"/>
+
+        <lomba.app.widget.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Partai Nasdem"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/tPartai"/>
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_gravity="center_horizontal"
+                  android:layout_marginTop="32dp">
+
+        <LinearLayout android:layout_width="120dp"
+                      android:layout_height="80dp"
+                      android:background="#4000"
+                      android:gravity="center_horizontal"
+                      android:orientation="vertical"
+                      android:layout_marginRight="12dp"
+                      android:paddingTop="2dp">
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="jenis kelamin"
+                    android:textSize="12dp"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22dp"
+                    android:id="@+id/tGender"
+                    android:text="laki-laki"
+                    android:textColor="#fff"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="120dp"
+                      android:layout_height="80dp"
+                      android:background="#4000"
+                      android:gravity="center_horizontal"
+                      android:orientation="vertical"
+                      android:layout_marginLeft="12dp"
+                      android:paddingTop="2dp">
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="tempat lahir"
+                    android:textSize="12dp"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22dp"
+                    android:id="@+id/tKota"
+                    android:text="bangdung"
+                    android:textColor="#fff"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_gravity="center_horizontal"
+                  android:layout_marginTop="32dp">
+
+        <LinearLayout android:layout_width="120dp"
+                      android:layout_height="80dp"
+                      android:background="#4000"
+                      android:gravity="center_horizontal"
+                      android:orientation="vertical"
+                      android:layout_marginRight="12dp"
+                      android:paddingTop="2dp">
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="usia"
+                    android:textSize="12dp"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22dp"
+                    android:id="@+id/tUsia"
+                    android:textColor="#fff"
+                    android:layout_marginTop="12dp"
+                    android:text="66th"
+                    android:layout_gravity="center_horizontal"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="120dp"
+                      android:layout_height="80dp"
+                      android:background="#4000"
+                      android:gravity="center_horizontal"
+                      android:orientation="vertical"
+                      android:layout_marginLeft="12dp"
+                      android:paddingTop="2dp">
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="agama"
+                    android:textSize="12dp"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22dp"
+                    android:id="@+id/tAgama"
+                    android:text="islam"
+                    android:textColor="#fff"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

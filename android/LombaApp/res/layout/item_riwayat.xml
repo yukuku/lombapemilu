@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:minHeight="24dp"
+        >
+
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="72dp"
+            android:layout_height="24dp"
+            android:gravity="center_vertical"
+            android:textSize="16dp"
+            android:textColor="#fff"
+            android:id="@+id/tTahun"
+            android:text="2012-2045"/>
+
+    <ImageView
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/timelinetengah"
+            android:id="@+id/imgBenang"
+            />
+
+    <lomba.app.widget.FontTextView
+            android:id="@+id/tKet"
+            android:layout_marginLeft="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="24dp"
+            android:gravity="center_vertical"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="16dp"
+            android:textColor="#fff"/>
+
+</LinearLayout>

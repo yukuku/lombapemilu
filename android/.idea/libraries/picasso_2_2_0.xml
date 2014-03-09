@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="picasso-2.2.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/external/picasso/picasso-2.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/external/picasso/library/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

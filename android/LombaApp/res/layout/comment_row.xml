@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:layout_width="match_parent"
+              android:descendantFocusability="blocksDescendants"
+              android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_marginRight="40dp" android:layout_height="wrap_content">
+        <ImageView android:id="@+id/gravatar_url" android:layout_width="40dp"
+                   android:layout_height="40dp"/>
+        <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:layout_centerVertical="true"
+                  android:id="@+id/thumbs_down" android:layout_alignParentRight="true"
+                  android:button="@drawable/cb_thumbs_down"/>
+        <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/thumbs_up"
+                  android:layout_centerVertical="true"
+                  android:button="@drawable/cb_thumbs_up"
+                  android:layout_marginRight="15dp"
+                  android:layout_toLeftOf="@+id/thumbs_down"/>
+
+        <lomba.app.widget.FontTextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                       android:layout_toLeftOf="@+id/thumbs_up"
+                                       android:layout_marginRight="15dp"
+                                       android:textSize="22sp" android:textColor="@android:color/white" android:layout_centerVertical="true"
+                                       android:id="@+id/sum_comment_rating"/>
+
+    </RelativeLayout>
+    <lomba.app.widget.FontTextView android:textSize="18sp" android:textStyle="bold" android:id="@+id/comment_title"
+                                   android:layout_marginRight="40dp"
+                                   android:layout_marginTop="8dp"
+                                   android:textColor="#fff"
+                                   android:layout_marginBottom="5dp"
+                                   android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <lomba.app.widget.FontTextView android:id="@+id/comment_content" android:textSize="17sp"
+                                   android:layout_marginRight="42dp"
+                                   android:textColor="#fff"
+                                   android:layout_marginBottom="10dp"
+                                   android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+</LinearLayout>

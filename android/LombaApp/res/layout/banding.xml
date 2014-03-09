@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="#09c"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <lomba.app.widget.DashView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"/>
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+
+                android:clipToPadding="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingBottom="32dp">
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:background="@color/banding_bg"
+                          android:paddingTop="24dp">
+
+
+                <FrameLayout android:layout_width="148dp"
+                             android:layout_height="178dp"
+                             android:background="@drawable/bingkai"
+                             android:layout_gravity="center_horizontal">
+
+                    <ImageView
+                            android:layout_width="140dp"
+                            android:layout_height="170dp"
+                            android:layout_gravity="center"
+                            android:id="@+id/imgFoto1"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:id="@+id/tUrutan1"
+                            android:background="#8000"
+                            android:textColor="#fff"
+                            android:text="15"/>
+
+                </FrameLayout>
+
+                <FrameLayout android:layout_width="148dp"
+                             android:layout_height="178dp"
+                             android:background="@drawable/bingkai"
+                             android:layout_marginLeft="32dp"
+                             android:layout_gravity="center_horizontal">
+
+                    <ImageView
+                            android:layout_width="140dp"
+                            android:layout_height="170dp"
+                            android:layout_gravity="center"
+                            android:id="@+id/imgFoto2"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:gravity="center"
+                            android:id="@+id/tUrutan2"
+                            android:background="#8000"
+                            android:textColor="#fff"
+                            android:text="15"/>
+
+                </FrameLayout>
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="8dp"
+                    >
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
+                        android:id="@+id/tNama1"
+                        android:tag="bold"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:layout_marginLeft="32dp"
+                        android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
+                        android:id="@+id/tNama2"
+                        android:tag="bold"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"/>
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+
+                <LinearLayout style="@style/BandingItem"
+                              android:gravity="center"
+                        >
+
+                    <view android:layout_width="65dp"
+                          android:layout_height="13dp"
+                          class="lomba.app.widget.RatingView"
+                          android:id="@+id/rating1"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="(123)"
+                            android:textColor="#fff"
+                            android:layout_marginLeft="8dp"
+                            android:id="@+id/tRatingCount1"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_marginLeft="32dp"
+                              android:gravity="center"
+                              style="@style/BandingItem">
+
+                    <view android:layout_width="65dp"
+                          android:layout_height="13dp"
+                          class="lomba.app.widget.RatingView"
+                          android:id="@+id/rating2"/>
+
+                    <lomba.app.widget.FontTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16dp"
+                            android:text="(123)"
+                            android:textColor="#fff"
+                            android:layout_marginLeft="8dp"
+                            android:id="@+id/tRatingCount2"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="perempuan"
+                        android:id="@+id/tGender1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="perempuan"
+                        android:id="@+id/tGender2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="Lokasi lokasi lokasi"
+                        android:id="@+id/tLokasi1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="Lokasi lokasi lokasi"
+                        android:id="@+id/tLokasi2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="66 thn"
+                        android:id="@+id/tUsia1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="66 thn"
+                        android:id="@+id/tUsia2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="islam"
+                        android:id="@+id/tAgama1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="islam"
+                        android:id="@+id/tAgama2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="24dp"
+                        android:text="Keluarga"
+                        android:tag="bold"
+                        android:padding="8dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"
+                        android:background="@color/banding_bg"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="kawin"
+                        android:id="@+id/tStatus1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="tidak kawin"
+                        android:id="@+id/tStatus2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="2 anak"
+                        android:id="@+id/tAnak1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="3 anak"
+                        android:id="@+id/tAnak2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="2 anak anak anak anak anak anak"
+                        android:id="@+id/tLokasiJuga1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="2 anak anak anak anak anak anak"
+                        android:id="@+id/tLokasiJuga2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="24dp"
+                        android:text="Pendidikan"
+                        android:tag="bold"
+                        android:padding="8dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"
+                        android:background="@color/banding_bg"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk "
+                        android:id="@+id/tPendidikan1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk "
+                        android:id="@+id/tPendidikan2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:tag="bold"
+                        android:textSize="24dp"
+                        android:text="Pekerjaan"
+                        android:padding="8dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"
+                        android:background="@color/banding_bg"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk "
+                        android:id="@+id/tPekerjaan1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk "
+                        android:id="@+id/tPekerjaan2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="24dp"
+                        android:text="Organisasi"
+                        android:tag="bold"
+                        android:padding="8dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"
+                        android:background="@color/banding_bg"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="16dp">
+
+                <lomba.app.widget.FontTextView
+                        android:text="didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk "
+                        android:id="@+id/tOrganisasi1"
+                        style="@style/BandingItem"/>
+
+                <lomba.app.widget.FontTextView
+                        android:layout_marginLeft="32dp"
+                        android:text="didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk didiidikk "
+                        android:id="@+id/tOrganisasi2"
+                        style="@style/BandingItem"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</FrameLayout>
