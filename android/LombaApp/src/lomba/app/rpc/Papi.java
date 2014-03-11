@@ -19,6 +19,7 @@ public class Papi {
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
 	static String BASE = "http://192.168.43.238/lomba_git/server/api.php";
+	static String BASE2 = "http://192.168.2.6/lomba_git/server/public/api/";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
@@ -130,7 +131,9 @@ public class Papi {
 
 			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
-			};
+			}
+
+			;
 		});
 	}
 
@@ -151,9 +154,14 @@ public class Papi {
 	}
 
 	public static void geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
+		// paksa bandung dulu
+		lat = -6.87315;
+		lng = 107.58682;
+
 		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682
-		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler2("utf-8") {
+
+		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "lng", lng), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				Log.d(TAG, "response: " + response.toString());
@@ -364,14 +372,16 @@ public class Papi {
 		}
 	}
 
-
 	public static void get_beranda(double lat, double lng, final Clbk<Beranda> clbk) {
 		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
 		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
-		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng), new JsonHttpResponseHandler2("utf-8") {
+		Log.d(TAG, BASE2 + "beranda?&lat=" + lat + "&lng=" + lng);
+
+		// paksa bandung dulu
+		client.get(BASE2 + "beranda", new RequestParams("lat", -6.87315f, "lng", 107.58682f), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
-				Log.d(TAG, "response: " + response.toString());
+				Log.d(TAG, "response get_beranda: " + response.toString());
 
 				final Beranda beranda = new Gson().fromJson(response.toString(), Beranda.class);
 				clbk.success(beranda);

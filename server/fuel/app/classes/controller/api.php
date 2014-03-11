@@ -6,6 +6,7 @@
  */
 class Controller_Api extends Controller_Rest {
 	public static $apiKey = '06ec082d057daa3d310b27483cc3962e';
+	protected $format = 'json';
 	
 	/**
 	 * @param string partai
@@ -134,8 +135,7 @@ class Controller_Api extends Controller_Rest {
 		$featured = $calegs[rand(0, count($calegs) - 1)];
 		$rating = Util::getCalegRating($featured->id);
 		$featured->rating = $rating;
-
-		$this->response(array('featured' => $featured, 'top_rated' => $topRated, 'most_commented', $mostCommented));
+		$this->response(array('featured' => $featured, 'top_rated' => $topRated, 'most_commented' => $mostCommented));
 	}
 }
 	
