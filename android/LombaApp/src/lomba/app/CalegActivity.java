@@ -64,6 +64,7 @@ public class CalegActivity extends Activity {
 	private ImageButton bP4;
 	private ImageButton bP5;
 	private ImageButton bP6;
+	String sort = "best";
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -165,7 +166,7 @@ public class CalegActivity extends Activity {
 
 	void loadLengkap2() {
 
-		Papi.comments(info.id, accountsByType[0].name, new Papi.Clbk<Papi.Comment[]>() {
+		Papi.comments(info.id, accountsByType[0].name, sort, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
