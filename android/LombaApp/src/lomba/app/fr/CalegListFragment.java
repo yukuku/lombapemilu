@@ -1,8 +1,13 @@
 package lomba.app.fr;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import lomba.app.App;
 import lomba.app.BandingActivity;
 import lomba.app.CalegActivity;
 import lomba.app.R;
@@ -50,6 +56,27 @@ public class CalegListFragment extends Fragment {
 		args.putString("partai", partai);
 		res.setArguments(args);
 		return res;
+	}
+
+	private BroadcastReceiver reload = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			loadCaleg();
+		}
+	};
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter("LEMBAGA_BERUBAH"));
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(reload);
 	}
 
 	@Override
@@ -117,8 +144,10 @@ public class CalegListFragment extends Fragment {
 	Handler h = new Handler();
 
 	private void loadCaleg() {
+		final int lembaga_aktif = Preferences.getInt(Prefkey.lembaga_aktif, 1);
+
 		loading.startAnimation(anim);
-		Papi.candidate_caleg2(Preferences.getString(Prefkey.dapil_dpr), "DPR", partai, new Papi.Clbk<Papi.Caleg[]>() {
+		Papi.candidate_caleg2(U.getDapilDariLembaga(lembaga_aktif), U.getNamaLembaga(lembaga_aktif), partai, new Papi.Clbk<Papi.Caleg[]>() {
 			@Override
 			public void success(final Papi.Caleg[] calegs) {
 				CalegListFragment.this.calegs = Arrays.asList(calegs);

@@ -1,8 +1,13 @@
 package lomba.app.fr;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +38,27 @@ public class BerandaFragment extends Fragment {
 	private ImageView loading;
 	private RotateAnimation anim;
 
+	private BroadcastReceiver reload = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			loadBeranda();
+		}
+	};
+
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter("LEMBAGA_BERUBAH"));
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(reload);
+	}
+
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		this.inflater = inflater;
@@ -50,12 +76,13 @@ public class BerandaFragment extends Fragment {
 		return res;
 	}
 
-
 	void loadBeranda() {
+		final int lembaga_aktif = Preferences.getInt(Prefkey.lembaga_aktif, 1);
+
 		loading.setVisibility(View.VISIBLE);
 		loading.startAnimation(anim);
 
-		Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), new Papi.Clbk<Papi.Beranda>() {
+		Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
 			@Override
 			public void success(final Papi.Beranda beranda) {
 				BerandaFragment.this.beranda = beranda;

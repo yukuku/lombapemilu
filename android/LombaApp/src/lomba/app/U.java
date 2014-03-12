@@ -2,6 +2,8 @@ package lomba.app;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import lomba.app.storage.Prefkey;
+import yuku.afw.storage.Preferences;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -81,5 +83,13 @@ public class U {
 		}
 
 		return titleCase.toString();
+	}
+
+	public static String getNamaLembaga(final int lembaga) {
+		return new String[]{null, "DPR", "DPRDI"}[lembaga];
+	}
+
+	public static String getDapilDariLembaga(final int lembaga) {
+		return Preferences.getString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1);
 	}
 }

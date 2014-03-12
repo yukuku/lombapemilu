@@ -377,10 +377,10 @@ public class Papi {
 	}
 
 
-	public static void get_beranda(double lat, double lng, final Clbk<Beranda> clbk) {
+	public static void get_beranda(double lat, double lng, final String lembaga, final Clbk<Beranda> clbk) {
 		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
 		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
-		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng), new JsonHttpResponseHandler2("utf-8") {
+		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng, "lembaga", lembaga), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				Log.d(TAG, "response: " + response.toString());
