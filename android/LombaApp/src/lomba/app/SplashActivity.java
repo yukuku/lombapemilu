@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -63,6 +62,7 @@ public class SplashActivity extends Activity {
 			Papi.geographic_point(lat, lng, new Papi.Clbk<Papi.Area[]>() {
 				@Override
 				public void success(final Papi.Area[] areas) {
+					boolean masuk = false;
 					for (final Papi.Area area : areas) {
 						if ("DPR".equals(area.lembaga)) {
 							Preferences.setString(Prefkey.dapil_dpr, area.id);
@@ -70,8 +70,15 @@ public class SplashActivity extends Activity {
 							iProgress.setImageResource(R.drawable.ic_action_accept);
 							tStatus.setText(Html.fromHtml("Daerah pemilihan:<br><b>" + area.nama + "</b>"));
 
-							h.postDelayed(masukmain, 2000);
+							masuk = true;
 						}
+						if ("DPRDI".equals(area.lembaga)) {
+							Preferences.setString(Prefkey.dapil_dprd1, area.id);
+							masuk = true;
+						}
+					}
+					if (masuk) {
+						h.postDelayed(masukmain, 2000);
 					}
 				}
 
