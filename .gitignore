@@ -27,3 +27,6 @@ appengine-generated
 .buildpath
 .settings
 .project
+
+# fuel
+fuel/app/logs/*
