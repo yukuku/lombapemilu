@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,11 +19,22 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://192.168.43.238/lomba_git/server/api.php";
+	static String BASE = "http://" + getprop("server") + "/lomba_git/server/api.php";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
 		client.setMaxRetriesAndTimeout(1, 20000);
+	}
+
+	static String getprop(String key) {
+		try {
+			Class clazz = Class.forName("android.os.SystemProperties");
+			Method method = clazz.getDeclaredMethod("get", String.class);
+			String prop = (String)method.invoke(null, key);
+			return prop;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static class Area {
