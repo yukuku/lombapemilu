@@ -161,7 +161,7 @@ public class Papi {
 		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682
 
-		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "lng", lng), new JsonHttpResponseHandler2("utf-8") {
+		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				Log.d(TAG, "response: " + response.toString());
