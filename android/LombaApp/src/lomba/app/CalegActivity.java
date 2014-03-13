@@ -7,7 +7,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -62,7 +61,7 @@ public class CalegActivity extends Activity {
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
 	private MessageDigest md5;
-	private static String accountName;
+	private String accountName;
 	private PostCommentFragment postCommentFragment;
 	private ImageButton bP1;
 	private ImageButton bP2;
@@ -71,6 +70,7 @@ public class CalegActivity extends Activity {
 	private ImageButton bP5;
 	private ImageButton bP6;
 	int sortcode = 1;
+	Papi.Saklar commentloader;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -172,9 +172,15 @@ public class CalegActivity extends Activity {
 		loadComments();
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Papi.lupakan(commentloader);
+	}
+
 	void loadComments() {
 		String sort = sortcode == 1? "best": "newest";
-		Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
+		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
@@ -196,7 +202,7 @@ public class CalegActivity extends Activity {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	void gotopage(int p) {
@@ -663,21 +669,23 @@ public class CalegActivity extends Activity {
 			submitB.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					FontButton fb = (FontButton) view;
+					final FontButton fb = (FontButton) view;
+					final CharSequence sebelumnya = fb.getText();
 					fb.setText("Mengirim...");
-					fb.setClickable(false);
+					fb.setEnabled(false);
+
 					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountName, new Papi.Clbk<Object>() {
 
 						@Override
 						public void success(Object o) {
 							loadComments();
 							postCommentFragment.dismissAllowingStateLoss();
-
 						}
 
 						@Override
 						public void failed(Throwable ex) {
-
+							fb.setEnabled(true);
+							fb.setText(sebelumnya);
 						}
 					});
 				}

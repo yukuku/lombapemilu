@@ -37,6 +37,7 @@ public class BerandaFragment extends Fragment {
 	Papi.Beranda beranda;
 	private ImageView loading;
 	private RotateAnimation anim;
+	Papi.Saklar berandaloader;
 
 	private BroadcastReceiver reload = new BroadcastReceiver() {
 		@Override
@@ -57,6 +58,7 @@ public class BerandaFragment extends Fragment {
 		super.onDestroy();
 
 		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(reload);
+		Papi.lupakan(berandaloader);
 	}
 
 	@Override
@@ -82,7 +84,7 @@ public class BerandaFragment extends Fragment {
 		loading.setVisibility(View.VISIBLE);
 		loading.startAnimation(anim);
 
-		Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
+		berandaloader = Papi.ganti(berandaloader, Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
 			@Override
 			public void success(final Papi.Beranda beranda) {
 				BerandaFragment.this.beranda = beranda;
@@ -110,7 +112,7 @@ public class BerandaFragment extends Fragment {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	class BerandaAdapter extends EasyAdapter {
