@@ -18,6 +18,8 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -26,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
@@ -67,7 +70,7 @@ public class CalegActivity extends Activity {
 	private ImageButton bP4;
 	private ImageButton bP5;
 	private ImageButton bP6;
-	String sort = "best";
+	int sortcode = 1;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -165,11 +168,12 @@ public class CalegActivity extends Activity {
 		gotopage(0);
 
 		loadLengkap();
-		loadLengkap2();
+
+		loadComments();
 	}
 
-	void loadLengkap2() {
-
+	void loadComments() {
+		String sort = sortcode == 1? "best": "newest";
 		Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
@@ -186,7 +190,7 @@ public class CalegActivity extends Activity {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								loadLengkap2();
+								loadComments();
 							}
 						});
 					}
@@ -413,6 +417,57 @@ public class CalegActivity extends Activity {
 		return res;
 	}
 
+	View rating(ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
+
+		ListView commentLs = V.get(res, R.id.comment_list);
+		View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
+		commentLs.addHeaderView(headerView);
+
+		FontTextView rate = V.get(headerView, R.id.total_rating);
+		FontTextView voter = V.get(headerView, R.id.total_voter);
+		final FontButton bSort = V.get(headerView, R.id.bSort);
+		final RatingView2 rv = V.get(headerView, R.id.rating);
+		rv.setRating(info.rating.avg);
+		rv.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				final float lastdown = rv.getLastdown();
+				int r = (int) (lastdown * 5) + 1;
+				if (r < 1) r = 1;
+				if (r > 5) r = 5;
+				rv.setRating(r);
+				showDialogRating(r);
+
+			}
+		});
+		bSort.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				PopupMenu pop = new PopupMenu(CalegActivity.this, bSort);
+				final Menu menu = pop.getMenu();
+				menu.add(0, 1, 0, "Komentar Terbaik");
+				menu.add(0, 2, 0, "Komentar Terbaru");
+				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(final MenuItem item) {
+						sortcode = item.getItemId();
+						bSort.setText(item.getTitle());
+						loadComments();
+						return true;
+					}
+				});
+				pop.show();
+
+			}
+		});
+		rate.setText(String.format("%.1f", info.rating.avg));
+		voter.setText("(" + info.rating.count + " rating)");
+		commentLs.setAdapter(commentsAdapter);
+
+		return res;
+	}
+
 	String grava(String email) {
 		if (md5 == null) {
 			try {
@@ -561,36 +616,6 @@ public class CalegActivity extends Activity {
 			return res;
 		}
 
-		View rating(ViewGroup container) {
-			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
-
-			ListView commentLs = V.get(res, R.id.comment_list);
-			View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
-			commentLs.addHeaderView(headerView);
-
-			FontTextView rate = V.get(headerView, R.id.total_rating);
-			FontTextView voter = V.get(headerView, R.id.total_voter);
-			final RatingView2 rv = V.get(headerView, R.id.rating);
-			rv.setRating(info.rating.avg);
-			rv.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					final float lastdown = rv.getLastdown();
-					int r = (int) (lastdown * 5) + 1;
-					if (r < 1) r = 1;
-					if (r > 5) r = 5;
-					rv.setRating(r);
-					showDialogRating(r);
-
-				}
-			});
-			rate.setText(String.format("%.1f", info.rating.avg));
-			voter.setText("(" + info.rating.count + " rating)");
-			commentLs.setAdapter(commentsAdapter);
-
-			return res;
-		}
-
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object obj) {
 			container.removeView(jazzy.findViewFromObject(position));
@@ -645,8 +670,7 @@ public class CalegActivity extends Activity {
 
 						@Override
 						public void success(Object o) {
-
-							loadLengkap2();
+							loadComments();
 							postCommentFragment.dismissAllowingStateLoss();
 
 						}
@@ -661,7 +685,7 @@ public class CalegActivity extends Activity {
 
 			Picasso.with(CalegActivity.this).load(grava(accountName)).into(ownPhoto);
 			ownEmail.setText(accountName);
-			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
+			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(0x80000000));
 
 			return v;
 		}
