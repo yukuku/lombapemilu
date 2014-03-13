@@ -72,12 +72,21 @@ class Controller_Api extends Controller_Rest {
 		try {
 			$calegsJson = Cache::get($cacheKey);
 		} catch(Exception $e) {
-			$calegsJson = file_get_contents('http://api.pemiluapi.org/geographic/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=DPR&lat=' . Input::get('lat') . '&long=' . Input::get('lng')); 
+			$calegsJson = file_get_contents('http://api.pemiluapi.org/geographic/api/caleg?apiKey=' . 
+					self::$apiKey . '&tahun=2014&lembaga=DPR&'.
+					'lat=' . Input::get('lat') . '&long=' . Input::get('lng')); 
 			Cache::set($cacheKey, $calegsJson);
 		}
-	
+		
 		//Loop thru the calegs we obtained, then generate comments and rating for each caleg if required
 		$results = json_decode($calegsJson);
+		if(empty($results->data->results)) {
+			//If no results were returned for the given coordinate, retry a fixed coord
+			$calegsJson = file_get_contents('http://api.pemiluapi.org/geographic/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=DPR&lat=-6.87315&long=107.58682');
+			Cache::set($cacheKey, $calegsJson);				
+			$results = json_decode($calegsJson);
+		}
+		
 		$calegs = array();
 		$calegIds = array();
 		
@@ -117,7 +126,7 @@ class Controller_Api extends Controller_Rest {
 		 * Most commented
 		 */
 		$mostCommented = DB::select('caleg_id', DB::expr('count(*) as cnt'))->from('comment')->where('caleg_id', 'in', $calegIds)->group_by('caleg_id')
-			->order_by('cnt')->limit(1)->execute();
+			->order_by('cnt', 'desc')->limit(1)->execute();
 		$mostCommented = $mostCommented->current();
 		
 		//Now assign the complete profile from the list of calegs we obtained earlier from api.pemilu

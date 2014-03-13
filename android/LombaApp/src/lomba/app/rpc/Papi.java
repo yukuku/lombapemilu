@@ -19,10 +19,11 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://" + getprop("server") + "/lomba_git/server/api.php";
+	static String BASE = "http://" + "192.168.2.6"  /*getprop("server")*/ + "/lomba_git/server/public/api/";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
+		Log.d(TAG, BASE);
 		client.setMaxRetriesAndTimeout(1, 20000);
 	}
 
@@ -174,13 +175,40 @@ public class Papi {
 				final JSONObject r = data.optJSONObject("results");
 				final JSONArray a = r.optJSONArray("areas");
 
-				final Area[] areas = new Gson().fromJson(a.toString(), Area[].class);
-				clbk.success(areas);
+				//Kalo data kosong dari latlng, minta Bandung
+				//TODO: minta jakarta II, buat pemilih di luar indonesia
+				//lat=6.87315&long=107.58682
+				Log.d(TAG, String.valueOf(a.length()));
+				if(a.length() == 0) {
+					client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", -6.87315, "long", 107.58682), new JsonHttpResponseHandler2("utf-8") {
+						@Override
+						void onSegalaFailure(Throwable e) {
+							clbk.failed(e);
+						}
+
+						@Override
+						public void onSuccess(JSONObject response) {
+							super.onSuccess(response);
+
+							final JSONObject data = response.optJSONObject("data");
+							final JSONObject r = data.optJSONObject("results");
+							final JSONArray a = r.optJSONArray("areas");
+
+
+							final Area[] areas = new Gson().fromJson(a.toString(), Area[].class);
+							clbk.success(areas);
+						}
+					});
+				} else {
+					final Area[] areas = new Gson().fromJson(a.toString(), Area[].class);
+					clbk.success(areas);
+				}
 			}
 
 			@Override
-			public void onSegalaFailure(final Throwable e) {
+			void onSegalaFailure(Throwable e) {
 				clbk.failed(e);
+
 			}
 		});
 	}
@@ -380,7 +408,7 @@ public class Papi {
 	public static void get_beranda(double lat, double lng, final String lembaga, final Clbk<Beranda> clbk) {
 		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
 		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
-		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng, "lembaga", lembaga), new JsonHttpResponseHandler2("utf-8") {
+		client.get(BASE + "beranda", new RequestParams("lat", lat, "lng", lng, "lembaga", lembaga), new JsonHttpResponseHandler2("utf-8") {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
 				Log.d(TAG, "response: " + response.toString());
