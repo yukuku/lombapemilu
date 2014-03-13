@@ -19,18 +19,21 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://" + getprop("server") + "/lomba_git/server/api.php";
+	static String BASE = "http://" + getprop("server", "10.0.3.2:8888") + "/lomba_git/server/api.php";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
 		client.setMaxRetriesAndTimeout(1, 20000);
 	}
 
-	static String getprop(String key) {
+	static String getprop(String key, final String def) {
 		try {
 			Class clazz = Class.forName("android.os.SystemProperties");
 			Method method = clazz.getDeclaredMethod("get", String.class);
 			String prop = (String)method.invoke(null, key);
+			if (prop == null) {
+				return def;
+			}
 			return prop;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -121,12 +124,16 @@ public class Papi {
 		public String title;
 		public String user_email;
 		public String content;
-		public String is_up;
+		public int is_up;
 		public int sum;
+
+		// ini dipake buat listview ajaa... custom data gitu
+		public boolean _jempol_atas;
+		public boolean _jempol_bawah;
 	}
 
 	public static void rateComment(String email, int id, int is_up) {
-		Log.d(TAG, BASE + "?m=rate_comment&user_email=" + email + "&comment_id=" + id + "&is_up=" + is_up);
+		Log.d(TAG, "@@rateComment " + BASE + "?m=rate_comment&user_email=" + email + "&comment_id=" + id + "&is_up=" + is_up);
 		client.get(BASE, new RequestParams("m", "rate_comment", "user_email", email, "comment_id", id, "is_up", is_up), new JsonHttpResponseHandler());
 	}
 
@@ -142,7 +149,9 @@ public class Papi {
 
 			public void onSegalaFailure(final Throwable e) {
 				clbk.failed(e);
-			};
+			}
+
+			;
 		});
 	}
 

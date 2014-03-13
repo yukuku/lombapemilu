@@ -2,7 +2,10 @@ package lomba.app;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.*;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -56,7 +59,7 @@ public class CalegActivity extends Activity {
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
 	private MessageDigest md5;
-	private static Account[] accountsByType;
+	private static String accountName;
 	private PostCommentFragment postCommentFragment;
 	private ImageButton bP1;
 	private ImageButton bP2;
@@ -80,8 +83,6 @@ public class CalegActivity extends Activity {
 		}
 	};
 
-	Papi.Comment[] comments;
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,7 +91,10 @@ public class CalegActivity extends Activity {
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
-		accountsByType = AccountManager.get(this).getAccountsByType("com.google");
+		final Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
+		if (accounts != null) {
+			accountName = accounts[0].name;
+		}
 
 		jazzy.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
@@ -166,7 +170,7 @@ public class CalegActivity extends Activity {
 
 	void loadLengkap2() {
 
-		Papi.comments(info.id, accountsByType[0].name, sort, new Papi.Clbk<Papi.Comment[]>() {
+		Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
@@ -414,7 +418,7 @@ public class CalegActivity extends Activity {
 			try {
 				md5 = MessageDigest.getInstance("md5");
 			} catch (NoSuchAlgorithmException e) {
-				Log.e(TAG, "e", e);
+				throw new RuntimeException(e);
 			}
 		}
 
@@ -444,6 +448,36 @@ public class CalegActivity extends Activity {
 
 		private Papi.Comment[] comments;
 
+		CompoundButton.OnCheckedChangeListener thumbsUp_cc = new RadioButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+				final Papi.Comment comment = (Papi.Comment) compoundButton.getTag();
+				comment._jempol_atas = isChecked;
+				if (isChecked) {
+					comment._jempol_bawah = false;
+				}
+				sendRateComment(comment);
+				notifyDataSetChanged();
+			}
+		};
+
+		void sendRateComment(final Papi.Comment comment) {
+			Papi.rateComment(accountName, comment.id, comment._jempol_atas? 1: comment._jempol_bawah? -1: 0);
+		}
+
+		CompoundButton.OnCheckedChangeListener thumbsDown_cc = new RadioButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+				final Papi.Comment comment = (Papi.Comment) compoundButton.getTag();
+				comment._jempol_bawah = isChecked;
+				if (isChecked) {
+					comment._jempol_atas = false;
+				}
+				sendRateComment(comment);
+				notifyDataSetChanged();
+			}
+		};
+
 		@Override
 		public View newView(int position, ViewGroup parent) {
 			return getLayoutInflater().inflate(R.layout.comment_row, parent, false);
@@ -458,40 +492,38 @@ public class CalegActivity extends Activity {
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 
-			thumbsUp.setChecked(false);
-			thumbsDown.setChecked(false);
-			if ("1".equals(comments[position].is_up)) {
-				thumbsUp.setChecked(true);
+			final Papi.Comment comment = comments[position];
+
+			thumbsUp.setOnCheckedChangeListener(null);
+			thumbsDown.setOnCheckedChangeListener(null);
+
+			thumbsUp.setChecked(comment.is_up == 1 || comment._jempol_atas);
+			thumbsUp.setTag(comment);
+
+			thumbsDown.setChecked(comment.is_up == -1 || comment._jempol_bawah);
+			thumbsDown.setTag(comment);
+
+			thumbsUp.setOnCheckedChangeListener(thumbsUp_cc);
+			thumbsDown.setOnCheckedChangeListener(thumbsDown_cc);
+
+			commentTitle.setText(Html.fromHtml("<b>" + comment.title + "</b>"));
+			commentContent.setText(comment.content);
+
+			int sum = comment.sum;
+			if (comment.is_up == 1) {
+				if (!comment._jempol_atas) sum--;
+				if (comment._jempol_bawah) sum--;
 			}
-
-			if ("-1".equals(comments[position].is_up)) {
-				thumbsDown.setChecked(true);
+			if (comment.is_up == -1) {
+				if (!comment._jempol_bawah) sum++;
+				if (comment._jempol_atas) sum++;
 			}
-
-			thumbsUp.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) {
-						Papi.rateComment(accountsByType[0].name, comments[position].id, 1);
-						thumbsDown.setChecked(false);
-					}
-				}
-			});
-
-			thumbsDown.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) {
-						Papi.rateComment(accountsByType[0].name, comments[position].id, -1);
-						thumbsUp.setChecked(false);
-					}
-				}
-			});
-
-			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
-			commentContent.setText(comments[position].content);
-			commentRate.setText(String.valueOf(comments[position].sum));
-			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
+			if (comment.is_up == 0) {
+				if (comment._jempol_atas) sum++;
+				if (comment._jempol_bawah) sum--;
+			}
+			commentRate.setText("" + sum);
+			Picasso.with(CalegActivity.this).load(grava(comment.user_email)).into(commentProfile);
 		}
 
 		@Override
@@ -609,7 +641,7 @@ public class CalegActivity extends Activity {
 					FontButton fb = (FontButton) view;
 					fb.setText("Mengirim...");
 					fb.setClickable(false);
-					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountsByType[0].name, new Papi.Clbk<Object>() {
+					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountName, new Papi.Clbk<Object>() {
 
 						@Override
 						public void success(Object o) {
@@ -627,8 +659,8 @@ public class CalegActivity extends Activity {
 				}
 			});
 
-			Picasso.with(CalegActivity.this).load(grava(accountsByType[0].name)).into(ownPhoto);
-			ownEmail.setText(accountsByType[0].name);
+			Picasso.with(CalegActivity.this).load(grava(accountName)).into(ownPhoto);
+			ownEmail.setText(accountName);
 			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
 
 			return v;

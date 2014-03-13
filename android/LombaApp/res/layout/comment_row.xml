@@ -14,10 +14,13 @@
         <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:layout_centerVertical="true"
                   android:id="@+id/thumbs_down" android:layout_alignParentRight="true"
-                  android:button="@drawable/cb_thumbs_down"/>
+                  android:button="@drawable/cb_thumbs_down"
+                  android:background="@drawable/jempol_bg"
+                />
         <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/thumbs_up"
                   android:layout_centerVertical="true"
                   android:button="@drawable/cb_thumbs_up"
+                  android:background="@drawable/jempol_bg"
                   android:layout_marginRight="15dp"
                   android:layout_toLeftOf="@+id/thumbs_down"/>
 
