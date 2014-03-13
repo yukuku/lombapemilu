@@ -558,10 +558,10 @@ public class CalegActivity extends Activity {
 			thumbsUp.setOnCheckedChangeListener(null);
 			thumbsDown.setOnCheckedChangeListener(null);
 
-			thumbsUp.setChecked(comment.is_up == 1 || comment._jempol_atas);
+			thumbsUp.setChecked(comment._jempol_atas);
 			thumbsUp.setTag(comment);
 
-			thumbsDown.setChecked(comment.is_up == -1 || comment._jempol_bawah);
+			thumbsDown.setChecked(comment._jempol_bawah);
 			thumbsDown.setTag(comment);
 
 			thumbsUp.setOnCheckedChangeListener(thumbsUp_cc);
@@ -594,6 +594,13 @@ public class CalegActivity extends Activity {
 
 		public void setData(Papi.Comment[] comments) {
 			this.comments = comments;
+
+			// must make sure jempol betul
+			for (final Papi.Comment comment : comments) {
+				if (comment.is_up == 1) comment._jempol_atas = true;
+				if (comment.is_up == -1) comment._jempol_bawah = true;
+			}
+
 			notifyDataSetChanged();
 		}
 	}

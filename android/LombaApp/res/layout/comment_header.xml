@@ -49,8 +49,9 @@
 
     <lomba.app.widget.FontButton android:layout_width="wrap_content"
                                  android:layout_height="wrap_content"
-                                 style="?android:spinnerStyle"
+                                 style="@style/SpinnerPutih"
                                  android:id="@+id/bSort"
                                  android:layout_marginTop="40dp"
-                                 android:text="Komentar Terbaik"/>
+                                 android:text="Komentar Terbaik"
+                                 android:textColor="#fff"/>
 </LinearLayout>
