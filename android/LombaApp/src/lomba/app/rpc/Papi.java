@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import lomba.app.BuildConfig;
 import org.apache.http.Header;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
@@ -24,6 +26,9 @@ public class Papi {
 	static {
 		client.setMaxRetriesAndTimeout(1, 20000);
 	}
+
+	static AtomicInteger cnt = new AtomicInteger();
+	static AtomicInteger noseri = new AtomicInteger();
 
 	public static class Saklar {
 		boolean cancelled;
@@ -165,33 +170,60 @@ public class Papi {
 
 	static Saklar get(String url, RequestParams params, final Hasil hasil) {
 		final Saklar saklar = new Saklar();
-		client.get(url, params, new AsyncHttpResponseHandler() {
-			public String getResponseString(byte[] stringBytes, String charset) {
-				try {
-					return stringBytes == null? null: new String(stringBytes, charset);
-				} catch (UnsupportedEncodingException e) {
-					throw new RuntimeException(e);
+
+		try {
+			final int noseri = Papi.noseri.incrementAndGet();
+			client.get(url, params, new AsyncHttpResponseHandler() {
+				public String getResponseString(byte[] stringBytes, String charset) {
+					try {
+						return stringBytes == null? null: new String(stringBytes, charset);
+					} catch (UnsupportedEncodingException e) {
+						throw new RuntimeException(e);
+					}
 				}
-			}
 
-			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBody) {
-				if (saklar.cancelled) return;
-				String response = getResponseString(responseBody, "utf-8");
-				hasil.success(response);
-			}
+				@Override
+				public void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBody) {
+					String response = null;
+					try {
+						if (saklar.cancelled) return;
+						response = getResponseString(responseBody, "utf-8");
+						hasil.success(response);
+					} finally {
+						final int c = cnt.decrementAndGet();
+						if (BuildConfig.DEBUG) {
+							Log.d(TAG, "[end get " + noseri + " onSuccess] connections: " + c);
+							Log.d(TAG, saklar.cancelled? "- cancelled": ("- response: " + response));
+						}
+					}
+				}
 
-			@Override
-			public void onFailure(final int statusCode, final Header[] headers, final byte[] responseBody, final Throwable error) {
-				if (saklar.cancelled) return;
-				hasil.failed(error);
+				@Override
+				public void onFailure(final int statusCode, final Header[] headers, final byte[] responseBody, final Throwable error) {
+					try {
+						if (saklar.cancelled) return;
+						hasil.failed(error);
+					} finally {
+						final int c = cnt.decrementAndGet();
+						if (BuildConfig.DEBUG) {
+							Log.d(TAG, "[end get " + noseri + " onSuccess] connections: " + c);
+							Log.d(TAG, saklar.cancelled? "- cancelled": ("- error: " + error));
+						}
+					}
+				}
+			});
+			return saklar;
+		} finally {
+			final int c = cnt.incrementAndGet();
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "[start get " + noseri + "] connections: " + c);
+				Log.d(TAG, "- url: " + url);
+				Log.d(TAG, "- params: " + params);
 			}
-		});
-		return saklar;
+		}
 	}
 
 	public static Saklar rateComment(String email, int id, int is_up) {
-		Log.d(TAG, "@@rateComment " + BASE + "?m=rate_comment&user_email=" + email + "&comment_id=" + id + "&is_up=" + is_up);
 		return get(BASE, new RequestParams("m", "rate_comment", "user_email", email, "comment_id", id, "is_up", is_up), new Hasil() {
 			@Override
 			public void success(final String s) {}
@@ -202,7 +234,6 @@ public class Papi {
 	}
 
 	public static Saklar comments(String calegId, String user_email, String sort, final Clbk<Comment[]> clbk) {
-		Log.d(TAG, "@@comments " + BASE + "?m=get_comments&caleg_id=" + calegId + "&user_email=" + user_email + "&sort=" + sort);
 		return get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId, "user_email", user_email, "sort", sort), new Hasil() {
 			@Override
 			public void success(final String s) {
@@ -219,7 +250,6 @@ public class Papi {
 	}
 
 	public static Saklar postComment(String caleg_id, double rating, String title, String content, String email, final Clbk<Object> clbk) {
-		Log.d(TAG, "@@postComment calegId=" + caleg_id + " rating=" + rating + " title=" + title + " content=" + content + " user_email=" + email);
 		return get(BASE, new RequestParams("m", "rate_comment_caleg", "caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new Hasil() {
 			@Override
 			public void success(final String s) {
@@ -234,7 +264,6 @@ public class Papi {
 	}
 
 	public static Saklar geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
-		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682
 		return get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new Hasil() {
 			@Override
@@ -253,7 +282,6 @@ public class Papi {
 	}
 
 	public static Saklar candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
-		Log.d(TAG, "@@candidate_caleg_detail id=" + id);
 		return get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new Hasil() {
 			@Override
 			public void success(final String s) {
@@ -316,7 +344,6 @@ public class Papi {
 	}
 
 	public static Saklar candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
-		Log.d(TAG, "@@candidate_caleg dapil=" + dapil + " lembaga=" + lembaga + " partai=" + partai);
 		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
 		return get(BASE, new RequestParams("m", "get_calegs_by_dapil", "apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new Hasil() {
 			@Override
@@ -333,7 +360,6 @@ public class Papi {
 	}
 
 	public static Saklar candidate_partai(final Clbk<Partai[]> clbk) {
-		Log.d(TAG, "@@candidate_partai");
 		// http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e
 		return get("http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e", null, new Hasil() {
 			@Override
@@ -350,7 +376,6 @@ public class Papi {
 	}
 
 	public static Saklar get_beranda(double lat, double lng, final String lembaga, final Clbk<Beranda> clbk) {
-		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
 		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
 		return get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng, "lembaga", lembaga), new Hasil() {
 			@Override
