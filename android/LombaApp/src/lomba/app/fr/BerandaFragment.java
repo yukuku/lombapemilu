@@ -84,7 +84,7 @@ public class BerandaFragment extends Fragment {
 		loading.setVisibility(View.VISIBLE);
 		loading.startAnimation(anim);
 
-		berandaloader = Papi.ganti(berandaloader, Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
+		berandaloader = Papi.ganti(berandaloader, Papi.get_beranda(U.getDapilDariLembaga(lembaga_aktif), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
 			@Override
 			public void success(final Papi.Beranda beranda) {
 				BerandaFragment.this.beranda = beranda;

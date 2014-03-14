@@ -20,7 +20,7 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://" + getprop("server", "10.0.3.2:8888") + "/lomba_git/server/api.php";
+	static String BASE = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/api.php";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
@@ -42,12 +42,13 @@ public class Papi {
 			Class clazz = Class.forName("android.os.SystemProperties");
 			Method method = clazz.getDeclaredMethod("get", String.class);
 			String prop = (String)method.invoke(null, key);
-			if (prop == null) {
+			if (prop == null || prop.length() == 0) {
 				return def;
 			}
 			return prop;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			Log.e(TAG, "ga bisa getprop", e);
+			return def;
 		}
 	}
 
@@ -206,7 +207,7 @@ public class Papi {
 					} finally {
 						final int c = cnt.decrementAndGet();
 						if (BuildConfig.DEBUG) {
-							Log.d(TAG, "[end get " + noseri + " onSuccess] connections: " + c);
+							Log.d(TAG, "[end get " + noseri + " onFailure] connections: " + c);
 							Log.d(TAG, saklar.cancelled? "- cancelled": ("- error: " + error));
 						}
 					}
@@ -375,9 +376,8 @@ public class Papi {
 		});
 	}
 
-	public static Saklar get_beranda(double lat, double lng, final String lembaga, final Clbk<Beranda> clbk) {
-		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
-		return get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng, "lembaga", lembaga), new Hasil() {
+	public static Saklar get_beranda(String dapil, final String lembaga, final Clbk<Beranda> clbk) {
+		return get(BASE, new RequestParams("m", "get_beranda", "dapil", dapil, "lembaga", lembaga), new Hasil() {
 			@Override
 			public void success(final String s) {
 				final Beranda beranda = new Gson().fromJson(s, Beranda.class);
