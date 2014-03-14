@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import lomba.app.BuildConfig;
+import com.thnkld.calegstore.app.BuildConfig;
 import org.apache.http.Header;
 
 import java.io.Serializable;
@@ -21,6 +21,7 @@ public class Papi {
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
 	static String BASE = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/api.php";
+	static String BASE_V2 = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/public/api";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
@@ -235,7 +236,7 @@ public class Papi {
 	}
 
 	public static Saklar comments(String calegId, String user_email, String sort, final Clbk<Comment[]> clbk) {
-		return get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId, "user_email", user_email, "sort", sort), new Hasil() {
+		return get(BASE_V2 + "/comments", new RequestParams("caleg_id", calegId, "user_email", user_email, "sort", sort), new Hasil() {
 			@Override
 			public void success(final String s) {
 				Log.d(TAG, "response: " + s);
@@ -377,7 +378,7 @@ public class Papi {
 	}
 
 	public static Saklar get_beranda(String dapil, final String lembaga, final Clbk<Beranda> clbk) {
-		return get(BASE, new RequestParams("m", "get_beranda", "dapil", dapil, "lembaga", lembaga), new Hasil() {
+		return get(BASE_V2 + "/beranda", new RequestParams("dapil", dapil, "lembaga", lembaga), new Hasil() {
 			@Override
 			public void success(final String s) {
 				final Beranda beranda = new Gson().fromJson(s, Beranda.class);

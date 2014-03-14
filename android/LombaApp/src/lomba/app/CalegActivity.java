@@ -180,7 +180,7 @@ public class CalegActivity extends Activity {
 	}
 
 	void loadComments() {
-		String sort = sortcode == 1? "best": "newest";
+		String sort = sortcode == 1? "jempoled": "updated";
 		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
