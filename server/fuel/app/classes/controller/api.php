@@ -61,47 +61,37 @@ class Controller_Api extends Controller_Rest {
 	}
 	
 	/**
-	 * @param $lat
-	 * @param $lng
+	 * @param $dapil
+	 * @param $lembaga
 	 */
 	function get_beranda() {
 		//First we try to load results from cache, for a given lat and lng
-		$cacheKey = __FUNCTION__ . '_' . md5(Input::get('lat') . '|' . Input::get('lng'));
-		$calegsJson = '';
+		$dapil = Input::get('dapil');
+		$lembaga = Input::get('lembaga');
+		$cacheKey = __FUNCTION__ . '_' . md5($dapil . '|' . $lembaga);
 
 		try {
 			$calegsJson = Cache::get($cacheKey);
 		} catch(Exception $e) {
-			$calegsJson = file_get_contents('http://api.pemiluapi.org/geographic/api/caleg?apiKey=' . 
-					self::$apiKey . '&tahun=2014&lembaga=DPR&'.
-					'lat=' . Input::get('lat') . '&long=' . Input::get('lng')); 
-			Cache::set($cacheKey, $calegsJson);
+			$calegsJson = file_get_contents(
+				'http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=' 
+				. $lembaga . '&dapil=' . $dapil
+			); 
+
+			if(!empty($calegsJson)) {
+				Cache::set($cacheKey, $calegsJson);
+			}
 		}
 		
 		//Loop thru the calegs we obtained, then generate comments and rating for each caleg if required
 		$results = json_decode($calegsJson);
-		if(empty($results->data->results)) {
-			//If no results were returned for the given coordinate, retry a fixed coord
-			$calegsJson = file_get_contents('http://api.pemiluapi.org/geographic/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=DPR&lat=-6.87315&long=107.58682');
-			Cache::set($cacheKey, $calegsJson);				
-			$results = json_decode($calegsJson);
-		}
-		
 		$calegs = array();
 		$calegIds = array();
-		
-		foreach($results->data->results as $result) {
-			//We only care about Dapil for now
-			if($result->kind == 'Dapil') {
-				$calegs = $result->caleg;
-					
-				foreach($calegs as $caleg) {
-					$calegIds[] = $caleg->id;
-					Util::generateComments($caleg->id);
-				}
-				
-				break;
-			}
+
+		$calegs = $results->data->results->caleg;
+			
+		foreach($calegs as $caleg) {
+			$calegIds[] = $caleg->id;
 		}
 	
 		/*
@@ -113,14 +103,20 @@ class Controller_Api extends Controller_Rest {
 			->group_by('caleg_id')->order_by('mar', 'desc')->execute();
 		$topRated = $topRated->current();
 		
-		//Now assign the complete profile from the list of calegs we obtained earlier from api.pemilu
-		foreach($calegs as $caleg) {
-			if($caleg->id == $topRated['caleg_id']) {
-				$caleg->rating = Util::getCalegRating($caleg->id);
-				$topRated = $caleg;
-				break;
+		if(empty($topRated)) {
+			$topRated = $calegs[rand(0, count($calegs) - 1)];
+			$topRated->rating = Util::getCalegRating($topRated->id);
+		} else {
+			//Assign the complete profile from the list of calegs we obtained earlier from api.pemilu
+			foreach($calegs as $caleg) {
+				if($caleg->id == $topRated['caleg_id']) {
+					$caleg->rating = Util::getCalegRating($caleg->id);
+					$topRated = $caleg;
+					break;
+				}
 			}
 		}
+		
 		
 		/**
 		 * Most commented
@@ -130,11 +126,17 @@ class Controller_Api extends Controller_Rest {
 		$mostCommented = $mostCommented->current();
 		
 		//Now assign the complete profile from the list of calegs we obtained earlier from api.pemilu
-		foreach($calegs as $caleg) {
-			if($caleg->id == $mostCommented['caleg_id']) {
-				$caleg->rating = Util::getCalegRating($caleg->id);
-				$mostCommented = $caleg;
-				break;
+		if(empty($mostCommented)) {
+			$mostCommented = $calegs[rand(0, count($calegs) - 1)];
+			$mostCommented->rating = Util::getCalegRating($mostCommented->id);
+		} else {
+			//Assign the complete profile from the list of calegs we obtained earlier from api.pemilu
+			foreach($calegs as $caleg) {
+				if($caleg->id == $mostCommented['caleg_id']) {
+					$caleg->rating = Util::getCalegRating($caleg->id);
+					$mostCommented = $caleg;
+					break;
+				}
 			}
 		}
 		
