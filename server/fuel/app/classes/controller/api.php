@@ -179,7 +179,22 @@ class Controller_Api extends Controller_Rest {
 			join(array($didUserRateComment, 'u'), 'left outer')->on('caleg_rating.id', '=', 'u.rating_id')->
 			where('caleg_rating.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
 		
-		$this->response($results);
+		$return = $results->as_array();
+		foreach($return as $i => $result) {
+			if(empty($return[$i]['sum'])) {
+				//Sum of thumbs up / down
+				$return[$i]['sum'] = 0;
+			}
+			
+			if(empty($return[$i]['is_up'])) {
+				//Whether $userEmail has alread upped/downed this comment
+				$return[$i]['is_up'] = 0;
+			}
+
+			unset($return[$i]['rating_id']);
+		}
+		
+		$this->response($return);
 	}
 	
 	/**
