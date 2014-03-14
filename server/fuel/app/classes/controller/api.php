@@ -213,7 +213,23 @@ class Controller_Api extends Controller_Rest {
 		$this->response(array(
 			'status' => !empty($result)
 		));
-		
+	}
+	
+	/**
+	 * @param string user_email
+	 * @param string caleg_id
+	 */
+	function get_has_rated() {
+		$calegId = Input::get('caleg_id');
+		$userEmail = Input::get('user_email');
+		$result = DB::select('rating')->from('caleg_rating')->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
+
+		//If has rated, return the rate
+		if($result->count() > 0) {
+			$this->response(array('has_rated' => 1, 'rate' => $result->current()));
+		} else {
+			$this->response(array('has_rated' => 0, 'rate' => 0));
+		}
 	}
 }
 	
