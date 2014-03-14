@@ -11,17 +11,18 @@ class Controller_Api extends Controller_Rest {
 	/**
 	 * @param string partai
 	 * @param string dapil
+	 * @param string lembaga
 	 *
 	 */
 	function get_calegs_by_dapil() {
 		//First we try to load results from cache, for a given dapil and partai
-		$cacheKey = __FUNCTION__ . '_' . md5(Input::get('dapil') . '|' . Input::get('partai'));
+		$cacheKey = __FUNCTION__ . '_' . md5(Input::get('dapil', '') . '|' . Input::get('partai', '') . '|' . Input::get('lembaga', ''));
 		$calegsJson = '';
 		
 		try {
 			$calegsJson = Cache::get($cacheKey);
 		} catch(Exception $e) {
-			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=DPR&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
+			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
 			Cache::set($cacheKey, $calegsJson);
 		}
 	
@@ -178,6 +179,45 @@ class Controller_Api extends Controller_Rest {
 			where('comment.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
 		
 		$this->response($results);
+	}
+	
+	/**
+	 * @param caleg_id
+	 * @param user_email
+	 * @param title
+	 * @param content
+	 * @param rating
+	 */
+	function get_rate_comment_caleg() {
+		//Check whether this user_email has rated this caleg_id
+		$calegId = Input::get('caleg_id');
+		$userEmail = Input::get('user_email');
+		$result = DB::select('rating')->from('caleg_rating')->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
+
+		//If user has commented and rated in the past, update, otherwise insert
+		$rating = Input::get('rating');
+		$title = Input::get('title');
+		$content = Input::get('content');
+		if($result->count() > 0) {
+			$result1 = DB::update('caleg_rating')->value('rating', $rating)->where('caleg_id', $calegId)->where('user_email', $userEmail);
+
+			$result2 = DB::update('comment')->set(array(
+				'title' => $title, 'content' => $content, 'updated' => time()
+			))->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
+		} else {
+			$result1 = DB::insert('caleg_rating')->set(array(
+				'caleg_id' => $calegId, 'user_email' => $userEmail, 'rating' => $rating
+			))->execute();
+	
+			$result2 = DB::insert('comment')->set(array(
+				'title' => $title, 'content' => $content, 'user_email' => $userEmail, 'created' => time(), 'updated' => time()
+			))->execute();
+		}
+	
+		$this->response(array(
+			'status' => !empty($result1) && !empty($result2)
+		));
+		
 	}
 }
 	
