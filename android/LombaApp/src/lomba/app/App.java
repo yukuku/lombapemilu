@@ -33,7 +33,9 @@ public class App extends yuku.afw.App implements GooglePlayServicesClient.Connec
 			Preferences.setFloat(Prefkey.loc_lng, (float) lng);
 		}
 
-		client.requestLocationUpdates(LocationRequest.create(), this);
+		final LocationRequest request = LocationRequest.create();
+		request.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+		client.requestLocationUpdates(request, this);
 	}
 
 	@Override
