@@ -20,7 +20,7 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/api.php";
+	// static String BASE = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/api.php";
 	static String BASE_V2 = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/public/api";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
@@ -225,8 +225,8 @@ public class Papi {
 		}
 	}
 
-	public static Saklar rateComment(String email, int id, int is_up) {
-		return get(BASE, new RequestParams("m", "rate_comment", "user_email", email, "comment_id", id, "is_up", is_up), new Hasil() {
+	public static Saklar rateComment(String email, int rating_id, int is_up) {
+		return get(BASE_V2 + "/rate_comment", new RequestParams("user_email", email, "rating_id", rating_id, "is_up", is_up), new Hasil() {
 			@Override
 			public void success(final String s) {}
 
@@ -235,8 +235,8 @@ public class Papi {
 		});
 	}
 
-	public static Saklar comments(String calegId, String user_email, String sort, final Clbk<Comment[]> clbk) {
-		return get(BASE_V2 + "/comments", new RequestParams("caleg_id", calegId, "user_email", user_email, "sort", sort), new Hasil() {
+	public static Saklar comments(String caleg_id, String user_email, String order_by, final Clbk<Comment[]> clbk) {
+		return get(BASE_V2 + "/comments", new RequestParams("caleg_id", caleg_id, "user_email", user_email, "order_by", order_by), new Hasil() {
 			@Override
 			public void success(final String s) {
 				Log.d(TAG, "response: " + s);
@@ -252,7 +252,7 @@ public class Papi {
 	}
 
 	public static Saklar postComment(String caleg_id, double rating, String title, String content, String email, final Clbk<Object> clbk) {
-		return get(BASE, new RequestParams("m", "rate_comment_caleg", "caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new Hasil() {
+		return get(BASE_V2 + "/rate_comment_caleg", new RequestParams("caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new Hasil() {
 			@Override
 			public void success(final String s) {
 				clbk.success(s);
@@ -346,8 +346,7 @@ public class Papi {
 	}
 
 	public static Saklar candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
-		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
-		return get(BASE, new RequestParams("m", "get_calegs_by_dapil", "apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new Hasil() {
+		return get(BASE_V2 + "/calegs_by_dapil", new RequestParams("dapil", dapil, "lembaga", lembaga, "partai", partai), new Hasil() {
 			@Override
 			public void success(final String s) {
 				final Caleg[] calegs = new Gson().fromJson(s, Caleg[].class);
