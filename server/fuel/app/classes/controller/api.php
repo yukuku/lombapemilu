@@ -35,7 +35,7 @@ class Controller_Api extends Controller_Rest {
 		$return = array();
 		foreach($calegs as $caleg) {
 			//Attempt to generate comments, the following call will only attempt to generate if caleg specified by $caleg->id has less than 50 comments / rates
-			Util::generateComments($caleg->id);
+// 			Util::generateComments($caleg->id);
 	
 			$calegIds[] = $caleg->id;
 		}		
@@ -64,6 +64,7 @@ class Controller_Api extends Controller_Rest {
 	/**
 	 * @param $dapil
 	 * @param $lembaga
+	 * 
 	 */
 	function get_beranda() {
 		//First we try to load results from cache, for a given lat and lng
@@ -90,9 +91,9 @@ class Controller_Api extends Controller_Rest {
 		$calegIds = array();
 
 		$calegs = $results->data->results->caleg;
-			
 		foreach($calegs as $caleg) {
 			$calegIds[] = $caleg->id;
+			Util::generateComments($caleg->id);
 		}
 	
 		/*
@@ -122,7 +123,7 @@ class Controller_Api extends Controller_Rest {
 		/**
 		 * Most commented
 		 */
-		$mostCommented = DB::select('caleg_id', DB::expr('count(*) as cnt'))->from('comment')->where('caleg_id', 'in', $calegIds)->group_by('caleg_id')
+		$mostCommented = DB::select('caleg_id', DB::expr('count(*) as cnt'))->from('caleg_rating')->where('caleg_id', 'in', $calegIds)->group_by('caleg_id')
 			->order_by('cnt', 'desc')->limit(1)->execute();
 		$mostCommented = $mostCommented->current();
 		
@@ -157,26 +158,26 @@ class Controller_Api extends Controller_Rest {
 	 * @param order_by
 	 */
 	function get_comments() {
-		$sumRatingOnComment = DB::select('comment_id', array(DB::expr('sum(is_up)'), 'sum'))->from('comment_rating')->group_by('comment_id');
-		$didUserRateComment = DB::select('comment_id', 'is_up')->from('comment_rating')->where('user_email', Input::get('user_email'));
+		$sumRatingOnComment = DB::select('rating_id', array(DB::expr('sum(is_up)'), 'sum'))->from('comment_rating')->group_by('rating_id');
+		$didUserRateComment = DB::select('rating_id', 'is_up')->from('comment_rating')->where('user_email', Input::get('user_email'));
 		
 		$orderBy = Input::get('order_by', 'updated');
 		if($orderBy == 'updated') {
-			$orderBy = 'comment.updated';
+			$orderBy = 'caleg_rating.updated';
 		} else {
 			$orderBy = 't.sum';	
 		}
 		
 		//Combine all the queries
 		// 		"select * from comment left outer join " .
-		// 		"(select comment_id, sum(is_up) as sum from comment_rating group by (comment_id)) t on " .
-		// 		"comment.id = t.comment_id left outer join " .
-		// 		"(select comment_id, is_up from comment_rating where user_email = '%s') u on " .
-		// 		"comment.id = u.comment_id where comment.caleg_id = '%s' order by comment.updated desc;";
-		$results = DB::select('*')->from('comment')->
-			join(array($sumRatingOnComment, 't'), 'left outer')->on('comment.id', '=', 't.comment_id')->
-			join(array($didUserRateComment, 'u'), 'left outer')->on('comment.id', '=', 'u.comment_id')->
-			where('comment.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
+		// 		"(select rating_id, sum(is_up) as sum from comment_rating group by (rating_id)) t on " .
+		// 		"comment.id = t.rating_id left outer join " .
+		// 		"(select rating_id, is_up from comment_rating where user_email = '%s') u on " .
+		// 		"comment.id = u.rating_id where comment.caleg_id = '%s' order by comment.updated desc;";
+		$results = DB::select('*')->from('caleg_rating')->
+			join(array($sumRatingOnComment, 't'), 'left outer')->on('caleg_rating.id', '=', 't.rating_id')->
+			join(array($didUserRateComment, 'u'), 'left outer')->on('caleg_rating.id', '=', 'u.rating_id')->
+			where('caleg_rating.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
 		
 		$this->response($results);
 	}
@@ -193,29 +194,24 @@ class Controller_Api extends Controller_Rest {
 		$calegId = Input::get('caleg_id');
 		$userEmail = Input::get('user_email');
 		$result = DB::select('rating')->from('caleg_rating')->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
-
+		
 		//If user has commented and rated in the past, update, otherwise insert
 		$rating = Input::get('rating');
 		$title = Input::get('title');
 		$content = Input::get('content');
-		if($result->count() > 0) {
-			$result1 = DB::update('caleg_rating')->value('rating', $rating)->where('caleg_id', $calegId)->where('user_email', $userEmail);
-
-			$result2 = DB::update('comment')->set(array(
-				'title' => $title, 'content' => $content, 'updated' => time()
+		if($result->count() > 0 && $result) {
+			$result = DB::update('caleg_rating')->set(array(
+				'title' => $title, 'content' => $content, 'updated' => time(), 'rating' => $rating
 			))->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
 		} else {
-			$result1 = DB::insert('caleg_rating')->set(array(
-				'caleg_id' => $calegId, 'user_email' => $userEmail, 'rating' => $rating
-			))->execute();
-	
-			$result2 = DB::insert('comment')->set(array(
-				'title' => $title, 'content' => $content, 'user_email' => $userEmail, 'created' => time(), 'updated' => time()
+			$result = DB::insert('caleg_rating')->set(array(
+				'caleg_id' => $calegId, 'user_email' => $userEmail, 'rating' => $rating,
+				'title' => $title, 'content' => $content, 'created' => time(), 'updated' => time()
 			))->execute();
 		}
 	
 		$this->response(array(
-			'status' => !empty($result1) && !empty($result2)
+			'status' => !empty($result)
 		));
 		
 	}

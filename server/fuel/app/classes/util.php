@@ -4,7 +4,7 @@ class Util {
 		//If we are not forced to generate, check how many comments this caleg has, only generate if less than 50
 		if($force === false) {
 			//First count how many comments this caleg has
-			$result = DB::select(DB::expr('COUNT(*) as count'))->from('comment')->where('caleg_id', $calegId)->limit(GENERATE_THRESHOLD)->execute();
+			$result = DB::select(DB::expr('COUNT(*) as count'))->from('caleg_rating')->where('caleg_id', $calegId)->limit(GENERATE_THRESHOLD)->execute();
 			$result = $result->current();
 			
 			if($result['count'] > GENERATE_THRESHOLD) {
@@ -29,19 +29,14 @@ class Util {
 			$email = RdmEmails::pick();
 			$comment = RdmComments::pick();
 
-			DB::insert('comment')->set(array(
+			DB::insert('caleg_rating')->set(array(
+				'rating' => floor(number_format($rating, 1) * 2) / 2, //Generate 1 decimal place, round up to nearest 0.05
 				'title' => $comment[0],
 				'content' => $comment[1],
 				'user_email' => $email,
 				'caleg_id' => $calegId,
 				'created' => time(),
 				'updated' => time()
-			))->execute();
-			
-			DB::insert('caleg_rating')->set(array(
-				'caleg_id' => $calegId,
-				'user_email' => $email,
-				'rating' => floor(number_format($rating, 1) * 2) / 2 //Generate 1 decimal place, round up to nearest 0.05
 			))->execute();
 		}
 	}
