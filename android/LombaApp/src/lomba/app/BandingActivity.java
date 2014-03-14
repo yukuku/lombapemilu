@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.RatingView;
 import yuku.afw.V;

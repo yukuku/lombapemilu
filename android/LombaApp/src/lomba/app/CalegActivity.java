@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.FontButton;
 import lomba.app.widget.FontEditTextView;

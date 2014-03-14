@@ -8,7 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-import lomba.app.R;
+import com.thnkld.calegstore.app.R;
 
 public class RatingView extends View {
 	public static final String TAG = RatingView.class.getSimpleName();

@@ -5,7 +5,7 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import lomba.app.R;
+import com.thnkld.calegstore.app.R;
 
 public class RatingView2 extends View {
 	public static final String TAG = RatingView2.class.getSimpleName();

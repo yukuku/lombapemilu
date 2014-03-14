@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;

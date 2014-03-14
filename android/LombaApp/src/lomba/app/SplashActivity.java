@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.thnkld.calegstore.app.R;
 import lomba.app.data.Dapil;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
