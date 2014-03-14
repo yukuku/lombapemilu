@@ -138,6 +138,28 @@ public class SplashActivity extends Activity {
 			Papi.geographic_point(lat, lng, new Papi.Clbk<Papi.Area[]>() {
 				@Override
 				public void success(final Papi.Area[] areas) {
+					sukses(areas);
+				}
+
+				private void sukses(final Papi.Area[] areas) {
+					// cek luar negeri
+					if (areas.length == 0) {
+						Papi.Area[] areaspalsu = {new Papi.Area(), new Papi.Area()};
+						// DKI JKT II: 3102-00-0000
+						areaspalsu[0].nama = "Luar Negeri";
+						areaspalsu[0].id = "3102-00-0000";
+						areaspalsu[0].lembaga = "DPR";
+						areaspalsu[0].kind = "Dapil";
+						// Jakarta 2: 3100-02-0000
+						areaspalsu[1].nama = "Luar Negeri";
+						areaspalsu[1].id = "3100-02-0000";
+						areaspalsu[1].lembaga = "DPRDI";
+						areaspalsu[1].kind = "Dapil";
+
+						sukses(areaspalsu);
+						return;
+					}
+
 					int masuk = 0;
 					for (final Papi.Area area : areas) {
 						if ("DPR".equals(area.lembaga)) {
@@ -152,16 +174,6 @@ public class SplashActivity extends Activity {
 							Preferences.setString(Prefkey.dapil_dprd1, area.id);
 							masuk++;
 						}
-					}
-
-					// cek luar negeri
-					if (areas.length == 0) {
-						// DKI JKT II: 3102-00-0000
-						Preferences.setString(Prefkey.dapil_dpr, "3102-00-0000");
-						masuk++;
-						// Jakarta 2: 3100-02-0000
-						Preferences.setString(Prefkey.dapil_dprd1, "3100-02-0000");
-						masuk++;
 					}
 
 					if (masuk >= 2) {

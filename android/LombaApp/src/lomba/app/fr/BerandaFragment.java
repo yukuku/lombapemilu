@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,8 +141,13 @@ public class BerandaFragment extends Fragment {
 			tDesc.setText(U.bagusinNama(caleg.nama));
 			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
-			imgPartai.setImageResource(getResources().getIdentifier("partai_" + (caleg.partai.id), "drawable", App.context.getPackageName()));
-			tPartai.setText(caleg.partai.nama);
+
+			try {
+				imgPartai.setImageResource(getResources().getIdentifier("partai_" + (caleg.partai.id), "drawable", App.context.getPackageName()));
+				tPartai.setText(caleg.partai.nama);
+			} catch (NullPointerException e) {
+				Log.e(TAG, "nurupo di partainya caleg");
+			}
 
 			View clickable = V.get(view, R.id.clickable);
 			clickable.setOnClickListener(new View.OnClickListener() {
