@@ -231,5 +231,28 @@ class Controller_Api extends Controller_Rest {
 			$this->response(array('has_rated' => 0, 'rate' => 0));
 		}
 	}
+	
+	/**
+	 * @param rating_id
+	 * @param is_up -1, 0, 1
+	 * @param user_email
+	 */
+	function get_rate_comment() {
+		$ratingId = Input::get('rating_id');
+		$userEmail = Input::get('user_email');
+		$rate = Input::get('is_up');
+		$result = DB::select('*')->from('comment_rating')->where('rating_id', $ratingId)->where('user_email', $userEmail)->execute();
+		
+		if($result->count() > 0) {
+			DB::update('comment_rating')->value('is_up', $rate)->where('user_email', $userEmail)->where('rating_id', $ratingId)->execute();
+		} else {
+			DB::insert('comment_rating')->set(array(
+				'rating_id' => $ratingId, 'user_email' => $userEmail, 'is_up' => $rate
+			))->execute();
+		}
+		
+		$this->response(array('status' => true));
+	}
+	
 }
 	
