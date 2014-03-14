@@ -146,5 +146,36 @@ class Controller_Api extends Controller_Rest {
 		$featured->rating = $rating;
 		$this->response(array('featured' => $featured, 'top_rated' => $topRated, 'most_commented' => $mostCommented));
 	}
+	
+	//Get comments from the given caleg id, also returns the rate for each comment and whether the logged in user rated already
+	/**
+	 * @param user_email
+	 * @param caleg_id
+	 * @param order_by
+	 */
+	function get_comments() {
+		$sumRatingOnComment = DB::select('comment_id', array(DB::expr('sum(is_up)'), 'sum'))->from('comment_rating')->group_by('comment_id');
+		$didUserRateComment = DB::select('comment_id', 'is_up')->from('comment_rating')->where('user_email', Input::get('user_email'));
+		
+		$orderBy = Input::get('order_by', 'updated');
+		if($orderBy == 'updated') {
+			$orderBy = 'comment.updated';
+		} else {
+			$orderBy = 't.sum';	
+		}
+		
+		//Combine all the queries
+		// 		"select * from comment left outer join " .
+		// 		"(select comment_id, sum(is_up) as sum from comment_rating group by (comment_id)) t on " .
+		// 		"comment.id = t.comment_id left outer join " .
+		// 		"(select comment_id, is_up from comment_rating where user_email = '%s') u on " .
+		// 		"comment.id = u.comment_id where comment.caleg_id = '%s' order by comment.updated desc;";
+		$results = DB::select('*')->from('comment')->
+			join(array($sumRatingOnComment, 't'), 'left outer')->on('comment.id', '=', 't.comment_id')->
+			join(array($didUserRateComment, 'u'), 'left outer')->on('comment.id', '=', 'u.comment_id')->
+			where('comment.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
+		
+		$this->response($results);
+	}
 }
 	

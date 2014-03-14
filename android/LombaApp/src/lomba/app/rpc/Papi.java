@@ -19,7 +19,7 @@ public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://" + "192.168.2.6"  /*getprop("server")*/ + "/lomba_git/server/public/api/";
+	static String BASE = "http://108.59.87.126/lombapemilu/server/public/api/";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
