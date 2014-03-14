@@ -180,6 +180,7 @@ class Controller_Api extends Controller_Rest {
 			where('caleg_rating.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
 		
 		$return = $results->as_array();
+		
 		foreach($return as $i => $result) {
 			if(empty($return[$i]['sum'])) {
 				//Sum of thumbs up / down
@@ -193,6 +194,10 @@ class Controller_Api extends Controller_Rest {
 
 			unset($return[$i]['rating_id']);
 		}
+		
+		usort($return, function($a, $b) {
+			return $a['sum'] < $b['sum'];
+		});
 		
 		$this->response($return);
 	}
