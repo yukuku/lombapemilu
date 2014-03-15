@@ -14,6 +14,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -311,12 +312,16 @@ public class CalegActivity extends Activity {
 
 		if (nikah) {
 			tDengan.setVisibility(View.VISIBLE);
-			SpannableStringBuilder sb = new SpannableStringBuilder();
-			sb.append("dengan ");
-			int sbl = sb.length();
-			sb.append(U.bagusinNama(info.nama_pasangan));
-			sb.setSpan(new ForegroundColorSpan(0xffffffff), sbl, sb.length(), 0);
-			tDengan.setText(sb);
+			if (TextUtils.isEmpty(info.nama_pasangan)) {
+				tDengan.setText("");
+			} else {
+				SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append("dengan ");
+				int sbl = sb.length();
+				sb.append(U.bagusinNama(info.nama_pasangan));
+				sb.setSpan(new ForegroundColorSpan(0xffffffff), sbl, sb.length(), 0);
+				tDengan.setText(sb);
+			}
 		} else {
 			tDengan.setVisibility(View.GONE);
 		}
@@ -341,19 +346,19 @@ public class CalegActivity extends Activity {
 
 	public static String gabung(Papi.Caleg info) {
 		StringBuilder sb = new StringBuilder();
-		if (info.kelurahan_tinggal != null) {
+		if (!TextUtils.isEmpty(info.kelurahan_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.kelurahan_tinggal);
 		}
-		if (info.kecamatan_tinggal != null) {
+		if (!TextUtils.isEmpty(info.kecamatan_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.kecamatan_tinggal);
 		}
-		if (info.kab_kota_tinggal != null) {
+		if (!TextUtils.isEmpty(info.kab_kota_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.kab_kota_tinggal);
 		}
-		if (info.provinsi_tinggal != null) {
+		if (!TextUtils.isEmpty(info.provinsi_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.provinsi_tinggal);
 		}
@@ -384,7 +389,7 @@ public class CalegActivity extends Activity {
 	}
 
 	private void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
-		if (idringkasans != null) {
+		if (idringkasans != null && idringkasans.length > 0) {
 
 			Papi.IdRingkasan[] dua = idringkasans.clone();
 			Arrays.sort(dua, new Comparator<Papi.IdRingkasan>() {
@@ -401,8 +406,9 @@ public class CalegActivity extends Activity {
 				TextView tKet = V.get(v, R.id.tKet);
 				ImageView imgBenang = V.get(v, R.id.imgBenang);
 
-				if (i == 0) imgBenang.setBackgroundResource(R.drawable.timelineatas);
-				if (i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
+				if (i == 0 && i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinesendirian);
+				else if (i == 0) imgBenang.setBackgroundResource(R.drawable.timelineatas);
+				else if (i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
 
 				final String[] pisah = pisah(row.ringkasan);
 				tTahun.setText(pisah[0]);
@@ -410,6 +416,9 @@ public class CalegActivity extends Activity {
 
 				wadah.addView(v);
 			}
+		} else {
+			final View v = getLayoutInflater().inflate(R.layout.item_riwayat_kosong, wadah, false);
+			wadah.addView(v);
 		}
 	}
 
@@ -502,7 +511,7 @@ public class CalegActivity extends Activity {
 		if (m.find()) {
 			return new String[] {m.group(1).replace("SEKARANG", "KINI"), U.toTitleCase(m.group(2))};
 		} else {
-			return new String[] {"", r};
+			return new String[] {"", U.toTitleCase(r)};
 		}
 	}
 

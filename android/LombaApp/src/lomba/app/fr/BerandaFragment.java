@@ -163,6 +163,11 @@ public class BerandaFragment extends Fragment {
 		public int getCount() {
 			return beranda == null? 0: 3;
 		}
+
+		@Override
+		public boolean isEnabled(final int position) {
+			return false;
+		}
 	}
 
 }

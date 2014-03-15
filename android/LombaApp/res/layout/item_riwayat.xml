@@ -26,6 +26,7 @@
     <lomba.app.widget.FontTextView
             android:id="@+id/tKet"
             android:layout_marginLeft="4dp"
+            android:layout_marginRight="32dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="24dp"

@@ -134,8 +134,8 @@ public class BandingActivity extends Activity {
 
 
 	void display() {
-		Picasso.with(this).load(U.bc(280, 340, info1.foto_url)).into(imgFoto1);
-		Picasso.with(this).load(U.bc(280, 340, info2.foto_url)).into(imgFoto2);
+		Picasso.with(this).load(U.bc(getResources().getDimensionPixelSize(R.dimen.banding_foto_w), getResources().getDimensionPixelSize(R.dimen.banding_foto_h), info1.foto_url)).into(imgFoto1);
+		Picasso.with(this).load(U.bc(getResources().getDimensionPixelSize(R.dimen.banding_foto_w), getResources().getDimensionPixelSize(R.dimen.banding_foto_h), info2.foto_url)).into(imgFoto2);
 
 		tNama1.setText(U.bagusinNama(info1.nama));
 		tNama2.setText(U.bagusinNama(info2.nama));
