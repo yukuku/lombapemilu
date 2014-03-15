@@ -1,6 +1,21 @@
 <?php
 class Util {
+	public static function setRatingGeneration($state = false) {
+		Cache::set('auto_generate_caleg_rating', $state);
+	}
+	
 	public static function generateComments($calegId, $force = false) {
+		//Check config
+		$isEnabled = 0;
+		try {
+			$isEnabled = Cache::get('auto_generate_caleg_rating');
+		} catch(Exception $e) {
+			Cache::set('auto_generate_caleg_rating', 0);
+		}
+		
+		//Do nothing 
+		if($isEnabled == 0) return;
+		
 		//If we are not forced to generate, check how many comments this caleg has, only generate if less than 50
 		if($force === false) {
 			//First count how many comments this caleg has
@@ -48,7 +63,7 @@ class Util {
 
 	//Get rating along with the number of vote of a caleg
 	public static function getCalegRating($calegId) {
-		$result = DB::select(DB::expr('count(rating) as count'), DB::expr('avg(rating) as avg'))
+		$result = DB::select(DB::expr('count(rating) as count'), DB::expr('coalesce(avg(rating), 0) as avg'))
 			->from('caleg_rating')->where('caleg_id', $calegId)->execute();
 		
 		return $result->current();

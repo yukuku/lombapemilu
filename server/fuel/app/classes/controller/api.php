@@ -61,6 +61,12 @@ class Controller_Api extends Controller_Rest {
 		return $this->response($calegs);
 	}
 	
+	function get_set_autogenerate() {
+		$state = Input::get('state', 0);
+		Util::setRatingGeneration($state);
+		$this->response(array('status' => true));
+	}
+	
 	/**
 	 * @param $dapil
 	 * @param $lembaga
@@ -195,9 +201,11 @@ class Controller_Api extends Controller_Rest {
 			unset($return[$i]['rating_id']);
 		}
 		
-		usort($return, function($a, $b) {
-			return $a['sum'] < $b['sum'];
-		});
+		if($orderBy == 't.sum') {
+			usort($return, function($a, $b) {
+				return $a['sum'] < $b['sum'];
+			});
+		}
 		
 		$this->response($return);
 	}
