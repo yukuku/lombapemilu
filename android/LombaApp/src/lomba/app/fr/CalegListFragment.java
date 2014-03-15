@@ -194,7 +194,7 @@ public class CalegListFragment extends Fragment {
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
 
 			tNama.setText(U.bagusinNama(caleg.nama));
-			Picasso.with(CalegListFragment.this.getActivity()).load(U.bc(192, 192, caleg.foto_url)).into(imgFoto);
+			Picasso.with(CalegListFragment.this.getActivity()).load(U.bc(192, 192, caleg.foto_url)).placeholder("L".equals(caleg.jenis_kelamin)? R.drawable.dummyfotolakikecil: R.drawable.dummyfotoperempuankecil).into(imgFoto);
 		}
 
 		@Override

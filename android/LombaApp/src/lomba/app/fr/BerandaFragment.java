@@ -137,7 +137,7 @@ public class BerandaFragment extends Fragment {
 
 			final Papi.Caleg caleg = new Papi.Caleg[] {beranda.featured, beranda.most_commented, beranda.top_rated}[position];
 
-			Picasso.with(getActivity()).load(U.bc(240, 320, caleg.foto_url)).into(imgFoto);
+			Picasso.with(getActivity()).load(U.bc(240, 320, caleg.foto_url)).placeholder("L".equals(caleg.jenis_kelamin)? R.drawable.dummyfotolakibesar: R.drawable.dummyfotoperempuanbesar).into(imgFoto);
 			tDesc.setText(U.bagusinNama(caleg.nama));
 			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));

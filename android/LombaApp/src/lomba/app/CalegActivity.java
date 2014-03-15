@@ -606,9 +606,11 @@ public class CalegActivity extends Activity {
 			this.comments = comments;
 
 			// must make sure jempol betul
-			for (final Papi.Comment comment : comments) {
-				if (comment.is_up == 1) comment._jempol_atas = true;
-				if (comment.is_up == -1) comment._jempol_bawah = true;
+			if (comments != null) {
+				for (final Papi.Comment comment : comments) {
+					if (comment.is_up == 1) comment._jempol_atas = true;
+					if (comment.is_up == -1) comment._jempol_bawah = true;
+				}
 			}
 
 			notifyDataSetChanged();

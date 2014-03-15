@@ -27,7 +27,7 @@
         <ImageView android:layout_width="120dp"
                    android:layout_height="160dp"
                    android:id="@+id/imgFoto"
-                   android:src="#800"/>
+                   android:scaleType="centerCrop"/>
 
         <LinearLayout android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
