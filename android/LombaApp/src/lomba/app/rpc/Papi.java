@@ -25,6 +25,7 @@ public class Papi {
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
+		Log.d(TAG, BASE);
 		client.setMaxRetriesAndTimeout(1, 20000);
 	}
 
@@ -261,6 +262,7 @@ public class Papi {
 			@Override
 			public void failed(final Throwable e) {
 				clbk.failed(e);
+
 			}
 		});
 	}
