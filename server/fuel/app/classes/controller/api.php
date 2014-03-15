@@ -8,6 +8,11 @@ class Controller_Api extends Controller_Rest {
 	public static $apiKey = '06ec082d057daa3d310b27483cc3962e';
 	protected $format = 'json';
 	
+	function get_hapus_data() {
+		DB::query('truncate table caleg_rating')->execute();
+		DB::query('truncate table comment_rating')->execute();
+	}
+	
 	/**
 	 * @param string partai
 	 * @param string dapil
@@ -23,7 +28,7 @@ class Controller_Api extends Controller_Rest {
 			$calegsJson = Cache::get($cacheKey);
 		} catch(Exception $e) {
 			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
-			Cache::set($cacheKey, $calegsJson);
+			Cache::set($cacheKey, $calegsJson, HOUR);
 		}
 	
 		//Now we try to decode the json and grab the caleg list from the JSON
@@ -87,7 +92,7 @@ class Controller_Api extends Controller_Rest {
 			); 
 
 			if(!empty($calegsJson)) {
-				Cache::set($cacheKey, $calegsJson);
+				Cache::set($cacheKey, $calegsJson, HOUR);
 			}
 		}
 		
