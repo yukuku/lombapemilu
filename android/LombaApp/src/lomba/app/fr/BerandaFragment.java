@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.App;
 import lomba.app.CalegActivity;
-import lomba.app.R;
 import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -37,6 +38,7 @@ public class BerandaFragment extends Fragment {
 	Papi.Beranda beranda;
 	private ImageView loading;
 	private RotateAnimation anim;
+	Papi.Saklar berandaloader;
 
 	private BroadcastReceiver reload = new BroadcastReceiver() {
 		@Override
@@ -57,6 +59,7 @@ public class BerandaFragment extends Fragment {
 		super.onDestroy();
 
 		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(reload);
+		Papi.lupakan(berandaloader);
 	}
 
 	@Override
@@ -82,7 +85,7 @@ public class BerandaFragment extends Fragment {
 		loading.setVisibility(View.VISIBLE);
 		loading.startAnimation(anim);
 
-		Papi.get_beranda(Preferences.getFloat(Prefkey.loc_lat, 0), Preferences.getFloat(Prefkey.loc_lng, 0), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
+		berandaloader = Papi.ganti(berandaloader, Papi.get_beranda(U.getDapilDariLembaga(lembaga_aktif), U.getNamaLembaga(lembaga_aktif), new Papi.Clbk<Papi.Beranda>() {
 			@Override
 			public void success(final Papi.Beranda beranda) {
 				BerandaFragment.this.beranda = beranda;
@@ -110,7 +113,7 @@ public class BerandaFragment extends Fragment {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	class BerandaAdapter extends EasyAdapter {
@@ -138,8 +141,13 @@ public class BerandaFragment extends Fragment {
 			tDesc.setText(U.bagusinNama(caleg.nama));
 			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
-			imgPartai.setImageResource(getResources().getIdentifier("partai_" + (caleg.partai.id), "drawable", App.context.getPackageName()));
-			tPartai.setText(caleg.partai.nama);
+
+			try {
+				imgPartai.setImageResource(getResources().getIdentifier("partai_" + (caleg.partai.id), "drawable", App.context.getPackageName()));
+				tPartai.setText(caleg.partai.nama);
+			} catch (NullPointerException e) {
+				Log.e(TAG, "nurupo di partainya caleg");
+			}
 
 			View clickable = V.get(view, R.id.clickable);
 			clickable.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +162,11 @@ public class BerandaFragment extends Fragment {
 		@Override
 		public int getCount() {
 			return beranda == null? 0: 3;
+		}
+
+		@Override
+		public boolean isEnabled(final int position) {
+			return false;
 		}
 	}
 

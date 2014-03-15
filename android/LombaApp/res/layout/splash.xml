@@ -8,25 +8,24 @@
 
     <ImageView
             android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_refresh"
             android:id="@+id/progressBar"
-    />
+            android:layout_above="@+id/tStatus"
+            android:layout_centerHorizontal="true"/>
     <lomba.app.widget.FontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
-            android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
-            android:text="Mengecek Lokasi"
-            android:layout_below="@+id/progressBar"
-            android:id="@+id/tStatus"/>
+            android:text="Mengecek lokasi"
+            android:id="@+id/tStatus"
+            android:layout_centerInParent="true"/>
     <lomba.app.widget.FontButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Retry"
+            android:text="Coba lagi"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             android:layout_below="@+id/tStatus"
@@ -44,4 +43,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
+    <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cbDapilDpr"
+            android:layout_below="@+id/tStatus"
+            android:visibility="invisible"
+            android:layout_centerHorizontal="true"/>
+    <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cbDapilDprd1"
+            android:layout_below="@+id/cbDapilDpr"
+            android:visibility="invisible"
+            android:layout_centerHorizontal="true"/>
+    <lomba.app.widget.FontButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mulai"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:layout_below="@+id/cbDapilDprd1"
+            android:visibility="invisible"
+            android:id="@+id/bSave"/>
+
 </RelativeLayout>

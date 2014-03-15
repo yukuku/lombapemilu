@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
-import lomba.app.R;
+import com.thnkld.calegstore.app.R;
 
 public class OutlineContainer extends FrameLayout implements Animatable {
 

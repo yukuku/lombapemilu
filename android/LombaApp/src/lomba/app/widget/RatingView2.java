@@ -5,7 +5,7 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import lomba.app.R;
+import com.thnkld.calegstore.app.R;
 
 public class RatingView2 extends View {
 	public static final String TAG = RatingView2.class.getSimpleName();
@@ -23,6 +23,7 @@ public class RatingView2 extends View {
 
 	static Bitmap base;
 	static Bitmap over;
+	static Paint aa;
 
 	public float getLastdown() {
 		return lastdown;
@@ -55,6 +56,11 @@ public class RatingView2 extends View {
 		if (over == null) {
 			over = BitmapFactory.decodeResource(getResources(), R.drawable.rating_over2);
 		}
+		if (aa == null) {
+			aa = new Paint();
+			aa.setAntiAlias(true);
+			aa.setFilterBitmap(true);
+		}
 	}
 
 	@Override
@@ -70,11 +76,11 @@ public class RatingView2 extends View {
 	protected void onDraw(final Canvas canvas) {
 		src.set(0, 0, base.getWidth(), base.getHeight());
 		dst.set(0, 0, getWidth(), getHeight());
-		canvas.drawBitmap(base, src, dst, null);
+		canvas.drawBitmap(base, src, dst, aa);
 
 		src.set(0, 0, (int) (base.getWidth() * rating / 5), base.getHeight());
 		dst.set(0, 0, getWidth() * rating / 5, getHeight());
 
-		canvas.drawBitmap(over, src, dst, null);
+		canvas.drawBitmap(over, src, dst, aa);
 	}
 }

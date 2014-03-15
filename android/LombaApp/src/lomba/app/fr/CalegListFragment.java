@@ -18,10 +18,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.App;
 import lomba.app.BandingActivity;
 import lomba.app.CalegActivity;
-import lomba.app.R;
 import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -49,6 +49,7 @@ public class CalegListFragment extends Fragment {
 	String partai;
 	private LayoutInflater inflater;
 	private RotateAnimation anim;
+	Papi.Saklar calegloader;
 
 	public static CalegListFragment create(String partai) {
 		CalegListFragment res = new CalegListFragment();
@@ -77,6 +78,7 @@ public class CalegListFragment extends Fragment {
 		super.onDestroy();
 
 		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(reload);
+		Papi.lupakan(calegloader);
 	}
 
 	@Override
@@ -147,7 +149,7 @@ public class CalegListFragment extends Fragment {
 		final int lembaga_aktif = Preferences.getInt(Prefkey.lembaga_aktif, 1);
 
 		loading.startAnimation(anim);
-		Papi.candidate_caleg2(U.getDapilDariLembaga(lembaga_aktif), U.getNamaLembaga(lembaga_aktif), partai, new Papi.Clbk<Papi.Caleg[]>() {
+		calegloader = Papi.ganti(calegloader, Papi.candidate_caleg2(U.getDapilDariLembaga(lembaga_aktif), U.getNamaLembaga(lembaga_aktif), partai, new Papi.Clbk<Papi.Caleg[]>() {
 			@Override
 			public void success(final Papi.Caleg[] calegs) {
 				CalegListFragment.this.calegs = Arrays.asList(calegs);
@@ -168,7 +170,7 @@ public class CalegListFragment extends Fragment {
 					}
 				}, 2000);
 			}
-		});
+		}));
 	}
 
 	class CalegAdapter extends EasyAdapter {

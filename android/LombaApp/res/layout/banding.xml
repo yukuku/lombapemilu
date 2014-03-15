@@ -31,14 +31,14 @@
                           android:paddingTop="24dp">
 
 
-                <FrameLayout android:layout_width="148dp"
-                             android:layout_height="178dp"
+                <FrameLayout android:layout_width="@dimen/banding_foto_bingkai_w"
+                             android:layout_height="@dimen/banding_foto_bingkai_h"
                              android:background="@drawable/bingkai"
                              android:layout_gravity="center_horizontal">
 
                     <ImageView
-                            android:layout_width="140dp"
-                            android:layout_height="170dp"
+                            android:layout_width="@dimen/banding_foto_w"
+                            android:layout_height="@dimen/banding_foto_h"
                             android:layout_gravity="center"
                             android:id="@+id/imgFoto1"/>
 
@@ -53,15 +53,15 @@
 
                 </FrameLayout>
 
-                <FrameLayout android:layout_width="148dp"
-                             android:layout_height="178dp"
+                <FrameLayout android:layout_width="@dimen/banding_foto_bingkai_w"
+                             android:layout_height="@dimen/banding_foto_bingkai_h"
                              android:background="@drawable/bingkai"
                              android:layout_marginLeft="32dp"
                              android:layout_gravity="center_horizontal">
 
                     <ImageView
-                            android:layout_width="140dp"
-                            android:layout_height="170dp"
+                            android:layout_width="@dimen/banding_foto_w"
+                            android:layout_height="@dimen/banding_foto_h"
                             android:layout_gravity="center"
                             android:id="@+id/imgFoto2"/>
 
@@ -84,25 +84,21 @@
                     >
 
                 <lomba.app.widget.FontTextView
-                        android:layout_width="140dp"
-                        android:layout_height="wrap_content"
+                        style="@style/BandingItem"
                         android:textSize="20dp"
                         android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
                         android:id="@+id/tNama1"
                         android:tag="bold"
-                        android:gravity="center_horizontal"
-                        android:textColor="#fff"/>
+                        android:gravity="center_horizontal"/>
 
                 <lomba.app.widget.FontTextView
-                        android:layout_width="140dp"
-                        android:layout_height="wrap_content"
+                        style="@style/BandingItem"
                         android:textSize="20dp"
                         android:layout_marginLeft="32dp"
                         android:text="Ir. Dr. Supriadi ayam goreng dan teman-temannya"
                         android:id="@+id/tNama2"
                         android:tag="bold"
-                        android:gravity="center_horizontal"
-                        android:textColor="#fff"/>
+                        android:gravity="center_horizontal"/>
 
             </LinearLayout>
 

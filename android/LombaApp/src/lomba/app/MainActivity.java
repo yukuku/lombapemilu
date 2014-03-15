@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
 	List<Papi.Partai> partais;
 	TextView tAbTitle;
 	Button bAbLembaga;
+	Papi.Saklar partailoader;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,6 +119,12 @@ public class MainActivity extends Activity {
 		setAbtitle(getString(R.string.app_name));
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Papi.lupakan(partailoader);
+	}
+
 	private void setLembaga(final int lembaga) {
 		bAbLembaga.setText(new String[] {null, "DPR", "DPRD I", "DPRD II"}[lembaga]);
 		Preferences.setInt(Prefkey.lembaga_aktif, lembaga);
@@ -129,7 +137,7 @@ public class MainActivity extends Activity {
 	}
 
 	void loadPartai() {
-		Papi.candidate_partai(new Papi.Clbk<Papi.Partai[]>() {
+		partailoader = Papi.ganti(partailoader, Papi.candidate_partai(new Papi.Clbk<Papi.Partai[]>() {
 			@Override
 			public void success(final Papi.Partai[] partais) {
 
@@ -163,7 +171,7 @@ public class MainActivity extends Activity {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	@Override

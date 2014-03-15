@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="banding_foto_bingkai_w">148dp</dimen>
+    <dimen name="banding_foto_bingkai_h">178dp</dimen>
+    <dimen name="banding_foto_w">140dp</dimen>
+    <dimen name="banding_foto_h">170dp</dimen>
+    <dimen name="banding_item_w">140dp</dimen>
+</resources>
