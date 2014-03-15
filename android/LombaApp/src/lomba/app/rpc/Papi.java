@@ -130,9 +130,9 @@ public class Papi {
 		client.get(BASE, new RequestParams("m", "rate_comment", "user_email", email, "comment_id", id, "is_up", is_up), new JsonHttpResponseHandler());
 	}
 
-	public static void comments(String calegId, String user_email, final Clbk<Comment[]> clbk) {
-		Log.d(TAG, BASE + "?m=get_comments&caleg_id=" + calegId + "&user_email=" + user_email);
-		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId, "user_email", user_email), new JsonHttpResponseHandler() {
+	public static void comments(String calegId, String user_email, String sort, final Clbk<Comment[]> clbk) {
+		Log.d(TAG, "@@comments " + BASE + "?m=get_comments&caleg_id=" + calegId + "&user_email=" + user_email + "&sort=" + sort);
+		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId, "user_email", user_email, "sort", sort), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
 				Log.d(TAG, "response: " + response.toString());
