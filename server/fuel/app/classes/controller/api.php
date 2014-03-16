@@ -28,25 +28,31 @@ class Controller_Api extends Controller_Rest {
 			$calegsJson = Cache::get($cacheKey);
 		} catch(Exception $e) {
 			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
-			Cache::set($cacheKey, $calegsJson, HOUR);
+			Cache::set($cacheKey, $calegsJson, 3600);
 		}
 	
 		//Now we try to decode the json and grab the caleg list from the JSON
 		$calegs = json_decode($calegsJson);
 		$calegs = $calegs->data->results->caleg;
 		
+		//If no calegs returned, return empty array to the client
+		if(empty($calegs)) {
+			$this->response(array());
+			return;
+		}
+		
 		//Store the ids, to return the caleg details later on
 		$calegIds = array();
 		$return = array();
 		foreach($calegs as $caleg) {
 			//Attempt to generate comments, the following call will only attempt to generate if caleg specified by $caleg->id has less than 50 comments / rates
-// 			Util::generateComments($caleg->id);
-	
 			$calegIds[] = $caleg->id;
+			Util::generateComments($caleg->id);
 		}		
 
 		//Calculate and merge average to $calegs
 		$calegRatings = array();
+		
 		$results = DB::select('caleg_id', DB::expr('count(rating) as count'), DB::expr('avg(rating) as avg'))
 			->from('caleg_rating')->where('caleg_id', 'in', $calegIds)->group_by('caleg_id')->execute();
 		$calegRatings = array();
@@ -92,7 +98,7 @@ class Controller_Api extends Controller_Rest {
 			); 
 
 			if(!empty($calegsJson)) {
-				Cache::set($cacheKey, $calegsJson, HOUR);
+				Cache::set($cacheKey, $calegsJson, 3600);
 			}
 		}
 		
@@ -102,6 +108,13 @@ class Controller_Api extends Controller_Rest {
 		$calegIds = array();
 
 		$calegs = $results->data->results->caleg;
+		
+		//If no calegs returned, return an empty array to client
+		if(empty($calegs)) {
+			$this->response(array());
+			return;
+		}
+		
 		foreach($calegs as $caleg) {
 			$calegIds[] = $caleg->id;
 			Util::generateComments($caleg->id);
