@@ -18,5 +18,5 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="#fff"
-            android:listSelector="@color/drawer_list_selector"/>
+            android:listSelector="@drawable/main_drawer_list_selector"/>
 </android.support.v4.widget.DrawerLayout>

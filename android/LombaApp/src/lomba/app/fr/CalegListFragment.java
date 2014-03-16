@@ -148,6 +148,10 @@ public class CalegListFragment extends Fragment {
 	private void loadCaleg() {
 		final int lembaga_aktif = Preferences.getInt(Prefkey.lembaga_aktif, 1);
 
+		calegs = null;
+		adapter.notifyDataSetChanged();
+
+		loading.setVisibility(View.VISIBLE);
 		loading.startAnimation(anim);
 		calegloader = Papi.ganti(calegloader, Papi.candidate_caleg2(U.getDapilDariLembaga(lembaga_aktif), U.getNamaLembaga(lembaga_aktif), partai, new Papi.Clbk<Papi.Caleg[]>() {
 			@Override
