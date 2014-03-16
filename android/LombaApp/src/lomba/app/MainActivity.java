@@ -1,28 +1,33 @@
 package lomba.app;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.text.SpannableString;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;
-import lomba.app.widget.FontSpan;
+import lomba.app.storage.Prefkey;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 
 import java.util.ArrayList;
@@ -39,6 +44,9 @@ public class MainActivity extends Activity {
 	int selection;
 	int oldSelection = -1;
 	List<Papi.Partai> partais;
+	TextView tAbTitle;
+	Button bAbLembaga;
+	Papi.Saklar partailoader;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +83,33 @@ public class MainActivity extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayShowTitleEnabled(false);
+		getActionBar().setDisplayShowCustomEnabled(true);
+		getActionBar().setCustomView(R.layout.main_ab_customview);
 
+		tAbTitle = V.get(getActionBar().getCustomView(), R.id.tAbTitle);
+		bAbLembaga = V.get(getActionBar().getCustomView(), R.id.bAbLembaga);
+
+		bAbLembaga.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				PopupMenu pop = new PopupMenu(getActionBar().getThemedContext(), bAbLembaga);
+				final Menu menu = pop.getMenu();
+				menu.add(0, 1, 0, "DPR");
+				menu.add(0, 2, 0, "DPRD I");
+				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(final MenuItem item) {
+						setLembaga(item.getItemId());
+						return true;
+					}
+				});
+				pop.show();
+			}
+		});
+		setLembaga(Preferences.getInt(Prefkey.lembaga_aktif, 1));
+
+		// pastikan initial state bener
 		if (savedInstanceState == null) {
 			updateContent();
 		}
@@ -85,17 +119,25 @@ public class MainActivity extends Activity {
 		setAbtitle(getString(R.string.app_name));
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Papi.lupakan(partailoader);
+	}
+
+	private void setLembaga(final int lembaga) {
+		bAbLembaga.setText(new String[] {null, "DPR", "DPRD I", "DPRD II"}[lembaga]);
+		Preferences.setInt(Prefkey.lembaga_aktif, lembaga);
+
+		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("LEMBAGA_BERUBAH"));
+	}
+
 	void setAbtitle(String t) {
-		SpannableString s = new SpannableString(t);
-		s.setSpan(new FontSpan(F.reg()), 0, s.length(), 0);
-
-		ActionBar actionBar = getActionBar();
-		actionBar.setTitle(s);
-
+		tAbTitle.setText(t);
 	}
 
 	void loadPartai() {
-		Papi.candidate_partai(new Papi.Clbk<Papi.Partai[]>() {
+		partailoader = Papi.ganti(partailoader, Papi.candidate_partai(new Papi.Clbk<Papi.Partai[]>() {
 			@Override
 			public void success(final Papi.Partai[] partais) {
 
@@ -129,7 +171,7 @@ public class MainActivity extends Activity {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	@Override

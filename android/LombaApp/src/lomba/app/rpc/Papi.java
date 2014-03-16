@@ -2,27 +2,75 @@ package lomba.app.rpc;
 
 import android.util.Log;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.thnkld.calegstore.app.BuildConfig;
 import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Papi {
 	public static final String TAG = Papi.class.getSimpleName();
 	private static final String APIKEY = "201042adb488aef2eb0efe21bdd3ca7f";
 
-	static String BASE = "http://192.168.43.238/lomba_git/server/api.php";
+	// static String BASE = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/api.php";
+	static String BASE_V2 = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/public/api";
 
 	static AsyncHttpClient client = new AsyncHttpClient();
 	static {
 		client.setMaxRetriesAndTimeout(1, 20000);
+	}
+
+	static AtomicInteger cnt = new AtomicInteger();
+	static AtomicInteger noseri = new AtomicInteger();
+
+	public static class Saklar {
+		boolean cancelled;
+		void cancel() {
+			cancelled = true;
+		}
+	}
+
+	static String getprop(String key, final String def) {
+		try {
+			Class clazz = Class.forName("android.os.SystemProperties");
+			Method method = clazz.getDeclaredMethod("get", String.class);
+			String prop = (String)method.invoke(null, key);
+			if (prop == null || prop.length() == 0) {
+				return def;
+			}
+			return prop;
+		} catch (Exception e) {
+			Log.e(TAG, "ga bisa getprop", e);
+			return def;
+		}
+	}
+
+	public static class ApiObject___<T> {
+		public Data___<T> data;
+	}
+
+	public static class Data___<T> {
+		public T results;
+	}
+
+	public static class Areas___ {
+		public Area[] areas;
+	}
+
+	public static class Calegs___ {
+		public Caleg[] caleg;
+	}
+
+	public static class Partais___ {
+		public Partai[] partai;
 	}
 
 	public static class Area {
@@ -101,7 +149,12 @@ public class Papi {
 
 	public interface Clbk<R> {
 		void success(R r);
-		void failed(Throwable ex);
+		void failed(Throwable e);
+	}
+
+	public interface Hasil {
+		void success(String s);
+		void failed(Throwable e);
 	}
 
 	public static class Comment {
@@ -109,278 +162,245 @@ public class Papi {
 		public String title;
 		public String user_email;
 		public String content;
-		public String is_up;
+		public int is_up;
 		public int sum;
+
+		// ini dipake buat listview ajaa... custom data gitu
+		public boolean _jempol_atas;
+		public boolean _jempol_bawah;
 	}
 
-	public static void rateComment(String email, int id, int is_up) {
-		Log.d(TAG, BASE + "?m=rate_comment&user_email=" + email + "&comment_id=" + id + "&is_up=" + is_up);
-		client.get(BASE, new RequestParams("m", "rate_comment", "user_email", email, "comment_id", id, "is_up", is_up), new JsonHttpResponseHandler());
+	static Saklar get(String url, RequestParams params, final Hasil hasil) {
+		final Saklar saklar = new Saklar();
+
+		try {
+			final int noseri = Papi.noseri.incrementAndGet();
+			client.get(url, params, new AsyncHttpResponseHandler() {
+				public String getResponseString(byte[] stringBytes, String charset) {
+					try {
+						return stringBytes == null? null: new String(stringBytes, charset);
+					} catch (UnsupportedEncodingException e) {
+						throw new RuntimeException(e);
+					}
+				}
+
+				@Override
+				public void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBody) {
+					String response = null;
+					try {
+						if (saklar.cancelled) return;
+						response = getResponseString(responseBody, "utf-8");
+						hasil.success(response);
+					} finally {
+						final int c = cnt.decrementAndGet();
+						if (BuildConfig.DEBUG) {
+							Log.d(TAG, "[end get " + noseri + " onSuccess] connections: " + c);
+							Log.d(TAG, saklar.cancelled? "- cancelled": ("- response: " + response));
+						}
+					}
+				}
+
+				@Override
+				public void onFailure(final int statusCode, final Header[] headers, final byte[] responseBody, final Throwable error) {
+					try {
+						if (saklar.cancelled) return;
+						hasil.failed(error);
+					} finally {
+						final int c = cnt.decrementAndGet();
+						if (BuildConfig.DEBUG) {
+							Log.d(TAG, "[end get " + noseri + " onFailure] connections: " + c);
+							Log.d(TAG, saklar.cancelled? "- cancelled": ("- error: " + error));
+						}
+					}
+				}
+			});
+			return saklar;
+		} finally {
+			final int c = cnt.incrementAndGet();
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "[start get " + noseri + "] connections: " + c);
+				Log.d(TAG, "- url: " + url);
+				Log.d(TAG, "- params: " + params);
+			}
+		}
 	}
 
-	public static void comments(String calegId, String user_email, final Clbk<Comment[]> clbk) {
-		Log.d(TAG, BASE + "?m=get_comments&caleg_id=" + calegId + "&user_email=" + user_email);
-		client.get(BASE, new RequestParams("m", "get_comments", "apiKey", APIKEY, "caleg_id", calegId, "user_email", user_email), new JsonHttpResponseHandler() {
+	public static Saklar rateComment(String email, int rating_id, int is_up) {
+		return get(BASE_V2 + "/rate_comment", new RequestParams("user_email", email, "rating_id", rating_id, "is_up", is_up), new Hasil() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
-				Log.d(TAG, "response: " + response.toString());
-				Comment[] comments = new Gson().fromJson(response.toString(), Comment[].class);
+			public void success(final String s) {}
+
+			@Override
+			public void failed(final Throwable e) {}
+		});
+	}
+
+	public static Saklar comments(String caleg_id, String user_email, String order_by, final Clbk<Comment[]> clbk) {
+		return get(BASE_V2 + "/comments", new RequestParams("caleg_id", caleg_id, "user_email", user_email, "order_by", order_by), new Hasil() {
+			@Override
+			public void success(final String s) {
+				Log.d(TAG, "response: " + s);
+				Comment[] comments = new Gson().fromJson(s, Comment[].class);
 				clbk.success(comments);
 			}
 
-			public void onSegalaFailure(final Throwable e) {
-				clbk.failed(e);
-			};
-		});
-	}
-
-	public static void postComment(String caleg_id, double rating, String title, String content, String email, final Clbk<Object> clbk) {
-		Log.d(TAG, "postComment calegId=" + caleg_id + " rating=" + rating + " title=" + title + " content=" + content + " user_email=" + email);
-		client.get(BASE, new RequestParams("m", "rate_comment_caleg", "caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new JsonHttpResponseHandler2("utf-8") {
 			@Override
-			public void onSuccess(JSONObject response) {
-				super.onSuccess(response);
-				clbk.success(response);
-			}
-
-			public void onSegalaFailure(final Throwable e) {
+			public void failed(final Throwable e) {
 				clbk.failed(e);
 			}
-
 		});
 	}
 
-	public static void geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
-		Log.d(TAG, "@@geographic_point lat=" + lat + " lng=" + lng);
+	public static Saklar postComment(String caleg_id, double rating, String title, String content, String email, final Clbk<Object> clbk) {
+		return get(BASE_V2 + "/rate_comment_caleg", new RequestParams("caleg_id", caleg_id, "rating", rating, "title", title, "content", content, "user_email", email), new Hasil() {
+			@Override
+			public void success(final String s) {
+				clbk.success(s);
+			}
+
+			@Override
+			public void failed(final Throwable e) {
+				clbk.failed(e);
+			}
+		});
+	}
+
+	public static Saklar geographic_point(double lat, double lng, final Clbk<Area[]> clbk) {
 		// http://api.pemiluapi.org/geographic/api/point?apiKey=201042adb488aef2eb0efe21bdd3ca7f&lat=-6.87315&long=107.58682
-		client.get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new JsonHttpResponseHandler2("utf-8") {
+		return get("http://api.pemiluapi.org/geographic/api/point", new RequestParams("apiKey", APIKEY, "lat", lat, "long", lng), new Hasil() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
-				Log.d(TAG, "response: " + response.toString());
+			public void success(final String s) {
+				Log.d(TAG, "response: " + s);
 
-				final JSONObject data = response.optJSONObject("data");
-				final JSONObject r = data.optJSONObject("results");
-				final JSONArray a = r.optJSONArray("areas");
-
-				final Area[] areas = new Gson().fromJson(a.toString(), Area[].class);
-				clbk.success(areas);
+				final ApiObject___<Areas___> o = new Gson().fromJson(s, new TypeToken<ApiObject___<Areas___>>(){}.getType());
+				clbk.success(o.data.results.areas);
 			}
 
 			@Override
-			public void onSegalaFailure(final Throwable e) {
+			public void failed(final Throwable e) {
 				clbk.failed(e);
 			}
 		});
 	}
 
-	public static void candidate_caleg(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
-		Log.d(TAG, "@@candidate_caleg dapil=" + dapil + " lembaga=" + lembaga + " partai=" + partai);
-		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
-		client.get("http://api.pemiluapi.org/candidate/api/caleg", new RequestParams("apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler2("utf-8") {
+	public static Saklar candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
+		return get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new Hasil() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
-				final JSONObject data = response.optJSONObject("data");
-				final JSONObject r = data.optJSONObject("results");
-				final JSONArray a = r.optJSONArray("caleg");
+			public void success(final String s) {
+				final ApiObject___<Calegs___> o = new Gson().fromJson(s, new TypeToken<ApiObject___<Calegs___>>(){}.getType());
+				final Caleg caleg = o.data.results.caleg[0];
 
-				Log.d(TAG, "caleg(s): " + a.toString());
+				if (BuildConfig.DEBUG) {
+					if (caleg.riwayat_pendidikan == null || caleg.riwayat_pendidikan.length == 0) {
+						caleg.riwayat_pendidikan = ubek(new IdRingkasan[] {
+						new IdRingkasan(1, "1957-1963, SD, SEKOLAH RAKYAT NEGERI, ACEH (placeholder)"),
+						new IdRingkasan(2, "1963-1966, SLTP, SMP NEGERI 1, BANDA ACEH (placeholder)"),
+						new IdRingkasan(3, "1963-1966 SLTP I NEGERI 1 BANDA ACEH (placeholder)"),
+						new IdRingkasan(4, "1966-1967, SMA NEGERI I BANDA ACEH (placeholder)"),
+						new IdRingkasan(5, "1967-1968, SLTA, SMA YPU, BANDUNG (placeholder)"),
+						new IdRingkasan(6, "1969-1971, FAKULTAS PUBLISTIK UNIVERSITAS PADJAJARAN, BANDUNG (placeholder)"),
+						new IdRingkasan(7, "1972-1984 STUDI ILMU KOMUNIKASI, ILMU POLITIK DAN SOSIOLOGI, WESTFAELISCHE - WILHELMS-UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN (placeholder)"),
+						new IdRingkasan(8, "1983 S3, DR. PHIL. UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN (placeholder)"),
+						}, 0.0);
+					}
 
-				final Caleg[] calegs = new Gson().fromJson(a.toString(), Caleg[].class);
-				clbk.success(calegs);
-			}
+					if (caleg.riwayat_pekerjaan == null || caleg.riwayat_pekerjaan.length == 0) {
+						caleg.riwayat_pekerjaan = ubek(new IdRingkasan[] {
+						new IdRingkasan(1, "1998-1998, FKP DPR RI, ANGGOTA TIM AHLI, JAKARTA (placeholder)"),
+						new IdRingkasan(2, "1998-1998, MPR RI, TIM AHLI, JAKARTA (placeholder)"),
+						new IdRingkasan(3, "2000-2005, TIM PENASEHAT PRESIDEN URUSAN ACEH ANGGOTA, JAKARTA (placeholder)"),
+						new IdRingkasan(4, "2000-2002, KEMENTRIAN POLKAM, PENASEHAT, JAKARTA (placeholder)"),
+						new IdRingkasan(5, "2005-2007, PEMERINTAHAN, TIM AHLI DPR RI, JAKARTA (placeholder)"),
+						new IdRingkasan(6, "2002-2005, PEMERINTAHAN, DUTA BESAR MESIR, MESIR (placeholder)"),
+						}, 0.5);
+					}
 
-			@Override
-			public void onSegalaFailure(final Throwable e) {
-				clbk.failed(e);
-			}
-		});
-	}
-
-	public static void candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
-		Log.d(TAG, "@@candidate_caleg_detail id=" + id);
-		client.get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new JsonHttpResponseHandler2("utf-8") {
-			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
-				final JSONObject data = response.optJSONObject("data");
-				final JSONObject r = data.optJSONObject("results");
-				final JSONArray a = r.optJSONArray("caleg");
-
-				Log.d(TAG, "caleg(s): " + a.toString());
-
-				final JSONObject o = a.optJSONObject(0);
-
-				final Caleg caleg = new Gson().fromJson(o.toString(), Caleg.class);
-
-
-				if (caleg.riwayat_pendidikan == null || caleg.riwayat_pendidikan.length == 0) {
-					caleg.riwayat_pendidikan = ubek(new IdRingkasan[] {
-					new IdRingkasan(1, "1957-1963, SD, SEKOLAH RAKYAT NEGERI, ACEH"),
-					new IdRingkasan(2, "1963-1966, SLTP, SMP NEGERI 1, BANDA ACEH"),
-					new IdRingkasan(3, "1963-1966 SLTP I NEGERI 1 BANDA ACEH"),
-					new IdRingkasan(4, "1966-1967, SMA NEGERI I BANDA ACEH"),
-					new IdRingkasan(5, "1967-1968, SLTA, SMA YPU, BANDUNG"),
-					new IdRingkasan(6, "1969-1971, FAKULTAS PUBLISTIK UNIVERSITAS PADJAJARAN, BANDUNG"),
-					new IdRingkasan(7, "1972-1984 STUDI ILMU KOMUNIKASI, ILMU POLITIK DAN SOSIOLOGI, WESTFAELISCHE - WILHELMS-UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN"),
-					new IdRingkasan(8, "1983 S3, DR. PHIL. UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN"),
-					});
-				}
-
-				if (caleg.riwayat_pekerjaan == null || caleg.riwayat_pekerjaan.length == 0) {
-					caleg.riwayat_pekerjaan = ubek(new IdRingkasan[] {
-					new IdRingkasan(1, "1998-1998, FKP DPR RI, ANGGOTA TIM AHLI, JAKARTA"),
-					new IdRingkasan(2, "1998-1998, MPR RI, TIM AHLI, JAKARTA"),
-					new IdRingkasan(3, "2000-2005, TIM PENASEHAT PRESIDEN URUSAN ACEH ANGGOTA, JAKARTA"),
-					new IdRingkasan(4, "2000-2002, KEMENTRIAN POLKAM, PENASEHAT, JAKARTA"),
-					new IdRingkasan(5, "2005-2007, PEMERINTAHAN, TIM AHLI DPR RI, JAKARTA"),
-					new IdRingkasan(6, "2002-2005, PEMERINTAHAN, DUTA BESAR MESIR, MESIR"),
-					});
-				}
-
-				if (caleg.riwayat_organisasi == null || caleg.riwayat_organisasi.length == 0) {
-					caleg.riwayat_organisasi = ubek(new IdRingkasan[] {
-					new IdRingkasan(1,"2013-SEKARANG, PARTAI NASDEM, KETUA DEWAN PAKAR DPP PARTAI NASDEM, JAKARTA"),
-					new IdRingkasan(2,"2010-SEKARANG, ORMAS NASIONAL DEMOKRAT, ANGGOTA DEWAN PERTIMBANGAN, JAKARTA"),
-					new IdRingkasan(3,"2007-SEKARANG, PENGURUS FORUM DUTA BESAR RI, JAKARTA"),
-					new IdRingkasan(4,"2009-2013, FISIP UI, KETUA DEWAN GURU BESAR JAKARTA"),
-					new IdRingkasan(5,"2010-2013, KOMITE PROFESOR UNTUK PERPUSTAKAAN UI, KETUA, JAKARTA"),
-					new IdRingkasan(6,"2011-2014, PERHIMPUNAN ALUMNI JERMAN, WAKIL KETUA DEWAN KEHORMATAN"),
-					});
+					if (caleg.riwayat_organisasi == null || caleg.riwayat_organisasi.length == 0) {
+						caleg.riwayat_organisasi = ubek(new IdRingkasan[] {
+						new IdRingkasan(1,"2013-SEKARANG, PARTAI NASDEM, KETUA DEWAN PAKAR DPP PARTAI NASDEM, JAKARTA (placeholder)"),
+						new IdRingkasan(2,"2010-SEKARANG, ORMAS NASIONAL DEMOKRAT, ANGGOTA DEWAN PERTIMBANGAN, JAKARTA (placeholder)"),
+						new IdRingkasan(3,"2007-SEKARANG, PENGURUS FORUM DUTA BESAR RI, JAKARTA (placeholder)"),
+						new IdRingkasan(4,"2009-2013, FISIP UI, KETUA DEWAN GURU BESAR JAKARTA (placeholder)"),
+						new IdRingkasan(5,"2010-2013, KOMITE PROFESOR UNTUK PERPUSTAKAAN UI, KETUA, JAKARTA (placeholder)"),
+						new IdRingkasan(6,"2011-2014, PERHIMPUNAN ALUMNI JERMAN, WAKIL KETUA DEWAN KEHORMATAN (placeholder)"),
+						}, 0.9);
+					}
 				}
 
 				clbk.success(caleg);
 			}
 
 			@Override
-			public void onSegalaFailure(final Throwable e) {
+			public void failed(final Throwable e) {
 				clbk.failed(e);
 			}
-
 		});
 	}
 
-	private static IdRingkasan[] ubek(final IdRingkasan[] idRingkasans) {
+	private static IdRingkasan[] ubek(final IdRingkasan[] idRingkasans, double peluang) {
 		List<IdRingkasan> res = new ArrayList<>();
 		for (final IdRingkasan idRingkasan : idRingkasans) {
-			if (Math.random() < 0.75f) {
+			if (Math.random() < peluang) {
 				res.add(idRingkasan);
 			}
 		}
 		return res.toArray(new IdRingkasan[res.size()]);
 	}
 
-	public static void candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
-		Log.d(TAG, "@@candidate_caleg dapil=" + dapil + " lembaga=" + lembaga + " partai=" + partai);
-		// http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=DPR&dapil=3201-00-0000
-		client.get(BASE, new RequestParams("m", "get_calegs_by_dapil", "apiKey", APIKEY, "tahun", 2014, "dapil", dapil, "lembaga", lembaga, "partai", partai), new JsonHttpResponseHandler2("utf-8") {
+	public static Saklar candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
+		return get(BASE_V2 + "/calegs_by_dapil", new RequestParams("dapil", dapil, "lembaga", lembaga, "partai", partai), new Hasil() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
-				Log.d(TAG, "response array len: " + response.length());
-
-				final Caleg[] calegs = new Gson().fromJson(response.toString(), Caleg[].class);
+			public void success(final String s) {
+				final Caleg[] calegs = new Gson().fromJson(s, Caleg[].class);
 				clbk.success(calegs);
 			}
 
 			@Override
-			public void onSegalaFailure(final Throwable e) {
+			public void failed(final Throwable e) {
 				clbk.failed(e);
 			}
-
 		});
 	}
 
-	public static void candidate_partai(final Clbk<Partai[]> clbk) {
-		Log.d(TAG, "@@candidate_partai");
+	public static Saklar candidate_partai(final Clbk<Partai[]> clbk) {
 		// http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e
-		client.get("http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e", new JsonHttpResponseHandler2("utf-8") {
+		return get("http://api.pemiluapi.org/candidate/api/partai?apiKey=06ec082d057daa3d310b27483cc3962e", null, new Hasil() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
-				final JSONObject data = response.optJSONObject("data");
-				final JSONObject r = data.optJSONObject("results");
-				final JSONArray a = r.optJSONArray("partai");
-
-				Log.d(TAG, "partai(s): " + a.toString());
-
-				final Partai[] partais = new Gson().fromJson(a.toString(), Partai[].class);
-				clbk.success(partais);
+			public void success(final String s) {
+				final ApiObject___<Partais___> o = new Gson().fromJson(s, new TypeToken<ApiObject___<Partais___>>(){}.getType());
+				clbk.success(o.data.results.partai);
 			}
 
 			@Override
-			public void onSegalaFailure(final Throwable e) {
+			public void failed(final Throwable e) {
 				clbk.failed(e);
 			}
-
 		});
 	}
 
-	static abstract class JsonHttpResponseHandler2 extends JsonHttpResponseHandler {
-		JsonHttpResponseHandler2(String encoding) {
-			super(encoding);
-		}
-
-		AtomicBoolean udagagal = new AtomicBoolean();
-
-		abstract void onSegalaFailure(Throwable e);
-
-		@Override
-		public void onFailure(final Throwable e, final JSONObject errorResponse) {
-			super.onFailure(e, errorResponse);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
-		}
-
-		@Override
-		public void onFailure(final Throwable e, final JSONArray errorResponse) {
-			super.onFailure(e, errorResponse);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
-		}
-
-		@Override
-		public void onFailure(final int statusCode, final Throwable e, final JSONArray errorResponse) {
-			super.onFailure(statusCode, e, errorResponse);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
-		}
-
-		@Override
-		public void onFailure(final int statusCode, final Throwable e, final JSONObject errorResponse) {
-			super.onFailure(statusCode, e, errorResponse);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(e);
-		}
-
-		@Override
-		public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
-			super.onFailure(statusCode, headers, responseString, throwable);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(throwable);
-		}
-
-		@Override
-		public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
-			super.onFailure(statusCode, headers, throwable, errorResponse);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(throwable);
-		}
-
-		@Override
-		public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONArray errorResponse) {
-			super.onFailure(statusCode, headers, throwable, errorResponse);
-			if (udagagal.compareAndSet(false, true)) onSegalaFailure(throwable);
-		}
-	}
-
-
-	public static void get_beranda(double lat, double lng, final Clbk<Beranda> clbk) {
-		Log.d(TAG, "@@get_beranda lat=" + lat + " lng=" + lng);
-		// http://192.168.43.238/lomba_git/server/api.php?m=get_beranda&lat=-6.87315&lng=107.58682
-		client.get(BASE, new RequestParams("m", "get_beranda", "lat", lat, "lng", lng), new JsonHttpResponseHandler2("utf-8") {
+	public static Saklar get_beranda(String dapil, final String lembaga, final Clbk<Beranda> clbk) {
+		return get(BASE_V2 + "/beranda", new RequestParams("dapil", dapil, "lembaga", lembaga), new Hasil() {
 			@Override
-			public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
-				Log.d(TAG, "response: " + response.toString());
-
-				final Beranda beranda = new Gson().fromJson(response.toString(), Beranda.class);
+			public void success(final String s) {
+				final Beranda beranda = new Gson().fromJson(s, Beranda.class);
 				clbk.success(beranda);
 			}
 
 			@Override
-			public void onSegalaFailure(final Throwable e) {
+			public void failed(final Throwable e) {
 				clbk.failed(e);
 			}
 		});
+	}
+
+	/** jangan peduli lg dengan ini */
+	public static void lupakan(Saklar saklar) {
+		if (saklar == null) return;
+		saklar.cancel();
+	}
+
+	public static Saklar ganti(Saklar lama, Saklar baru) {
+		lupakan(lama);
+		return baru;
 	}
 }

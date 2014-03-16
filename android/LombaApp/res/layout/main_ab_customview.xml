@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <lomba.app.widget.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="Caleg Store"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:layout_weight="0"
+            android:id="@+id/tAbTitle"/>
+
+    <ImageView android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_weight="1"/>
+
+    <lomba.app.widget.FontButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:spinnerStyle"
+            android:layout_weight="0"
+            android:text="DPR"
+            android:id="@+id/bAbLembaga"/>
+
+
+</LinearLayout>

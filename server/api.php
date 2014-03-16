@@ -85,8 +85,6 @@ function get_caleg_rating($caleg_id) {
 	} else {
 		return $return;
 	}
-	
-	
 }
 
 if($method == 'get_caleg_rating') {
@@ -350,31 +348,6 @@ if($method == 'get_beranda') {
 		'top_rated' => $max_avg, 'most_commented' => $most_cmtd, 'featured' => $featured
 	)));
 }
-
-/**
- * create table caleg_rating(
-	id int(11) primary key auto_increment,
-	caleg_id int(11) not null,
-	user_email text not null,
-	rating double not null
-);
-
-create table commment( 
-	id int(11) primary key auto_increment,
-	title text,
-	content text,
-	user_email text,
-	caleg_id int(11)
-);
-
-create table comment_rating (
-	id int primary key auto_increment,
-	comment_id int(11),
-	user_email text not null,
-	is_up int(1),
-	foreign key(comment_id) references comment(id)
-)
- */
 
 class C {
 public static $comments = array(

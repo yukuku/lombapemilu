@@ -11,13 +11,16 @@
                     android:layout_marginRight="40dp" android:layout_height="wrap_content">
         <ImageView android:id="@+id/gravatar_url" android:layout_width="40dp"
                    android:layout_height="40dp"/>
-        <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <CheckBox android:layout_width="27dp" android:layout_height="27dp"
                   android:layout_centerVertical="true"
                   android:id="@+id/thumbs_down" android:layout_alignParentRight="true"
-                  android:button="@drawable/cb_thumbs_down"/>
-        <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/thumbs_up"
+                  android:button="@drawable/cb_thumbs_down"
+                  android:background="@drawable/jempol_bg"
+                />
+        <CheckBox android:layout_width="27dp" android:layout_height="27dp" android:id="@+id/thumbs_up"
                   android:layout_centerVertical="true"
                   android:button="@drawable/cb_thumbs_up"
+                  android:background="@drawable/jempol_bg"
                   android:layout_marginRight="15dp"
                   android:layout_toLeftOf="@+id/thumbs_down"/>
 

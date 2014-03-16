@@ -52,7 +52,7 @@
         <ImageView android:layout_width="96dp"
                    android:layout_height="96dp"
                    android:id="@+id/imgFoto"
-                   android:src="#008"/>
+                   android:scaleType="centerCrop"/>
 
         <ImageView android:layout_width="96dp"
                    android:layout_height="96dp"

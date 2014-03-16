@@ -2,9 +2,11 @@ package lomba.app;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.*;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -12,9 +14,12 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -23,11 +28,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
+import com.thnkld.calegstore.app.R;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.FontButton;
 import lomba.app.widget.FontEditTextView;
@@ -56,7 +63,7 @@ public class CalegActivity extends Activity {
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
 	private MessageDigest md5;
-	private static Account[] accountsByType;
+	private String accountName;
 	private PostCommentFragment postCommentFragment;
 	private ImageButton bP1;
 	private ImageButton bP2;
@@ -64,6 +71,8 @@ public class CalegActivity extends Activity {
 	private ImageButton bP4;
 	private ImageButton bP5;
 	private ImageButton bP6;
+	int sortcode = 1;
+	Papi.Saklar commentloader;
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -79,8 +88,6 @@ public class CalegActivity extends Activity {
 		}
 	};
 
-	Papi.Comment[] comments;
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -89,7 +96,10 @@ public class CalegActivity extends Activity {
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
-		accountsByType = AccountManager.get(this).getAccountsByType("com.google");
+		final Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
+		if (accounts != null) {
+			accountName = accounts[0].name;
+		}
 
 		jazzy.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
@@ -160,12 +170,19 @@ public class CalegActivity extends Activity {
 		gotopage(0);
 
 		loadLengkap();
-		loadLengkap2();
+
+		loadComments();
 	}
 
-	void loadLengkap2() {
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Papi.lupakan(commentloader);
+	}
 
-		Papi.comments(info.id, accountsByType[0].name, new Papi.Clbk<Papi.Comment[]>() {
+	void loadComments() {
+		String sort = sortcode == 1? "jempoled": "updated";
+		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
@@ -181,13 +198,13 @@ public class CalegActivity extends Activity {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								loadLengkap2();
+								loadComments();
 							}
 						});
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	void gotopage(int p) {
@@ -295,12 +312,16 @@ public class CalegActivity extends Activity {
 
 		if (nikah) {
 			tDengan.setVisibility(View.VISIBLE);
-			SpannableStringBuilder sb = new SpannableStringBuilder();
-			sb.append("dengan ");
-			int sbl = sb.length();
-			sb.append(U.bagusinNama(info.nama_pasangan));
-			sb.setSpan(new ForegroundColorSpan(0xffffffff), sbl, sb.length(), 0);
-			tDengan.setText(sb);
+			if (TextUtils.isEmpty(info.nama_pasangan)) {
+				tDengan.setText("");
+			} else {
+				SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append("dengan ");
+				int sbl = sb.length();
+				sb.append(U.bagusinNama(info.nama_pasangan));
+				sb.setSpan(new ForegroundColorSpan(0xffffffff), sbl, sb.length(), 0);
+				tDengan.setText(sb);
+			}
 		} else {
 			tDengan.setVisibility(View.GONE);
 		}
@@ -325,19 +346,19 @@ public class CalegActivity extends Activity {
 
 	public static String gabung(Papi.Caleg info) {
 		StringBuilder sb = new StringBuilder();
-		if (info.kelurahan_tinggal != null) {
+		if (!TextUtils.isEmpty(info.kelurahan_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.kelurahan_tinggal);
 		}
-		if (info.kecamatan_tinggal != null) {
+		if (!TextUtils.isEmpty(info.kecamatan_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.kecamatan_tinggal);
 		}
-		if (info.kab_kota_tinggal != null) {
+		if (!TextUtils.isEmpty(info.kab_kota_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.kab_kota_tinggal);
 		}
-		if (info.provinsi_tinggal != null) {
+		if (!TextUtils.isEmpty(info.provinsi_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
 			sb.append(info.provinsi_tinggal);
 		}
@@ -368,7 +389,7 @@ public class CalegActivity extends Activity {
 	}
 
 	private void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
-		if (idringkasans != null) {
+		if (idringkasans != null && idringkasans.length > 0) {
 
 			Papi.IdRingkasan[] dua = idringkasans.clone();
 			Arrays.sort(dua, new Comparator<Papi.IdRingkasan>() {
@@ -385,8 +406,9 @@ public class CalegActivity extends Activity {
 				TextView tKet = V.get(v, R.id.tKet);
 				ImageView imgBenang = V.get(v, R.id.imgBenang);
 
-				if (i == 0) imgBenang.setBackgroundResource(R.drawable.timelineatas);
-				if (i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
+				if (i == 0 && i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinesendirian);
+				else if (i == 0) imgBenang.setBackgroundResource(R.drawable.timelineatas);
+				else if (i == dua.length - 1) imgBenang.setBackgroundResource(R.drawable.timelinebawah);
 
 				final String[] pisah = pisah(row.ringkasan);
 				tTahun.setText(pisah[0]);
@@ -394,6 +416,9 @@ public class CalegActivity extends Activity {
 
 				wadah.addView(v);
 			}
+		} else {
+			final View v = getLayoutInflater().inflate(R.layout.item_riwayat_kosong, wadah, false);
+			wadah.addView(v);
 		}
 	}
 
@@ -408,12 +433,63 @@ public class CalegActivity extends Activity {
 		return res;
 	}
 
+	View rating(ViewGroup container) {
+		View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
+
+		ListView commentLs = V.get(res, R.id.comment_list);
+		View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
+		commentLs.addHeaderView(headerView);
+
+		FontTextView rate = V.get(headerView, R.id.total_rating);
+		FontTextView voter = V.get(headerView, R.id.total_voter);
+		final FontButton bSort = V.get(headerView, R.id.bSort);
+		final RatingView2 rv = V.get(headerView, R.id.rating);
+		rv.setRating(info.rating.avg);
+		rv.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				final float lastdown = rv.getLastdown();
+				int r = (int) (lastdown * 5) + 1;
+				if (r < 1) r = 1;
+				if (r > 5) r = 5;
+				rv.setRating(r);
+				showDialogRating(r);
+
+			}
+		});
+		bSort.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				PopupMenu pop = new PopupMenu(CalegActivity.this, bSort);
+				final Menu menu = pop.getMenu();
+				menu.add(0, 1, 0, "Komentar Terbaik");
+				menu.add(0, 2, 0, "Komentar Terbaru");
+				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(final MenuItem item) {
+						sortcode = item.getItemId();
+						bSort.setText(item.getTitle());
+						loadComments();
+						return true;
+					}
+				});
+				pop.show();
+
+			}
+		});
+		rate.setText(String.format("%.1f", info.rating.avg));
+		voter.setText("(" + info.rating.count + " rating)");
+		commentLs.setAdapter(commentsAdapter);
+
+		return res;
+	}
+
 	String grava(String email) {
 		if (md5 == null) {
 			try {
 				md5 = MessageDigest.getInstance("md5");
 			} catch (NoSuchAlgorithmException e) {
-				Log.e(TAG, "e", e);
+				throw new RuntimeException(e);
 			}
 		}
 
@@ -435,13 +511,43 @@ public class CalegActivity extends Activity {
 		if (m.find()) {
 			return new String[] {m.group(1).replace("SEKARANG", "KINI"), U.toTitleCase(m.group(2))};
 		} else {
-			return new String[] {"", r};
+			return new String[] {"", U.toTitleCase(r)};
 		}
 	}
 
 	class CommentAdapter extends EasyAdapter {
 
 		private Papi.Comment[] comments;
+
+		CompoundButton.OnCheckedChangeListener thumbsUp_cc = new RadioButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+				final Papi.Comment comment = (Papi.Comment) compoundButton.getTag();
+				comment._jempol_atas = isChecked;
+				if (isChecked) {
+					comment._jempol_bawah = false;
+				}
+				sendRateComment(comment);
+				notifyDataSetChanged();
+			}
+		};
+
+		void sendRateComment(final Papi.Comment comment) {
+			Papi.rateComment(accountName, comment.id, comment._jempol_atas? 1: comment._jempol_bawah? -1: 0);
+		}
+
+		CompoundButton.OnCheckedChangeListener thumbsDown_cc = new RadioButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+				final Papi.Comment comment = (Papi.Comment) compoundButton.getTag();
+				comment._jempol_bawah = isChecked;
+				if (isChecked) {
+					comment._jempol_atas = false;
+				}
+				sendRateComment(comment);
+				notifyDataSetChanged();
+			}
+		};
 
 		@Override
 		public View newView(int position, ViewGroup parent) {
@@ -457,40 +563,38 @@ public class CalegActivity extends Activity {
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
 
-			thumbsUp.setChecked(false);
-			thumbsDown.setChecked(false);
-			if ("1".equals(comments[position].is_up)) {
-				thumbsUp.setChecked(true);
+			final Papi.Comment comment = comments[position];
+
+			thumbsUp.setOnCheckedChangeListener(null);
+			thumbsDown.setOnCheckedChangeListener(null);
+
+			thumbsUp.setChecked(comment._jempol_atas);
+			thumbsUp.setTag(comment);
+
+			thumbsDown.setChecked(comment._jempol_bawah);
+			thumbsDown.setTag(comment);
+
+			thumbsUp.setOnCheckedChangeListener(thumbsUp_cc);
+			thumbsDown.setOnCheckedChangeListener(thumbsDown_cc);
+
+			commentTitle.setText(Html.fromHtml("<b>" + comment.title + "</b>"));
+			commentContent.setText(comment.content);
+
+			int sum = comment.sum;
+			if (comment.is_up == 1) {
+				if (!comment._jempol_atas) sum--;
+				if (comment._jempol_bawah) sum--;
 			}
-
-			if ("-1".equals(comments[position].is_up)) {
-				thumbsDown.setChecked(true);
+			if (comment.is_up == -1) {
+				if (!comment._jempol_bawah) sum++;
+				if (comment._jempol_atas) sum++;
 			}
-
-			thumbsUp.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) {
-						Papi.rateComment(accountsByType[0].name, comments[position].id, 1);
-						thumbsDown.setChecked(false);
-					}
-				}
-			});
-
-			thumbsDown.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-					if(isChecked) {
-						Papi.rateComment(accountsByType[0].name, comments[position].id, -1);
-						thumbsUp.setChecked(false);
-					}
-				}
-			});
-
-			commentTitle.setText(Html.fromHtml("<b>" + comments[position].title + "</b>"));
-			commentContent.setText(comments[position].content);
-			commentRate.setText(String.valueOf(comments[position].sum));
-			Picasso.with(CalegActivity.this).load(grava(comments[position].user_email)).into(commentProfile);
+			if (comment.is_up == 0) {
+				if (comment._jempol_atas) sum++;
+				if (comment._jempol_bawah) sum--;
+			}
+			commentRate.setText("" + sum);
+			Picasso.with(CalegActivity.this).load(grava(comment.user_email)).into(commentProfile);
 		}
 
 		@Override
@@ -500,6 +604,15 @@ public class CalegActivity extends Activity {
 
 		public void setData(Papi.Comment[] comments) {
 			this.comments = comments;
+
+			// must make sure jempol betul
+			if (comments != null) {
+				for (final Papi.Comment comment : comments) {
+					if (comment.is_up == 1) comment._jempol_atas = true;
+					if (comment.is_up == -1) comment._jempol_bawah = true;
+				}
+			}
+
 			notifyDataSetChanged();
 		}
 	}
@@ -525,36 +638,6 @@ public class CalegActivity extends Activity {
 
 			jazzy.setObjectForPosition(res, position);
 			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-			return res;
-		}
-
-		View rating(ViewGroup container) {
-			View res = getLayoutInflater().inflate(R.layout.info_rating, container, false);
-
-			ListView commentLs = V.get(res, R.id.comment_list);
-			View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
-			commentLs.addHeaderView(headerView);
-
-			FontTextView rate = V.get(headerView, R.id.total_rating);
-			FontTextView voter = V.get(headerView, R.id.total_voter);
-			final RatingView2 rv = V.get(headerView, R.id.rating);
-			rv.setRating(info.rating.avg);
-			rv.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					final float lastdown = rv.getLastdown();
-					int r = (int) (lastdown * 5) + 1;
-					if (r < 1) r = 1;
-					if (r > 5) r = 5;
-					rv.setRating(r);
-					showDialogRating(r);
-
-				}
-			});
-			rate.setText(String.format("%.1f", info.rating.avg));
-			voter.setText("(" + info.rating.count + " rating)");
-			commentLs.setAdapter(commentsAdapter);
-
 			return res;
 		}
 
@@ -605,30 +688,31 @@ public class CalegActivity extends Activity {
 			submitB.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					FontButton fb = (FontButton) view;
+					final FontButton fb = (FontButton) view;
+					final CharSequence sebelumnya = fb.getText();
 					fb.setText("Mengirim...");
-					fb.setClickable(false);
-					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountsByType[0].name, new Papi.Clbk<Object>() {
+					fb.setEnabled(false);
+
+					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountName, new Papi.Clbk<Object>() {
 
 						@Override
 						public void success(Object o) {
-
-							loadLengkap2();
+							loadComments();
 							postCommentFragment.dismissAllowingStateLoss();
-
 						}
 
 						@Override
 						public void failed(Throwable ex) {
-
+							fb.setEnabled(true);
+							fb.setText(sebelumnya);
 						}
 					});
 				}
 			});
 
-			Picasso.with(CalegActivity.this).load(grava(accountsByType[0].name)).into(ownPhoto);
-			ownEmail.setText(accountsByType[0].name);
-			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
+			Picasso.with(CalegActivity.this).load(grava(accountName)).into(ownPhoto);
+			ownEmail.setText(accountName);
+			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(0x80000000));
 
 			return v;
 		}
