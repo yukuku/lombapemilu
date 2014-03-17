@@ -1,5 +1,5 @@
 <?php
-class Controller_Admin extends Controller_Base {
+class Controller_8e8c87ea929c833d6c1dedbae73630ee extends Controller_Base {
 	public function before() {
 		parent::before();
 		Casset::css('admin.css');
