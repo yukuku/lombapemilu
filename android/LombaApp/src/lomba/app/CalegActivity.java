@@ -31,7 +31,6 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import com.jfeinstein.jazzyviewpager.JazzyViewPager;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
@@ -57,7 +56,7 @@ import java.util.regex.Pattern;
 public class CalegActivity extends Activity {
 	public static final String TAG = CalegActivity.class.getSimpleName();
 
-	JazzyViewPager jazzy;
+	ViewPager jazzy;
 	String id;
 	InfoAdapter adapter;
 	Papi.Caleg info;
@@ -95,7 +94,7 @@ public class CalegActivity extends Activity {
 
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
-		jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
+		// jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
 		final Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
 		if (accounts != null) {
 			accountName = accounts[0].name;
@@ -636,14 +635,14 @@ public class CalegActivity extends Activity {
 				res = datadiri(container);
 			}
 
-			jazzy.setObjectForPosition(res, position);
+			// jazzy.setObjectForPosition(res, position);
 			container.addView(res, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 			return res;
 		}
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object obj) {
-			container.removeView(jazzy.findViewFromObject(position));
+			// container.removeView(jazzy.findViewFromObject(position));
 		}
 
 		@Override
