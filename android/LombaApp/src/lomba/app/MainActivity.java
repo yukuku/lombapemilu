@@ -10,6 +10,9 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +25,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
+import lomba.app.ac.AboutActivity;
+import lomba.app.data.Dapil;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
+import lomba.app.widget.FontSpan;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -36,6 +42,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends Activity {
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
@@ -47,6 +54,8 @@ public class MainActivity extends Activity {
 	TextView tAbTitle;
 	Button bAbLembaga;
 	Papi.Saklar partailoader;
+	Button cbDapilDpr;
+	Button cbDapilDprd1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,15 +64,44 @@ public class MainActivity extends Activity {
 
 		adapter = new DrawerAdapter();
 		drawer = V.get(this, R.id.drawer_layout);
+
+		View navListHeader = getLayoutInflater().inflate(R.layout.drawer_header, null);
+		View navListFooter = getLayoutInflater().inflate(R.layout.drawer_footer, null);
+
 		navList = V.get(this, R.id.drawer);
+		navList.addHeaderView(navListHeader);
+		navList.addFooterView(navListFooter);
 		navList.setAdapter(adapter);
 		navList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				selection = position;
+				Log.d(TAG, "position = " + position);
+				selection = position - 1; // because of header view
 				drawer.closeDrawer(GravityCompat.START);
 				adapter.notifyDataSetChanged();
 				updateContent();
+			}
+		});
+
+		cbDapilDpr = V.get(navListHeader, R.id.cbDapilDpr);
+		cbDapilDprd1 = V.get(navListHeader, R.id.cbDapilDprd1);
+		navListFooter.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				startActivity(new Intent(App.context, AboutActivity.class));
+			}
+		});
+
+		cbDapilDpr.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				popupDapil(cbDapilDpr, 1);
+			}
+		});
+		cbDapilDprd1.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				popupDapil(cbDapilDprd1, 2);
 			}
 		});
 
@@ -117,6 +155,36 @@ public class MainActivity extends Activity {
 		loadPartai();
 
 		setAbtitle(getString(R.string.app_name));
+		displayDrawerDapil();
+	}
+
+	private void popupDapil(final Button button, final int lembaga) {
+		final PopupMenu pop = new PopupMenu(MainActivity.this, button);
+		final List<Dapil.Row> rows = Dapil.getRows(lembaga);
+		final Menu menu = pop.getMenu();
+		for (int i = 0; i < rows.size(); i++) {
+			final Dapil.Row row = rows.get(i);
+			SpannableStringBuilder sb = new SpannableStringBuilder(row.desc);
+			sb.setSpan(new ForegroundColorSpan(0xffffffff), 0, sb.length(), 0);
+			sb.setSpan(new FontSpan(F.reg()), 0, sb.length(), 0);
+			menu.add(0, i, 0, sb);
+		}
+		pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(final MenuItem item) {
+				final int pos = item.getItemId();
+				final Dapil.Row row = rows.get(pos);
+				Preferences.setString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1, row.kode);
+				displayDrawerDapil();
+				return true;
+			}
+		});
+		pop.show();
+	}
+
+	private void displayDrawerDapil() {
+		cbDapilDpr.setText(Dapil.getDesc(1, Preferences.getString(Prefkey.dapil_dpr)));
+		cbDapilDprd1.setText(Dapil.getDesc(2, Preferences.getString(Prefkey.dapil_dprd1)));
 	}
 
 	@Override
@@ -261,6 +329,37 @@ public class MainActivity extends Activity {
 		@Override
 		public int getCount() {
 			return 1 + (partais == null? 0: partais.size());
+		}
+	}
+
+
+	class DapilAdapter extends EasyAdapter {
+		private final List<Dapil.Row> rows;
+
+		public DapilAdapter(final int lembaga) {
+			rows = Dapil.getRows(lembaga);
+		}
+
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.simple_spinner_item, parent, false);
+		}
+
+		@Override
+		public View newDropDownView(final int position, final ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+		}
+
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			TextView textView = (TextView) view;
+			final Dapil.Row row = rows.get(position);
+			textView.setText(row.desc);
+		}
+
+		@Override
+		public int getCount() {
+			return rows.size();
 		}
 	}
 }

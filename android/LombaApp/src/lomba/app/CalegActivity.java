@@ -503,15 +503,23 @@ public class CalegActivity extends Activity {
 		return "http://www.gravatar.com/avatar/" + hasil + "?s=80&d=identicon";
 	}
 
-	static Matcher m = Pattern.compile("([0-9]+(?:-[0-9]+|-SEKARANG)?)(?:,?\\s*)(.*)").matcher("");
+	static Matcher m1 = Pattern.compile("^([0-9]+(?:-[0-9]+|-\\w+)?)(?:,?\\s*)(.*)$", Pattern.CASE_INSENSITIVE).matcher("");
+	// tahun di blk
+	static Matcher m2 = Pattern.compile("^(.*?)(?:,?\\s*)\\s*(?:\\(?)([0-9]+(?:-[0-9]+|-\\w+)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
 
 	String[] pisah(String r) {
-		m.reset(r);
-		if (m.find()) {
-			return new String[] {m.group(1).replace("SEKARANG", "KINI"), U.toTitleCase(m.group(2))};
-		} else {
-			return new String[] {"", U.toTitleCase(r)};
+		m1.reset(r);
+		if (m1.matches()) {
+			return new String[] {m1.group(1).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.toTitleCase(m1.group(2))};
 		}
+
+		// try 2
+		m2.reset(r);
+		if (m2.matches()) {
+			return new String[] {m2.group(2).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.toTitleCase(m2.group(1))};
+		}
+
+		return new String[] {"", U.toTitleCase(r)};
 	}
 
 	class CommentAdapter extends EasyAdapter {
