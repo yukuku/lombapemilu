@@ -30,7 +30,6 @@ import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
-import lomba.app.widget.FontSpan;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -132,8 +131,8 @@ public class MainActivity extends Activity {
 			public void onClick(final View v) {
 				PopupMenu pop = new PopupMenu(getActionBar().getThemedContext(), bAbLembaga);
 				final Menu menu = pop.getMenu();
-				menu.add(0, 1, 0, "DPR");
-				menu.add(0, 2, 0, "DPRD I");
+				menu.add(0, 1, 0, F.wrap("DPR", F.reg()));
+				menu.add(0, 2, 0, F.wrap("DPRD I", F.reg()));
 				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(final MenuItem item) {
@@ -165,8 +164,7 @@ public class MainActivity extends Activity {
 			final Dapil.Row row = rows.get(i);
 			SpannableStringBuilder sb = new SpannableStringBuilder(row.desc);
 			sb.setSpan(new ForegroundColorSpan(0xffffffff), 0, sb.length(), 0);
-			sb.setSpan(new FontSpan(F.reg()), 0, sb.length(), 0);
-			menu.add(0, i, 0, sb);
+			menu.add(0, i, 0, F.wrap(sb, F.reg()));
 		}
 		pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 			@Override

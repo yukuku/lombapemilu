@@ -117,10 +117,10 @@ public class SplashActivity extends Activity {
 			public void bindView(final View view, final int position, final ViewGroup parent) {
 				TextView textView = (TextView) view;
 				if (position == 0) {
-					textView.setText("Pilih Dapil " + (lembaga == 1? "DPR": "DPRD I"));
+					textView.setText(F.wrap("Pilih Dapil " + (lembaga == 1? "DPR": "DPRD I"), F.reg()));
 				} else {
 					final Dapil.Row row = rows.get(position - 1);
-					textView.setText(row.desc);
+					textView.setText(F.wrap(row.desc, F.reg()));
 				}
 			}
 
