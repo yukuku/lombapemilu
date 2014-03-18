@@ -263,12 +263,20 @@ class Controller_Api extends Controller_Rest {
 			))->execute();
 		}
 		
+		$err = DB::error_info();
+		Log::debug(__FUNCTION__ . ' err: ' . print_r($err, 1));
 		Log::debug(__FUNCTION__ . ': kueri terakhir - ' . DB::last_query());
 		Log::debug(__FUNCTION__ . ': ' . $result);
 	
-		$this->response(array(
-			'status' => !empty($result)
-		));
+		$return = array();
+		
+		if(!empty($err[1])) {
+			$return = array('status' => false, 'err' => $err);
+		} else {
+			$return = array('status' => true);
+		}
+		
+		$this->response($return);
 	}
 	
 	/**
