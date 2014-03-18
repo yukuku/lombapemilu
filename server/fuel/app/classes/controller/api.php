@@ -263,6 +263,7 @@ class Controller_Api extends Controller_Rest {
 			))->execute();
 		}
 		
+		Log::debug(__FUNCTION__ . ': kueri terakhir - ' . DB::last_query());
 		Log::debug(__FUNCTION__ . ': ' . $result);
 	
 		$this->response(array(
