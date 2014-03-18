@@ -50,7 +50,6 @@ abstract class Controller
 		{
 			$response = \Response::forge($response, $this->response_status);
 		}
-
 		return $response;
 	}
 

@@ -8,9 +8,16 @@ class Controller_Api extends Controller_Rest {
 	public static $apiKey = '06ec082d057daa3d310b27483cc3962e';
 	protected $format = 'json';
 	
+	/**
+	 * @param string h
+	 */
 	function get_hapus_data() {
-		DB::query('truncate table caleg_rating')->execute();
-		DB::query('truncate table comment_rating')->execute();
+		if(Input::get('hes') != 'inihesyangdatangnyadarijs') {
+		} else {
+			DB::query('truncate table caleg_rating')->execute();
+			DB::query('truncate table comment_rating')->execute();
+		}
+		Response::redirect('admin/index');
 	}
 	
 	/**
@@ -37,7 +44,7 @@ class Controller_Api extends Controller_Rest {
 		
 		//If no calegs returned, return empty array to the client
 		if(empty($calegs)) {
-			$this->response(array());
+			exit("[]"); // Not using $this->response(array()) as it returns empty content and 204, which doesn't work well yet on android
 			return;
 		}
 		
@@ -109,9 +116,9 @@ class Controller_Api extends Controller_Rest {
 
 		$calegs = $results->data->results->caleg;
 		
-		//If no calegs returned, return an empty array to client
+		//If no calegs returned, return empty array to the client
 		if(empty($calegs)) {
-			$this->response(array());
+			exit("[]"); // Not using $this->response(array()) as it returns empty content and 204, which doesn't work well yet on android
 			return;
 		}
 		
