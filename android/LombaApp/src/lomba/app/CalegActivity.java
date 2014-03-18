@@ -505,7 +505,7 @@ public class CalegActivity extends Activity {
 
 	static Matcher m1 = Pattern.compile("^([0-9]+(?:-[0-9]+|-\\w+)?)(?:,?\\s*)(.*)$", Pattern.CASE_INSENSITIVE).matcher("");
 	// tahun di blk
-	static Matcher m2 = Pattern.compile("^(.*?)(?:,?\\s*)\\s*(?:\\(?)([0-9]+(?:-[0-9]+|-\\w+)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
+	static Matcher m2 = Pattern.compile("^(.*?)(?:[,-]?\\s*)\\s*(?:\\(?)([0-9]{4,}(?:\\s*-\\s*[0-9]+|\\s*-\\s*\\w+)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
 
 	String[] pisah(String r) {
 		m1.reset(r);

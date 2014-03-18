@@ -12,7 +12,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +42,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 	private static final String TAG = MainActivity.class.getSimpleName();
+	public static final String KRITERIA_CALEG_BERUBAH = "KRITERIA_CALEG_BERUBAH";
 
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
@@ -75,8 +75,7 @@ public class MainActivity extends Activity {
 		navList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				Log.d(TAG, "position = " + position);
-				selection = position - 1; // because of header view
+				selection = position - navList.getHeaderViewsCount();
 				drawer.closeDrawer(GravityCompat.START);
 				adapter.notifyDataSetChanged();
 				updateContent();
@@ -176,6 +175,7 @@ public class MainActivity extends Activity {
 				final Dapil.Row row = rows.get(pos);
 				Preferences.setString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1, row.kode);
 				displayDrawerDapil();
+				LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(KRITERIA_CALEG_BERUBAH));
 				return true;
 			}
 		});
@@ -197,7 +197,7 @@ public class MainActivity extends Activity {
 		bAbLembaga.setText(new String[] {null, "DPR", "DPRD I", "DPRD II"}[lembaga]);
 		Preferences.setInt(Prefkey.lembaga_aktif, lembaga);
 
-		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("LEMBAGA_BERUBAH"));
+		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(KRITERIA_CALEG_BERUBAH));
 	}
 
 	void setAbtitle(String t) {
