@@ -251,10 +251,12 @@ class Controller_Api extends Controller_Rest {
 		$title = Input::get('title');
 		$content = Input::get('content');
 		if($result->count() > 0) {
+			Log::debug(__FUNCTION__ . ': ' . 'update');
 			$result = DB::update('caleg_rating')->set(array(
 				'title' => $title, 'content' => $content, 'updated' => time(), 'rating' => $rating
 			))->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
 		} else {
+			Log::debug(__FUNCTION__ . ': ' . 'insert');
 			$result = DB::insert('caleg_rating')->set(array(
 				'caleg_id' => $calegId, 'user_email' => $userEmail, 'rating' => $rating,
 				'title' => $title, 'content' => $content, 'created' => time(), 'updated' => time()
