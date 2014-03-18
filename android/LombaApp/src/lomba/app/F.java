@@ -1,6 +1,8 @@
 package lomba.app;
 
 import android.graphics.Typeface;
+import android.text.SpannableStringBuilder;
+import lomba.app.widget.FontSpan;
 
 public class F {
 	public static final String TAG = F.class.getSimpleName();
@@ -30,4 +32,9 @@ public class F {
 		return bold;
 	}
 
+	public static SpannableStringBuilder wrap(CharSequence s, Typeface f) {
+		final SpannableStringBuilder res = s instanceof SpannableStringBuilder? (SpannableStringBuilder) s: new SpannableStringBuilder(s);
+		res.setSpan(new FontSpan(f), 0, res.length(), 0);
+		return res;
+	}
 }

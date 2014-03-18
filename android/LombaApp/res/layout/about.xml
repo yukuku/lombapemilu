@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:background="#e5e5e5">
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/note_shadow"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:gravity="center_horizontal"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp">
+
+            <ImageView
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/ic_launcher_196"
+                    android:layout_marginTop="24dp"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:tag="bold"
+                    android:textSize="24dp"
+                    android:layout_marginTop="16dp"/>
+
+            <lomba.app.widget.FontTextView
+                    android:id="@+id/tVersi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="versi x.y.z"
+                    android:textSize="18dp"
+                    />
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pemenang ke-3 Pemilu Hackathon 8–9 Maret 2014"
+                    android:textSize="16dp"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center_horizontal"/>
+
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Team Alexcier"
+                    android:textSize="18dp"
+                    android:tag="bold"
+                    android:layout_marginTop="32dp"/>
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Randy Sugianto (Yuku) - programmer\nAndreas Wong - programmer\nJaya Satrio Hendrick - desainer"
+                    android:textSize="16dp"
+                    android:gravity="center_horizontal"/>
+
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Atribusi"
+                    android:textSize="16dp"
+                    android:tag="bold"
+                    android:layout_marginTop="32dp"/>
+            <lomba.app.widget.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" “Home” symbol by Edward Boatman, “Person” symbol by Dmitry Baranovskiy, “Parent” symbol by Dmitry Baranovskiy, “Couple” symbol by Piotrek Chuchla, “Child” symbol by Jens Tärning, “Group” symbol by baabullah hasan, “Briefcase” symbol by Ed Harrison, “Book” symbol by Dan Hetteix, from The Noun Project."
+                    android:textSize="16dp"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="32dp"/>
+        </LinearLayout>
+    </FrameLayout>
+</ScrollView>
