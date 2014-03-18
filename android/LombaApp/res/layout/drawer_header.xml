@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:paddingLeft="8dp"
+              android:paddingTop="8dp"
+              android:paddingBottom="8dp">
+
+    <lomba.app.widget.FontTextView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:tag="bold"
+                                   android:textSize="14dp"
+                                   android:text="DAPIL DPR"/>
+
+    <lomba.app.widget.FontButton android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/cbDapilDpr"
+            style="?android:spinnerStyle"/>
+
+    <lomba.app.widget.FontTextView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:tag="bold"
+                                   android:textSize="14dp"
+                                   android:text="DAPIL DPRD I"/>
+
+    <lomba.app.widget.FontButton android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/cbDapilDprd1"
+             style="?android:spinnerStyle"/>
+
+</LinearLayout>

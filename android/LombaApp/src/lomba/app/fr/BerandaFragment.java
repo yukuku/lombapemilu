@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
 import lomba.app.App;
 import lomba.app.CalegActivity;
+import lomba.app.MainActivity;
 import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -51,7 +52,7 @@ public class BerandaFragment extends Fragment {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter("LEMBAGA_BERUBAH"));
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.KRITERIA_CALEG_BERUBAH));
 	}
 
 	@Override

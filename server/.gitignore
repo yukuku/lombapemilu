@@ -3,3 +3,5 @@
 .project
 cache/*
 fuel/app/cache/*
+public/assets/cache/*.css
+public/assets/cache/*.js

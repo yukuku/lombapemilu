@@ -8,9 +8,16 @@ class Controller_Api extends Controller_Rest {
 	public static $apiKey = '06ec082d057daa3d310b27483cc3962e';
 	protected $format = 'json';
 	
+	/**
+	 * @param string h
+	 */
 	function get_hapus_data() {
-		DB::query('truncate table caleg_rating')->execute();
-		DB::query('truncate table comment_rating')->execute();
+		if(Input::get('hes') != 'inihesyangdatangnyadarijs') {
+		} else {
+			DB::query('truncate table caleg_rating')->execute();
+			DB::query('truncate table comment_rating')->execute();
+		}
+		Response::redirect('admin/index');
 	}
 	
 	/**
@@ -37,7 +44,7 @@ class Controller_Api extends Controller_Rest {
 		
 		//If no calegs returned, return empty array to the client
 		if(empty($calegs)) {
-			$this->response(array());
+			exit("[]"); // Not using $this->response(array()) as it returns empty content and 204, which doesn't work well yet on android
 			return;
 		}
 		
@@ -109,9 +116,9 @@ class Controller_Api extends Controller_Rest {
 
 		$calegs = $results->data->results->caleg;
 		
-		//If no calegs returned, return an empty array to client
+		//If no calegs returned, return empty array to the client
 		if(empty($calegs)) {
-			$this->response(array());
+			exit("[]"); // Not using $this->response(array()) as it returns empty content and 204, which doesn't work well yet on android
 			return;
 		}
 		
@@ -192,18 +199,16 @@ class Controller_Api extends Controller_Rest {
 			$orderBy = 't.sum';	
 		}
 		
-		//Combine all the queries
-		// 		"select * from comment left outer join " .
-		// 		"(select rating_id, sum(is_up) as sum from comment_rating group by (rating_id)) t on " .
-		// 		"comment.id = t.rating_id left outer join " .
-		// 		"(select rating_id, is_up from comment_rating where user_email = '%s') u on " .
-		// 		"comment.id = u.rating_id where comment.caleg_id = '%s' order by comment.updated desc;";
 		$results = DB::select('*')->from('caleg_rating')->
 			join(array($sumRatingOnComment, 't'), 'left outer')->on('caleg_rating.id', '=', 't.rating_id')->
 			join(array($didUserRateComment, 'u'), 'left outer')->on('caleg_rating.id', '=', 'u.rating_id')->
 			where('caleg_rating.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
 		
 		$return = $results->as_array();
+		
+		if(empty($return)) {
+			exit("[]");
+		}
 		
 		foreach($return as $i => $result) {
 			if(empty($return[$i]['sum'])) {
@@ -245,20 +250,33 @@ class Controller_Api extends Controller_Rest {
 		$rating = Input::get('rating');
 		$title = Input::get('title');
 		$content = Input::get('content');
-		if($result->count() > 0 && $result) {
+		if($result->count() > 0) {
+			Log::debug(__FUNCTION__ . ': ' . 'update');
 			$result = DB::update('caleg_rating')->set(array(
 				'title' => $title, 'content' => $content, 'updated' => time(), 'rating' => $rating
 			))->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
 		} else {
+			Log::debug(__FUNCTION__ . ': ' . 'insert');
 			$result = DB::insert('caleg_rating')->set(array(
 				'caleg_id' => $calegId, 'user_email' => $userEmail, 'rating' => $rating,
 				'title' => $title, 'content' => $content, 'created' => time(), 'updated' => time()
 			))->execute();
 		}
+		
+		$err = DB::error_info();
+		Log::debug(__FUNCTION__ . ' err: ' . print_r($err, 1));
+		Log::debug(__FUNCTION__ . ': kueri terakhir - ' . DB::last_query());
+		Log::debug(__FUNCTION__ . ': ' . $result);
 	
-		$this->response(array(
-			'status' => !empty($result)
-		));
+		$return = array();
+		
+		if(!empty($err[1])) {
+			$return = array('status' => false, 'err' => $err);
+		} else {
+			$return = array('status' => true);
+		}
+		
+		$this->response($return);
 	}
 	
 	/**

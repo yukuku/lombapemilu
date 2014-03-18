@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<lomba.app.widget.FontTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="ABOUT"
+        android:paddingLeft="16dp"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:background="@drawable/main_drawer_list_selector"
+        />

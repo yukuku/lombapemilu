@@ -21,6 +21,8 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 
+import java.util.List;
+
 public class SplashActivity extends Activity {
 	Handler h = new Handler();
 	int lokasicekbrpkali = 0;
@@ -64,8 +66,8 @@ public class SplashActivity extends Activity {
 		@Override
 		public void run() {
 			tStatus.setText("Daerah pemilihan:");
-			DapilAdapter dprAdapter = new DapilAdapter(Dapil.dpr);
-			DapilAdapter dprd1Adapter = new DapilAdapter(Dapil.dprd1);
+			DapilAdapter dprAdapter = new DapilAdapter(1);
+			DapilAdapter dprd1Adapter = new DapilAdapter(2);
 			iProgress.clearAnimation();
 			iProgress.setVisibility(View.INVISIBLE);
 			cbDapilDpr.setAdapter(dprAdapter);
@@ -76,16 +78,16 @@ public class SplashActivity extends Activity {
 			bSave.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					int posDpr = cbDapilDpr.getSelectedItemPosition();
-					int posDprd1 = cbDapilDprd1.getSelectedItemPosition();
+					int posDpr = cbDapilDpr.getSelectedItemPosition() - 1;
+					int posDprd1 = cbDapilDprd1.getSelectedItemPosition() - 1;
 
-					if (posDpr == 0 || posDprd1 == 0) {
+					if (posDpr == -1 || posDprd1 == -1) {
 						// jangan ngapa2in
 						return;
 					}
 
-					Preferences.setString(Prefkey.dapil_dpr, Dapil.dpr[posDpr].split(" ", 2)[0]);
-					Preferences.setString(Prefkey.dapil_dprd1, Dapil.dprd1[posDprd1].split(" ", 2)[0]);
+					Preferences.setString(Prefkey.dapil_dpr, Dapil.getKode(1, posDpr));
+					Preferences.setString(Prefkey.dapil_dprd1, Dapil.getKode(2, posDprd1));
 
 					h.postDelayed(masukmain, 100);
 				}
@@ -93,10 +95,12 @@ public class SplashActivity extends Activity {
 		}
 
 		class DapilAdapter extends EasyAdapter {
-			private final String[] rows;
+			private final List<Dapil.Row> rows;
+			private final int lembaga;
 
-			DapilAdapter(String[] rows) {
-				this.rows = rows;
+			public DapilAdapter(final int lembaga) {
+				this.lembaga = lembaga;
+				rows = Dapil.getRows(lembaga);
 			}
 
 			@Override
@@ -112,13 +116,17 @@ public class SplashActivity extends Activity {
 			@Override
 			public void bindView(final View view, final int position, final ViewGroup parent) {
 				TextView textView = (TextView) view;
-				final String[] split = rows[position].split(" ", 2);
-				textView.setText(split[1]);
+				if (position == 0) {
+					textView.setText(F.wrap("Pilih Dapil " + (lembaga == 1? "DPR": "DPRD I"), F.reg()));
+				} else {
+					final Dapil.Row row = rows.get(position - 1);
+					textView.setText(F.wrap(row.desc, F.reg()));
+				}
 			}
 
 			@Override
 			public int getCount() {
-				return rows.length;
+				return 1 + rows.size();
 			}
 		}
 	};
