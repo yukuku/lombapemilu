@@ -199,18 +199,16 @@ class Controller_Api extends Controller_Rest {
 			$orderBy = 't.sum';	
 		}
 		
-		//Combine all the queries
-		// 		"select * from comment left outer join " .
-		// 		"(select rating_id, sum(is_up) as sum from comment_rating group by (rating_id)) t on " .
-		// 		"comment.id = t.rating_id left outer join " .
-		// 		"(select rating_id, is_up from comment_rating where user_email = '%s') u on " .
-		// 		"comment.id = u.rating_id where comment.caleg_id = '%s' order by comment.updated desc;";
 		$results = DB::select('*')->from('caleg_rating')->
 			join(array($sumRatingOnComment, 't'), 'left outer')->on('caleg_rating.id', '=', 't.rating_id')->
 			join(array($didUserRateComment, 'u'), 'left outer')->on('caleg_rating.id', '=', 'u.rating_id')->
 			where('caleg_rating.caleg_id', Input::get('caleg_id'))->order_by($orderBy, 'desc')->execute();
 		
 		$return = $results->as_array();
+		
+		if(empty($return)) {
+			exit("[]");
+		}
 		
 		foreach($return as $i => $result) {
 			if(empty($return[$i]['sum'])) {
