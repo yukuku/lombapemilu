@@ -1,9 +1,16 @@
 package lomba.app.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Dapil {
 
-	public static String[] dpr = {
-	"0 Pilih dapil DPR",
+	public static class Row {
+		public String kode;
+		public String desc;
+	}
+
+	static String[] dpr = {
 	"1101-00-0000 Aceh I",
 	"1102-00-0000 Aceh II",
 	"1201-00-0000 Sumatera Utara I",
@@ -84,8 +91,7 @@ public class Dapil {
 
 	};
 
-	public static String[] dprd1 = {
-	"0 Pilih dapil DPRD I",
+	static String[] dprd1 = {
 	"1100-01-0000 Aceh 1",
 	"1100-02-0000 Aceh 2",
 	"1100-03-0000 Aceh 3",
@@ -346,4 +352,59 @@ public class Dapil {
 	"9200-04-0000 Papua Barat 4",
 	"9200-05-0000 Papua Barat 5",
 	};
+
+	public static List<Row> getRows(int lembaga) {
+		String[] data;
+		if (lembaga == 1) {
+			data = dpr;
+		} else if (lembaga == 2) {
+			data = dprd1;
+		} else {
+			throw new RuntimeException("lembaga ga didukung");
+		}
+
+		List<Row> res = new ArrayList<>();
+		for (final String s : data) {
+			res.add(new Row() {{
+				String[] splitan = s.split(" ", 2);
+				kode = splitan[0];
+				desc = splitan[1];
+			}});
+		}
+		return res;
+	}
+
+	public static String getKode(final int lembaga, final int pos) {
+		String[] data;
+		if (lembaga == 1) {
+			data = dpr;
+		} else if (lembaga == 2) {
+			data = dprd1;
+		} else {
+			throw new RuntimeException("lembaga ga didukung");
+		}
+
+		String[] splitan = data[pos].split(" ", 2);
+		return splitan[0];
+	}
+
+	public static String getDesc(final int lembaga, final String kode) {
+		String[] data;
+		if (lembaga == 1) {
+			data = dpr;
+		} else if (lembaga == 2) {
+			data = dprd1;
+		} else {
+			throw new RuntimeException("lembaga ga didukung");
+		}
+
+		for (final String s : data) {
+			if (s.startsWith(kode)) {
+				String[] splitan = s.split(" ", 2);
+				return splitan[1];
+			}
+		}
+
+		return null;
+	}
 }
