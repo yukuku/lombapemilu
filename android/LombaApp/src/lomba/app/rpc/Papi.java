@@ -173,8 +173,8 @@ public class Papi {
 	static Saklar get(String url, RequestParams params, final Hasil hasil) {
 		final Saklar saklar = new Saklar();
 
+		final int noseri = Papi.noseri.incrementAndGet();
 		try {
-			final int noseri = Papi.noseri.incrementAndGet();
 			client.get(url, params, new AsyncHttpResponseHandler() {
 				public String getResponseString(byte[] stringBytes, String charset) {
 					try {
@@ -194,8 +194,8 @@ public class Papi {
 					} finally {
 						final int c = cnt.decrementAndGet();
 						if (BuildConfig.DEBUG) {
-							Log.d(TAG, "[end get " + noseri + " onSuccess] connections: " + c);
-							Log.d(TAG, saklar.cancelled? "- cancelled": ("- response: " + response));
+							Log.d(TAG, "[get " + noseri + " onSuccess] connections: " + c);
+							Log.d(TAG, ("[" + noseri + "] ") + (saklar.cancelled? "- cancelled": ("- response: " + response)));
 						}
 					}
 				}
@@ -208,8 +208,14 @@ public class Papi {
 					} finally {
 						final int c = cnt.decrementAndGet();
 						if (BuildConfig.DEBUG) {
-							Log.d(TAG, "[end get " + noseri + " onFailure] connections: " + c);
-							Log.d(TAG, saklar.cancelled? "- cancelled": ("- error: " + error));
+							Log.d(TAG, "[get " + noseri + " onFailure] connections: " + c);
+							if (saklar.cancelled) {
+								Log.d(TAG, ("[" + noseri + "] ") + "- cancelled");
+							} else {
+								String response = getResponseString(responseBody, "utf-8");
+								Log.d(TAG, ("[" + noseri + "] ") + "- error: " + error);
+								Log.d(TAG, ("[" + noseri + "] ") + "- response: " + response);
+							}
 						}
 					}
 				}
@@ -218,9 +224,9 @@ public class Papi {
 		} finally {
 			final int c = cnt.incrementAndGet();
 			if (BuildConfig.DEBUG) {
-				Log.d(TAG, "[start get " + noseri + "] connections: " + c);
-				Log.d(TAG, "- url: " + url);
-				Log.d(TAG, "- params: " + params);
+				Log.d(TAG, "[get " + noseri + " start] connections: " + c);
+				Log.d(TAG, ("[" + noseri + "] ") + "- url: " + url);
+				Log.d(TAG, ("[" + noseri + "] ") + "- params: " + params);
 			}
 		}
 	}
