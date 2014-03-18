@@ -250,7 +250,7 @@ class Controller_Api extends Controller_Rest {
 		$rating = Input::get('rating');
 		$title = Input::get('title');
 		$content = Input::get('content');
-		if($result->count() > 0 && $result) {
+		if($result->count() > 0) {
 			$result = DB::update('caleg_rating')->set(array(
 				'title' => $title, 'content' => $content, 'updated' => time(), 'rating' => $rating
 			))->where('caleg_id', $calegId)->where('user_email', $userEmail)->execute();
@@ -260,6 +260,8 @@ class Controller_Api extends Controller_Rest {
 				'title' => $title, 'content' => $content, 'created' => time(), 'updated' => time()
 			))->execute();
 		}
+		
+		Log::debug(__FUNCTION__ . ': ' . $result);
 	
 		$this->response(array(
 			'status' => !empty($result)
