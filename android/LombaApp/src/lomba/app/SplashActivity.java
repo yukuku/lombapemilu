@@ -1,6 +1,5 @@
 package lomba.app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +13,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.thnkld.calegstore.app.R;
+import lomba.app.App;
+import lomba.app.F;
+import lomba.app.ac.MainActivity;
+import lomba.app.ac.base.BaseActivity;
 import lomba.app.data.Dapil;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -23,7 +26,7 @@ import yuku.afw.widget.EasyAdapter;
 
 import java.util.List;
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends BaseActivity {
 	Handler h = new Handler();
 	int lokasicekbrpkali = 0;
 	TextView tStatus;
