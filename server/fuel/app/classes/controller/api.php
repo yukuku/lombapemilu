@@ -136,11 +136,10 @@ class Controller_Api extends Controller_Rest {
 		 * Top rated, with a subquery, we first get all the average of required calegs
 		 * Then outer query fetch the largest average
 		 */
-		$subQuery = DB::select('caleg_id', DB::expr('avg(rating) as avg_rate'))->from('caleg_rating')->group_by('caleg_id');
+		$subQuery = DB::select('caleg_id', DB::expr('avg(rating) as avg_rate'), DB::expr('count(*) as count_rate'))->from('caleg_rating')->group_by('caleg_id')->where('caleg_id', 'in', $calegIds);
 		$topRated = DB::select('t.caleg_id', DB::expr('max(avg_rate) as mar'))->from(array($subQuery, 't'))->where('caleg_id', 'in', $calegIds)
-			->group_by('caleg_id')->order_by('mar', 'desc')->execute();
+			->group_by('caleg_id')->order_by('mar', 'desc')->order_by('count_rate', 'desc')->execute();
 		$topRated = $topRated->current();
-		
 		if(empty($topRated)) {
 			$topRated = $calegs[rand(0, count($calegs) - 1)];
 			$topRated->rating = Util::getCalegRating($topRated->id);
