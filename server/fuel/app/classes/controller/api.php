@@ -266,7 +266,7 @@ class Controller_Api extends Controller_Rest {
 		$err = DB::error_info();
 		Log::debug(__FUNCTION__ . ' err: ' . print_r($err, 1));
 		Log::debug(__FUNCTION__ . ': kueri terakhir - ' . DB::last_query());
-		Log::debug(__FUNCTION__ . ': ' . $result);
+		Log::debug(__FUNCTION__ . ': ' . print_r($result, 1));
 	
 		$return = array();
 		
