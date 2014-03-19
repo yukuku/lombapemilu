@@ -20,8 +20,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
 import lomba.app.App;
-import lomba.app.CalegActivity;
-import lomba.app.MainActivity;
+import lomba.app.ac.CalegActivity;
+import lomba.app.ac.MainActivity;
 import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -52,7 +52,7 @@ public class BerandaFragment extends Fragment {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.KRITERIA_CALEG_BERUBAH));
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.CALEG_BERUBAH));
 	}
 
 	@Override
@@ -128,6 +128,7 @@ public class BerandaFragment extends Fragment {
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView tJudul = V.get(view, R.id.tJudul);
 			ImageView imgFoto = V.get(view, R.id.imgFoto);
+			TextView tUrutan = V.get(view, R.id.tUrutan);
 			TextView tDesc = V.get(view, R.id.tDesc);
 			RatingView rating = V.get(view, R.id.rating);
 			TextView tRatingCount = V.get(view, R.id.tRatingCount);
@@ -138,6 +139,7 @@ public class BerandaFragment extends Fragment {
 
 			final Papi.Caleg caleg = new Papi.Caleg[] {beranda.featured, beranda.most_commented, beranda.top_rated}[position];
 
+			tUrutan.setText("" + caleg.urutan);
 			Picasso.with(getActivity()).load(U.bc(240, 320, caleg.foto_url)).placeholder("L".equals(caleg.jenis_kelamin)? R.drawable.dummyfotolakibesar: R.drawable.dummyfotoperempuanbesar).into(imgFoto);
 			tDesc.setText(U.bagusinNama(caleg.nama));
 			rating.setRating(caleg.rating == null? 0: caleg.rating.avg);

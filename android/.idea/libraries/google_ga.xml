@@ -1,10 +1,10 @@
 <component name="libraryTable">
   <library name="google-ga">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/external/google-analytics-v3/libGoogleAnalyticsServices.jar!/" />
+      <root url="jar://$PROJECT_DIR$/external/google-analytics-services/libGoogleAnalyticsServices.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$PROJECT_DIR$/external/google-analytics-v3/ga/javadocs.zip!/" />
+      <root url="jar://$PROJECT_DIR$/external/google-analytics-services/ga/javadocs.zip!/" />
     </JAVADOC>
     <SOURCES />
   </library>

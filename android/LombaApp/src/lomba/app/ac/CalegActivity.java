@@ -1,8 +1,7 @@
-package lomba.app;
+package lomba.app.ac;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -10,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
@@ -17,6 +17,8 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.LruCache;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +36,9 @@ import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
+import lomba.app.App;
+import lomba.app.U;
+import lomba.app.ac.base.BaseActivity;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.FontButton;
 import lomba.app.widget.FontEditTextView;
@@ -47,13 +52,16 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CalegActivity extends Activity {
+public class CalegActivity extends BaseActivity {
 	public static final String TAG = CalegActivity.class.getSimpleName();
 
 	ViewPager jazzy;
@@ -70,8 +78,16 @@ public class CalegActivity extends Activity {
 	private ImageButton bP4;
 	private ImageButton bP5;
 	private ImageButton bP6;
-	int sortcode = 1;
+	int orderbycode = 1;
 	Papi.Saklar commentloader;
+	Papi.Saklar lengkaploader;
+	List<Pair<LinearLayout, JenisTimeline>> willupdatewhendetailinfocompleteds = new ArrayList<>();
+	private FontTextView tTotalRating;
+	private FontTextView tTotalVoter;
+
+	enum JenisTimeline {
+		pendidikan, pekerjaan, organisasi;
+	}
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -177,11 +193,12 @@ public class CalegActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		Papi.lupakan(commentloader);
+		Papi.lupakan(lengkaploader);
 	}
 
 	void loadComments() {
-		String sort = sortcode == 1? "jempoled": "updated";
-		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
+		String order_by = orderbycode == 1? "jempoled": "updated";
+		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, order_by, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
@@ -220,14 +237,34 @@ public class CalegActivity extends Activity {
 	}
 
 	void loadLengkap() {
-		Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
+		lengkaploader = Papi.ganti(lengkaploader, Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
 			@Override
 			public void success(final Papi.Caleg caleg) {
 				Log.d(TAG, "@@success diperbarui");
-				CalegActivity.this.info.riwayat_pendidikan = caleg.riwayat_pendidikan;
-				CalegActivity.this.info.riwayat_pekerjaan = caleg.riwayat_pekerjaan;
-				CalegActivity.this.info.riwayat_organisasi = caleg.riwayat_organisasi;
-				adapter.notifyDataSetChanged();
+				info.riwayat_pendidikan = caleg.riwayat_pendidikan;
+				info.riwayat_pekerjaan = caleg.riwayat_pekerjaan;
+				info.riwayat_organisasi = caleg.riwayat_organisasi;
+				for (final Pair<LinearLayout, JenisTimeline> willupdatewhendetailinfocompleted : willupdatewhendetailinfocompleteds) {
+					final Papi.IdRingkasan[] idringkasans;
+					switch (willupdatewhendetailinfocompleted.second) {
+						case pendidikan:
+							idringkasans = info.riwayat_pendidikan;
+							break;
+						case pekerjaan:
+							idringkasans = info.riwayat_pekerjaan;
+							break;
+						case organisasi:
+							idringkasans = info.riwayat_organisasi;
+							break;
+						default:
+							idringkasans = null;
+							break;
+					}
+
+					displayTimeline(willupdatewhendetailinfocompleted.first, idringkasans);
+				}
+				info.rating = caleg.rating;
+				displayRating();
 			}
 
 			@Override
@@ -246,11 +283,12 @@ public class CalegActivity extends Activity {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	View datadiri(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_datadiri, container, false);
+		TextView tUrutan = V.get(res, R.id.tUrutan);
 		TextView tUsia = V.get(res, R.id.tUsia);
 		TextView tAgama = V.get(res, R.id.tAgama);
 		TextView tGender = V.get(res, R.id.tGender);
@@ -259,6 +297,8 @@ public class CalegActivity extends Activity {
 		TextView tPartai = V.get(res, R.id.tPartai);
 		ImageView imgPartai = V.get(res, R.id.imgPartai);
 		ImageView imgFoto = V.get(res, R.id.imgFoto);
+
+		tUrutan.setText("" + info.urutan);
 
 		int umur = 0;
 		if (info.tanggal_lahir != null) {
@@ -338,12 +378,12 @@ public class CalegActivity extends Activity {
 			anakcontainer.addView(img);
 		}
 
-		tLokasi.setText(U.toTitleCase(gabung(info)));
+		tLokasi.setText(U.toTitleCase(gabungTinggal(info)));
 
 		return res;
 	}
 
-	public static String gabung(Papi.Caleg info) {
+	public static String gabungTinggal(Papi.Caleg info) {
 		StringBuilder sb = new StringBuilder();
 		if (!TextUtils.isEmpty(info.kelurahan_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
@@ -371,7 +411,8 @@ public class CalegActivity extends Activity {
 		LinearLayout wadah = V.get(res, R.id.wadah);
 		final Papi.IdRingkasan[] idringkasans = info.riwayat_organisasi;
 
-		addrows(wadah, idringkasans);
+		displayTimeline(wadah, idringkasans);
+		willupdatewhendetailinfocompleteds.add(Pair.create(wadah, JenisTimeline.organisasi));
 
 		return res;
 	}
@@ -382,21 +423,65 @@ public class CalegActivity extends Activity {
 		LinearLayout wadah = V.get(res, R.id.wadah);
 		final Papi.IdRingkasan[] idringkasans = info.riwayat_pendidikan;
 
-		addrows(wadah, idringkasans);
+		displayTimeline(wadah, idringkasans);
+		willupdatewhendetailinfocompleteds.add(Pair.create(wadah, JenisTimeline.pendidikan));
 
 		return res;
 	}
 
-	private void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
-		if (idringkasans != null && idringkasans.length > 0) {
+	static Matcher mtoint = Pattern.compile("[^0-9]").matcher("");
 
+	static int toint(String s) {
+		if (s == null || s.length() == 0) return 0;
+
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			mtoint.reset(s);
+			if (mtoint.find()) {
+				try {
+					return Integer.parseInt(s.substring(0, mtoint.start()));
+				} catch (NumberFormatException e1) {
+					return 0;
+				}
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	void displayTimeline(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
+		// clear first
+		wadah.removeAllViews();
+
+		// case 1: not loaded
+		if (idringkasans == null) {
+			wadah.addView(getLayoutInflater().inflate(R.layout.item_riwayat_masihloading, wadah, false));
+		}
+		// case 2: loaded but no data
+		else if (idringkasans.length == 0) {
+			wadah.addView(getLayoutInflater().inflate(R.layout.item_riwayat_kosong, wadah, false));
+		}
+		// case 3: loaded and have some data
+		else {
 			Papi.IdRingkasan[] dua = idringkasans.clone();
-			Arrays.sort(dua, new Comparator<Papi.IdRingkasan>() {
+			Arrays.sort(dua, Collections.reverseOrder(new Comparator<Papi.IdRingkasan>() {
 				@Override
 				public int compare(final Papi.IdRingkasan lhs, final Papi.IdRingkasan rhs) {
-					return rhs.ringkasan.compareTo(lhs.ringkasan);
+					final String[] lhpisah = pisah(lhs.ringkasan);
+					final String[] rhpisah = pisah(rhs.ringkasan);
+
+					int lhtahun = toint(lhpisah[0]);
+					int rhtahun = toint(rhpisah[0]);
+
+					if (lhtahun != rhtahun) {
+						return lhtahun - rhtahun;
+					}
+
+					// original
+					return 0;
 				}
-			});
+			}));
 
 			for (int i = 0; i < dua.length; i++) {
 				final Papi.IdRingkasan row = dua[i];
@@ -415,9 +500,6 @@ public class CalegActivity extends Activity {
 
 				wadah.addView(v);
 			}
-		} else {
-			final View v = getLayoutInflater().inflate(R.layout.item_riwayat_kosong, wadah, false);
-			wadah.addView(v);
 		}
 	}
 
@@ -427,7 +509,8 @@ public class CalegActivity extends Activity {
 		LinearLayout wadah = V.get(res, R.id.wadah);
 		final Papi.IdRingkasan[] idringkasans = info.riwayat_pekerjaan;
 
-		addrows(wadah, idringkasans);
+		displayTimeline(wadah, idringkasans);
+		willupdatewhendetailinfocompleteds.add(Pair.create(wadah, JenisTimeline.pekerjaan));
 
 		return res;
 	}
@@ -439,8 +522,8 @@ public class CalegActivity extends Activity {
 		View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
 		commentLs.addHeaderView(headerView);
 
-		FontTextView rate = V.get(headerView, R.id.total_rating);
-		FontTextView voter = V.get(headerView, R.id.total_voter);
+		tTotalRating = V.get(headerView, R.id.total_rating);
+		tTotalVoter = V.get(headerView, R.id.total_voter);
 		final FontButton bSort = V.get(headerView, R.id.bSort);
 		final RatingView2 rv = V.get(headerView, R.id.rating);
 		rv.setRating(info.rating.avg);
@@ -466,7 +549,7 @@ public class CalegActivity extends Activity {
 				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(final MenuItem item) {
-						sortcode = item.getItemId();
+						orderbycode = item.getItemId();
 						bSort.setText(item.getTitle());
 						loadComments();
 						return true;
@@ -476,11 +559,16 @@ public class CalegActivity extends Activity {
 
 			}
 		});
-		rate.setText(String.format("%.1f", info.rating.avg));
-		voter.setText("(" + info.rating.count + " rating)");
+		displayRating();
 		commentLs.setAdapter(commentsAdapter);
 
 		return res;
+	}
+
+	private void displayRating() {
+		if (info.rating == null) return;
+		if (tTotalRating != null) tTotalRating.setText(String.format("%.1f", info.rating.avg));
+		if (tTotalVoter != null) tTotalVoter.setText("(" + info.rating.count + " rating)");
 	}
 
 	String grava(String email) {
@@ -505,21 +593,33 @@ public class CalegActivity extends Activity {
 
 	static Matcher m1 = Pattern.compile("^([0-9]+(?:-[0-9]+|-\\w+)?)(?:,?\\s*)(.*)$", Pattern.CASE_INSENSITIVE).matcher("");
 	// tahun di blk
-	static Matcher m2 = Pattern.compile("^(.*?)(?:[,-]?\\s*)\\s*(?:\\(?)([0-9]{4,}(?:\\s*-\\s*[0-9]+|\\s*-\\s*\\w+)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
+	static Matcher m2 = Pattern.compile("^(.*?)(?:[,-]?\\s*)\\s*(?:\\(?)([0-9]{4,}(?:\\s*-\\s*[0-9]+|\\s*-\\s*(?:\\w+)?)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
+
+	static LruCache<String, String[]> pisahcache = new LruCache<>(100);
 
 	String[] pisah(String r) {
+		String[] v = pisahcache.get(r);
+		if (v != null) {
+			return v;
+		}
+		v = pisah0(r);
+		pisahcache.put(r, v);
+		return v;
+	}
+
+	String[] pisah0(String r) {
 		m1.reset(r);
 		if (m1.matches()) {
-			return new String[] {m1.group(1).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.toTitleCase(m1.group(2))};
+			return new String[] {m1.group(1).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.formatRiwayat(m1.group(2))};
 		}
 
 		// try 2
 		m2.reset(r);
 		if (m2.matches()) {
-			return new String[] {m2.group(2).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.toTitleCase(m2.group(1))};
+			return new String[] {m2.group(2).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.formatRiwayat(m2.group(1))};
 		}
 
-		return new String[] {"", U.toTitleCase(r)};
+		return new String[] {"", U.formatRiwayat(r)};
 	}
 
 	class CommentAdapter extends EasyAdapter {
@@ -705,7 +805,11 @@ public class CalegActivity extends Activity {
 						@Override
 						public void success(Object o) {
 							loadComments();
+							loadLengkap();
 							postCommentFragment.dismissAllowingStateLoss();
+
+							// ask everyone to refresh
+							LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(MainActivity.CALEG_BERUBAH));
 						}
 
 						@Override

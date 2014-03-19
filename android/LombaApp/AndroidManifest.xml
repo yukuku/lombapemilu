@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.thnkld.calegstore.app"
-          android:versionCode="6"
-          android:versionName="2.1.0">
+          android:versionCode="7"
+          android:versionName="2.2.0">
     <uses-sdk android:minSdkVersion="14"
               android:targetSdkVersion="18"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application android:label="@string/app_name"
                  android:icon="@drawable/ic_launcher"
                  android:theme="@style/Theme.Lomba"
                  android:name="lomba.app.App">
-        <activity android:name="lomba.app.MainActivity"
+        <activity android:name="lomba.app.ac.MainActivity"
                   android:exported="true"
                   android:label="@string/app_name"/>
-        <activity android:name="lomba.app.CalegActivity"
-                  android:label="@string/app_name"
+        <activity android:name="lomba.app.ac.CalegActivity"
                   android:theme="@android:style/Theme.Holo.NoActionBar"/>
-        <activity android:name="lomba.app.BandingActivity"
+        <activity android:name="lomba.app.ac.BandingActivity"
                   android:theme="@android:style/Theme.Holo.NoActionBar"/>
         <activity android:name="lomba.app.SplashActivity"
                   android:theme="@android:style/Theme.Holo.Light.NoActionBar">

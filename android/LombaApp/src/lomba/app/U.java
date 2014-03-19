@@ -85,6 +85,21 @@ public class U {
 		return titleCase.toString();
 	}
 
+	public static String formatRiwayat(String input) {
+		// cek apakah semua huruf besar kalo iya pake toTitleCase
+		boolean semuakapital = true;
+		for (final char c : input.toCharArray()) {
+			if (c >= 'a' && c <= 'z') { // has lowercase
+				semuakapital = false;
+				break;
+			}
+		}
+		if (semuakapital) {
+			return toTitleCase(input);
+		}
+		return input;
+	}
+
 	public static String getNamaLembaga(final int lembaga) {
 		return new String[]{null, "DPR", "DPRDI"}[lembaga];
 	}

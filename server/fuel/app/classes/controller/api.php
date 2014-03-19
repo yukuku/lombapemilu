@@ -31,11 +31,16 @@ class Controller_Api extends Controller_Rest {
 		$cacheKey = __FUNCTION__ . '_' . md5(Input::get('dapil', '') . '|' . Input::get('partai', '') . '|' . Input::get('lembaga', ''));
 		$calegsJson = '';
 		
+		Log::debug('args: ' . print_r(Input::all(), 1));
+		Log::debug('cache key: ' . $cacheKey);
+		
 		try {
 			$calegsJson = Cache::get($cacheKey);
+			Log::debug('getting from cache');
 		} catch(Exception $e) {
 			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
-			Cache::set($cacheKey, $calegsJson, 3600);
+			Cache::set($cacheKey, $calegsJson);
+			Log::debug('getting from network');
 		}
 	
 		//Now we try to decode the json and grab the caleg list from the JSON
@@ -175,11 +180,44 @@ class Controller_Api extends Controller_Rest {
 		
 		/**
 		 * Featured, just grab a random dude
+		 * But this will change only once an hour to prevent really random every load
 		 */
+		srand((int) (time() / 3600));
 		$featured = $calegs[rand(0, count($calegs) - 1)];
+		srand();
 		$rating = Util::getCalegRating($featured->id);
 		$featured->rating = $rating;
 		$this->response(array('featured' => $featured, 'top_rated' => $topRated, 'most_commented' => $mostCommented));
+	}
+	
+	/**
+	 * Get individual caleg details, but with rating
+	 * @param $caleg_id
+	 */
+	function get_caleg() {
+		$caleg_id = Input::get('caleg_id');
+		$cacheKey = __FUNCTION__ . '_' . md5($caleg_id);
+
+		try {
+			$calegJson = Cache::get($cacheKey);
+		} catch(Exception $e) {
+			$calegJson = file_get_contents(
+				'http://api.pemiluapi.org/candidate/api/caleg/' . $caleg_id . '?apiKey=06ec082d057daa3d310b27483cc3962e'
+			); 
+
+			if(!empty($calegJson)) {
+				Cache::set($cacheKey, $calegJson, 3600);
+			}
+		}
+		
+		//Loop thru the calegs we obtained, then generate comments and rating for each caleg if required
+		$results = json_decode($calegJson);
+		$caleg = $results->data->results->caleg[0];
+
+		$rating = Util::getCalegRating($caleg_id);
+		$caleg->rating = $rating;
+
+		$this->response($results);
 	}
 	
 	//Get comments from the given caleg id, also returns the rate for each comment and whether the logged in user rated already
@@ -266,7 +304,7 @@ class Controller_Api extends Controller_Rest {
 		$err = DB::error_info();
 		Log::debug(__FUNCTION__ . ' err: ' . print_r($err, 1));
 		Log::debug(__FUNCTION__ . ': kueri terakhir - ' . DB::last_query());
-		Log::debug(__FUNCTION__ . ': ' . $result);
+		Log::debug(__FUNCTION__ . ': ' . print_r($result, 1));
 	
 		$return = array();
 		

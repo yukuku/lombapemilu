@@ -20,9 +20,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
 import lomba.app.App;
-import lomba.app.BandingActivity;
-import lomba.app.CalegActivity;
-import lomba.app.MainActivity;
+import lomba.app.ac.BandingActivity;
+import lomba.app.ac.CalegActivity;
+import lomba.app.ac.MainActivity;
 import lomba.app.U;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
@@ -71,7 +71,7 @@ public class CalegListFragment extends Fragment {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.KRITERIA_CALEG_BERUBAH));
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.CALEG_BERUBAH));
 	}
 
 	@Override
@@ -187,6 +187,7 @@ public class CalegListFragment extends Fragment {
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView tNama = V.get(view, R.id.tNama);
+			TextView tUrutan = V.get(view, R.id.tUrutan);
 			ImageView imgFoto = V.get(view, R.id.imgFoto);
 			RatingView rating = V.get(view, R.id.rating);
 			TextView tRatingCount = V.get(view, R.id.tRatingCount);
@@ -199,6 +200,7 @@ public class CalegListFragment extends Fragment {
 			tRatingCount.setText(caleg.rating == null? "(0)": ("(" + caleg.rating.count + ")"));
 
 			tNama.setText(U.bagusinNama(caleg.nama));
+			tUrutan.setText("" + caleg.urutan);
 			Picasso.with(CalegListFragment.this.getActivity()).load(U.bc(192, 192, caleg.foto_url)).placeholder("L".equals(caleg.jenis_kelamin)? R.drawable.dummyfotolakikecil: R.drawable.dummyfotoperempuankecil).into(imgFoto);
 		}
 

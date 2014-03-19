@@ -1,6 +1,5 @@
-package lomba.app;
+package lomba.app.ac;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -9,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
+import lomba.app.App;
+import lomba.app.U;
+import lomba.app.ac.base.BaseActivity;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.RatingView;
 import yuku.afw.V;
@@ -20,7 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
-public class BandingActivity extends Activity {
+public class BandingActivity extends BaseActivity {
 	public static final String TAG = BandingActivity.class.getSimpleName();
 
 	String id1;
@@ -205,8 +207,8 @@ public class BandingActivity extends Activity {
 		}
 
 
-		tLokasiJuga1.setText(U.toTitleCase(CalegActivity.gabung(info1)));
-		tLokasiJuga2.setText(U.toTitleCase(CalegActivity.gabung(info2)));
+		tLokasiJuga1.setText(U.toTitleCase(CalegActivity.gabungTinggal(info1)));
+		tLokasiJuga2.setText(U.toTitleCase(CalegActivity.gabungTinggal(info2)));
 
 		tPendidikan1.setText(sum(info1.riwayat_pendidikan));
 		tPendidikan2.setText(sum(info2.riwayat_pendidikan));
@@ -233,7 +235,7 @@ public class BandingActivity extends Activity {
 				if (sb.length() != 0) {
 					sb.append("\n\n");
 				}
-				sb.append(U.toTitleCase(row.ringkasan));
+				sb.append(U.formatRiwayat(row.ringkasan));
 			}
 		}
 		return sb.toString();

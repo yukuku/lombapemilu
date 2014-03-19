@@ -12,8 +12,6 @@ import org.apache.http.Header;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Papi {
@@ -289,50 +287,12 @@ public class Papi {
 		});
 	}
 
-	public static Saklar candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
-		return get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new Hasil() {
+	public static Saklar candidate_caleg_detail(String caleg_id, final Clbk<Caleg> clbk) {
+		return get(BASE_V2 + "/caleg", new RequestParams("caleg_id", caleg_id), new Hasil() {
 			@Override
 			public void success(final String s) {
-				final ApiObject___<Calegs___> o = new Gson().fromJson(s, new TypeToken<ApiObject___<Calegs___>>(){}.getType());
+				final ApiObject___<Calegs___> o = new Gson().fromJson(s, new TypeToken<ApiObject___<Calegs___>>() {}.getType());
 				final Caleg caleg = o.data.results.caleg[0];
-
-				if (BuildConfig.DEBUG) {
-					if (caleg.riwayat_pendidikan == null || caleg.riwayat_pendidikan.length == 0) {
-						caleg.riwayat_pendidikan = ubek(new IdRingkasan[] {
-						new IdRingkasan(1, "1957-1963, SD, SEKOLAH RAKYAT NEGERI, ACEH (placeholder)"),
-						new IdRingkasan(2, "1963-1966, SLTP, SMP NEGERI 1, BANDA ACEH (placeholder)"),
-						new IdRingkasan(3, "1963-1966 SLTP I NEGERI 1 BANDA ACEH (placeholder)"),
-						new IdRingkasan(4, "1966-1967, SMA NEGERI I BANDA ACEH (placeholder)"),
-						new IdRingkasan(5, "1967-1968, SLTA, SMA YPU, BANDUNG (placeholder)"),
-						new IdRingkasan(6, "1969-1971, FAKULTAS PUBLISTIK UNIVERSITAS PADJAJARAN, BANDUNG (placeholder)"),
-						new IdRingkasan(7, "1972-1984 STUDI ILMU KOMUNIKASI, ILMU POLITIK DAN SOSIOLOGI, WESTFAELISCHE - WILHELMS-UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN (placeholder)"),
-						new IdRingkasan(8, "1983 S3, DR. PHIL. UNIVERSITAET, MUENSTER, REP. FEDERAL JERMAN (placeholder)"),
-						}, 0.0);
-					}
-
-					if (caleg.riwayat_pekerjaan == null || caleg.riwayat_pekerjaan.length == 0) {
-						caleg.riwayat_pekerjaan = ubek(new IdRingkasan[] {
-						new IdRingkasan(1, "1998-1998, FKP DPR RI, ANGGOTA TIM AHLI, JAKARTA (placeholder)"),
-						new IdRingkasan(2, "1998-1998, MPR RI, TIM AHLI, JAKARTA (placeholder)"),
-						new IdRingkasan(3, "2000-2005, TIM PENASEHAT PRESIDEN URUSAN ACEH ANGGOTA, JAKARTA (placeholder)"),
-						new IdRingkasan(4, "2000-2002, KEMENTRIAN POLKAM, PENASEHAT, JAKARTA (placeholder)"),
-						new IdRingkasan(5, "2005-2007, PEMERINTAHAN, TIM AHLI DPR RI, JAKARTA (placeholder)"),
-						new IdRingkasan(6, "2002-2005, PEMERINTAHAN, DUTA BESAR MESIR, MESIR (placeholder)"),
-						}, 0.5);
-					}
-
-					if (caleg.riwayat_organisasi == null || caleg.riwayat_organisasi.length == 0) {
-						caleg.riwayat_organisasi = ubek(new IdRingkasan[] {
-						new IdRingkasan(1,"2013-SEKARANG, PARTAI NASDEM, KETUA DEWAN PAKAR DPP PARTAI NASDEM, JAKARTA (placeholder)"),
-						new IdRingkasan(2,"2010-SEKARANG, ORMAS NASIONAL DEMOKRAT, ANGGOTA DEWAN PERTIMBANGAN, JAKARTA (placeholder)"),
-						new IdRingkasan(3,"2007-SEKARANG, PENGURUS FORUM DUTA BESAR RI, JAKARTA (placeholder)"),
-						new IdRingkasan(4,"2009-2013, FISIP UI, KETUA DEWAN GURU BESAR JAKARTA (placeholder)"),
-						new IdRingkasan(5,"2010-2013, KOMITE PROFESOR UNTUK PERPUSTAKAAN UI, KETUA, JAKARTA (placeholder)"),
-						new IdRingkasan(6,"2011-2014, PERHIMPUNAN ALUMNI JERMAN, WAKIL KETUA DEWAN KEHORMATAN (placeholder)"),
-						}, 0.9);
-					}
-				}
-
 				clbk.success(caleg);
 			}
 
@@ -341,16 +301,6 @@ public class Papi {
 				clbk.failed(e);
 			}
 		});
-	}
-
-	private static IdRingkasan[] ubek(final IdRingkasan[] idRingkasans, double peluang) {
-		List<IdRingkasan> res = new ArrayList<>();
-		for (final IdRingkasan idRingkasan : idRingkasans) {
-			if (Math.random() < peluang) {
-				res.add(idRingkasan);
-			}
-		}
-		return res.toArray(new IdRingkasan[res.size()]);
 	}
 
 	public static Saklar candidate_caleg2(String dapil, String lembaga, String partai, final Clbk<Caleg[]> clbk) {
