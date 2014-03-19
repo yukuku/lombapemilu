@@ -180,8 +180,11 @@ class Controller_Api extends Controller_Rest {
 		
 		/**
 		 * Featured, just grab a random dude
+		 * But this will change only once an hour to prevent really random every load
 		 */
+		srand((int) (time() / 3600));
 		$featured = $calegs[rand(0, count($calegs) - 1)];
+		srand();
 		$rating = Util::getCalegRating($featured->id);
 		$featured->rating = $rating;
 		$this->response(array('featured' => $featured, 'top_rated' => $topRated, 'most_commented' => $mostCommented));
