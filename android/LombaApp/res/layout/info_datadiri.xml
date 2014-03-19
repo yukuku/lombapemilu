@@ -18,6 +18,11 @@
                 android:layout_gravity="center"
                 android:id="@+id/imgFoto"/>
 
+        <lomba.app.widget.FontTextView
+                android:id="@+id/tUrutan"
+                android:text="15"
+                style="@style/NomerUrut"/>
+
     </FrameLayout>
 
     <lomba.app.widget.FontTextView
