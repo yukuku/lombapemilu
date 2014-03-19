@@ -39,7 +39,7 @@ class Controller_Api extends Controller_Rest {
 			Log::debug('getting from cache');
 		} catch(Exception $e) {
 			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
-			Cache::set($cacheKey, $calegsJson, 3600);
+			Cache::set($cacheKey, $calegsJson);
 			Log::debug('getting from network');
 		}
 	
