@@ -6,8 +6,6 @@ use \Fuel\Core\Cache;
 class Cacher {
 	public $apiKey = '06ec082d057daa3d310b27483cc3962e';
 	public function run($lembaga = 'DPR') {
-		Cache::delete_all();
-		
 		//First get all provinces, and then cache it
 		$provinces = '';
 		try {
@@ -48,12 +46,9 @@ class Cacher {
 					$dapilId = $dapil->id;
 					$cacheKey = 'get_calegs_by_dapil_' . md5($dapilId . '|' . $party->id . '|' . $lembaga);
 					
-					try {
-						$calegs = Cache::get($cacheKey);
-					} catch(\CacheNotFoundException $e) {
-						$calegs = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . $this->apiKey . '&partai=' . $party->id . '&tahun=2014&lembaga=' . $lembaga . '&dapil=' . $dapilId);
-						Cache::set($cacheKey, $calegs, 3600);
-					}
+					Cache::delete($cacheKey);
+					$calegs = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . $this->apiKey . '&partai=' . $party->id . '&tahun=2014&lembaga=' . $lembaga . '&dapil=' . $dapilId);
+					Cache::set($cacheKey, $calegs);
 					
 				}
 			}
