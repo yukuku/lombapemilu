@@ -190,6 +190,36 @@ class Controller_Api extends Controller_Rest {
 		$this->response(array('featured' => $featured, 'top_rated' => $topRated, 'most_commented' => $mostCommented));
 	}
 	
+	/**
+	 * Get individual caleg details, but with rating
+	 * @param $caleg_id
+	 */
+	function get_caleg() {
+		$caleg_id = Input::get('caleg_id');
+		$cacheKey = __FUNCTION__ . '_' . md5($caleg_id);
+
+		try {
+			$calegJson = Cache::get($cacheKey);
+		} catch(Exception $e) {
+			$calegJson = file_get_contents(
+				'http://api.pemiluapi.org/candidate/api/caleg/' . $caleg_id . '?apiKey=06ec082d057daa3d310b27483cc3962e'
+			); 
+
+			if(!empty($calegJson)) {
+				Cache::set($cacheKey, $calegJson, 3600);
+			}
+		}
+		
+		//Loop thru the calegs we obtained, then generate comments and rating for each caleg if required
+		$results = json_decode($calegJson);
+		$caleg = $results->data->results->caleg[0];
+
+		$rating = Util::getCalegRating($caleg_id);
+		$caleg->rating = $rating;
+
+		$this->response($results);
+	}
+	
 	//Get comments from the given caleg id, also returns the rate for each comment and whether the logged in user rated already
 	/**
 	 * @param user_email

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
@@ -79,7 +80,10 @@ public class CalegActivity extends BaseActivity {
 	private ImageButton bP6;
 	int orderbycode = 1;
 	Papi.Saklar commentloader;
+	Papi.Saklar lengkaploader;
 	List<Pair<LinearLayout, JenisTimeline>> willupdatewhendetailinfocompleteds = new ArrayList<>();
+	private FontTextView tTotalRating;
+	private FontTextView tTotalVoter;
 
 	enum JenisTimeline {
 		pendidikan, pekerjaan, organisasi;
@@ -189,6 +193,7 @@ public class CalegActivity extends BaseActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		Papi.lupakan(commentloader);
+		Papi.lupakan(lengkaploader);
 	}
 
 	void loadComments() {
@@ -232,24 +237,34 @@ public class CalegActivity extends BaseActivity {
 	}
 
 	void loadLengkap() {
-		Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
+		lengkaploader = Papi.ganti(lengkaploader, Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
 			@Override
 			public void success(final Papi.Caleg caleg) {
 				Log.d(TAG, "@@success diperbarui");
-				CalegActivity.this.info.riwayat_pendidikan = caleg.riwayat_pendidikan;
-				CalegActivity.this.info.riwayat_pekerjaan = caleg.riwayat_pekerjaan;
-				CalegActivity.this.info.riwayat_organisasi = caleg.riwayat_organisasi;
+				info.riwayat_pendidikan = caleg.riwayat_pendidikan;
+				info.riwayat_pekerjaan = caleg.riwayat_pekerjaan;
+				info.riwayat_organisasi = caleg.riwayat_organisasi;
 				for (final Pair<LinearLayout, JenisTimeline> willupdatewhendetailinfocompleted : willupdatewhendetailinfocompleteds) {
 					final Papi.IdRingkasan[] idringkasans;
 					switch (willupdatewhendetailinfocompleted.second) {
-						case pendidikan: idringkasans = info.riwayat_pendidikan; break;
-						case pekerjaan: idringkasans = info.riwayat_pekerjaan; break;
-						case organisasi: idringkasans = info.riwayat_organisasi; break;
-						default: idringkasans = null; break;
+						case pendidikan:
+							idringkasans = info.riwayat_pendidikan;
+							break;
+						case pekerjaan:
+							idringkasans = info.riwayat_pekerjaan;
+							break;
+						case organisasi:
+							idringkasans = info.riwayat_organisasi;
+							break;
+						default:
+							idringkasans = null;
+							break;
 					}
 
 					displayTimeline(willupdatewhendetailinfocompleted.first, idringkasans);
 				}
+				info.rating = caleg.rating;
+				displayRating();
 			}
 
 			@Override
@@ -268,7 +283,7 @@ public class CalegActivity extends BaseActivity {
 					}
 				}).start();
 			}
-		});
+		}));
 	}
 
 	View datadiri(final ViewGroup container) {
@@ -504,8 +519,8 @@ public class CalegActivity extends BaseActivity {
 		View headerView = getLayoutInflater().inflate(R.layout.comment_header, null);
 		commentLs.addHeaderView(headerView);
 
-		FontTextView rate = V.get(headerView, R.id.total_rating);
-		FontTextView voter = V.get(headerView, R.id.total_voter);
+		tTotalRating = V.get(headerView, R.id.total_rating);
+		tTotalVoter = V.get(headerView, R.id.total_voter);
 		final FontButton bSort = V.get(headerView, R.id.bSort);
 		final RatingView2 rv = V.get(headerView, R.id.rating);
 		rv.setRating(info.rating.avg);
@@ -541,11 +556,16 @@ public class CalegActivity extends BaseActivity {
 
 			}
 		});
-		rate.setText(String.format("%.1f", info.rating.avg));
-		voter.setText("(" + info.rating.count + " rating)");
+		displayRating();
 		commentLs.setAdapter(commentsAdapter);
 
 		return res;
+	}
+
+	private void displayRating() {
+		if (info.rating == null) return;
+		if (tTotalRating != null) tTotalRating.setText(String.format("%.1f", info.rating.avg));
+		if (tTotalVoter != null) tTotalVoter.setText("(" + info.rating.count + " rating)");
 	}
 
 	String grava(String email) {
@@ -782,7 +802,11 @@ public class CalegActivity extends BaseActivity {
 						@Override
 						public void success(Object o) {
 							loadComments();
+							loadLengkap();
 							postCommentFragment.dismissAllowingStateLoss();
+
+							// ask everyone to refresh
+							LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(MainActivity.CALEG_BERUBAH));
 						}
 
 						@Override
