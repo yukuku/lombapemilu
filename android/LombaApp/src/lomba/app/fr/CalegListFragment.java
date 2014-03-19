@@ -71,7 +71,7 @@ public class CalegListFragment extends Fragment {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.KRITERIA_CALEG_BERUBAH));
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(reload, new IntentFilter(MainActivity.CALEG_BERUBAH));
 	}
 
 	@Override

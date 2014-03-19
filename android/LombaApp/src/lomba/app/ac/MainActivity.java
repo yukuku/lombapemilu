@@ -42,7 +42,7 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity {
 	private static final String TAG = MainActivity.class.getSimpleName();
-	public static final String KRITERIA_CALEG_BERUBAH = "KRITERIA_CALEG_BERUBAH";
+	public static final String CALEG_BERUBAH = "CALEG_BERUBAH";
 
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
@@ -174,7 +174,7 @@ public class MainActivity extends BaseActivity {
 				final Dapil.Row row = rows.get(pos);
 				Preferences.setString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1, row.kode);
 				displayDrawerDapil();
-				LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(KRITERIA_CALEG_BERUBAH));
+				LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(CALEG_BERUBAH));
 				return true;
 			}
 		});
@@ -196,7 +196,7 @@ public class MainActivity extends BaseActivity {
 		bAbLembaga.setText(new String[] {null, "DPR", "DPRD I", "DPRD II"}[lembaga]);
 		Preferences.setInt(Prefkey.lembaga_aktif, lembaga);
 
-		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(KRITERIA_CALEG_BERUBAH));
+		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(CALEG_BERUBAH));
 	}
 
 	void setAbtitle(String t) {

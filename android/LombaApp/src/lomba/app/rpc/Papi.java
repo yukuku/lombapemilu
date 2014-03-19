@@ -287,12 +287,13 @@ public class Papi {
 		});
 	}
 
-	public static Saklar candidate_caleg_detail(String id, final Clbk<Caleg> clbk) {
-		return get("http://api.pemiluapi.org/candidate/api/caleg/" + id, new RequestParams("apiKey", APIKEY), new Hasil() {
+	public static Saklar candidate_caleg_detail(String caleg_id, final Clbk<Caleg> clbk) {
+		return get(BASE_V2 + "/caleg", new RequestParams("caleg_id", caleg_id), new Hasil() {
 			@Override
 			public void success(final String s) {
 				final ApiObject___<Calegs___> o = new Gson().fromJson(s, new TypeToken<ApiObject___<Calegs___>>() {}.getType());
-				final Caleg caleg = o.data.results.caleg[0];		clbk.success(caleg);
+				final Caleg caleg = o.data.results.caleg[0];
+				clbk.success(caleg);
 			}
 
 			@Override
