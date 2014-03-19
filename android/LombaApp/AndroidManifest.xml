@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.thnkld.calegstore.app"
-          android:versionCode="5"
-          android:versionName="2.0.1">
+          android:versionCode="6"
+          android:versionName="2.1.0">
     <uses-sdk android:minSdkVersion="14"
               android:targetSdkVersion="18"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -28,7 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="lomba.app.ac.AboutActivity"
-                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
+        <activity android:name="lomba.app.ac.AboutActivity"/>
     </application>
 </manifest>

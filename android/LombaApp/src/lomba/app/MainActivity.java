@@ -12,7 +12,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +30,6 @@ import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
 import lomba.app.rpc.Papi;
 import lomba.app.storage.Prefkey;
-import lomba.app.widget.FontSpan;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -43,6 +41,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 	private static final String TAG = MainActivity.class.getSimpleName();
+	public static final String KRITERIA_CALEG_BERUBAH = "KRITERIA_CALEG_BERUBAH";
 
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
@@ -75,8 +74,7 @@ public class MainActivity extends Activity {
 		navList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				Log.d(TAG, "position = " + position);
-				selection = position - 1; // because of header view
+				selection = position - navList.getHeaderViewsCount();
 				drawer.closeDrawer(GravityCompat.START);
 				adapter.notifyDataSetChanged();
 				updateContent();
@@ -133,8 +131,8 @@ public class MainActivity extends Activity {
 			public void onClick(final View v) {
 				PopupMenu pop = new PopupMenu(getActionBar().getThemedContext(), bAbLembaga);
 				final Menu menu = pop.getMenu();
-				menu.add(0, 1, 0, "DPR");
-				menu.add(0, 2, 0, "DPRD I");
+				menu.add(0, 1, 0, F.wrap("DPR", F.reg()));
+				menu.add(0, 2, 0, F.wrap("DPRD I", F.reg()));
 				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(final MenuItem item) {
@@ -166,8 +164,7 @@ public class MainActivity extends Activity {
 			final Dapil.Row row = rows.get(i);
 			SpannableStringBuilder sb = new SpannableStringBuilder(row.desc);
 			sb.setSpan(new ForegroundColorSpan(0xffffffff), 0, sb.length(), 0);
-			sb.setSpan(new FontSpan(F.reg()), 0, sb.length(), 0);
-			menu.add(0, i, 0, sb);
+			menu.add(0, i, 0, F.wrap(sb, F.reg()));
 		}
 		pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 			@Override
@@ -176,6 +173,7 @@ public class MainActivity extends Activity {
 				final Dapil.Row row = rows.get(pos);
 				Preferences.setString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1, row.kode);
 				displayDrawerDapil();
+				LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(KRITERIA_CALEG_BERUBAH));
 				return true;
 			}
 		});
@@ -197,7 +195,7 @@ public class MainActivity extends Activity {
 		bAbLembaga.setText(new String[] {null, "DPR", "DPRD I", "DPRD II"}[lembaga]);
 		Preferences.setInt(Prefkey.lembaga_aktif, lembaga);
 
-		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("LEMBAGA_BERUBAH"));
+		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(KRITERIA_CALEG_BERUBAH));
 	}
 
 	void setAbtitle(String t) {

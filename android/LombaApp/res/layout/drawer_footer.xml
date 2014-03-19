@@ -8,4 +8,5 @@
         android:paddingLeft="16dp"
         android:gravity="center_vertical"
         android:minHeight="48dp"
+        android:background="@drawable/main_drawer_list_selector"
         />
