@@ -46,7 +46,6 @@ class Cacher {
 				foreach($parties as $party) {
 					echo "\tGetting all calegs from partai " . $party->nama . ", dapil " . $dapil->nama_lengkap . " within lembaga " . $lembaga . "\n";
 					$dapilId = $dapil->id;
-					\Log::debug($dapilId . ' ' . $party->id . ' ' . $lembaga);
 					$cacheKey = 'get_calegs_by_dapil_' . md5($dapilId . '|' . $party->id . '|' . $lembaga);
 					
 					try {
