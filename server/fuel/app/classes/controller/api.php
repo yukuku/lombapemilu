@@ -31,11 +31,16 @@ class Controller_Api extends Controller_Rest {
 		$cacheKey = __FUNCTION__ . '_' . md5(Input::get('dapil', '') . '|' . Input::get('partai', '') . '|' . Input::get('lembaga', ''));
 		$calegsJson = '';
 		
+		Log::debug('args: ' . print_r(Input::all(), 1));
+		Log::debug('cache key: ' . $cacheKey);
+		
 		try {
 			$calegsJson = Cache::get($cacheKey);
+			Log::debug('getting from cache');
 		} catch(Exception $e) {
 			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
 			Cache::set($cacheKey, $calegsJson, 3600);
+			Log::debug('getting from network');
 		}
 	
 		//Now we try to decode the json and grab the caleg list from the JSON
