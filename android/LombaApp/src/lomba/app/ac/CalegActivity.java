@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.LruCache;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,10 +51,12 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,6 +79,11 @@ public class CalegActivity extends BaseActivity {
 	private ImageButton bP6;
 	int orderbycode = 1;
 	Papi.Saklar commentloader;
+	List<Pair<LinearLayout, JenisTimeline>> willupdatewhendetailinfocompleteds = new ArrayList<>();
+
+	enum JenisTimeline {
+		pendidikan, pekerjaan, organisasi;
+	}
 
 	public static Intent create(String id, byte[] dt) {
 		Intent res = new Intent(App.context, CalegActivity.class);
@@ -231,7 +239,17 @@ public class CalegActivity extends BaseActivity {
 				CalegActivity.this.info.riwayat_pendidikan = caleg.riwayat_pendidikan;
 				CalegActivity.this.info.riwayat_pekerjaan = caleg.riwayat_pekerjaan;
 				CalegActivity.this.info.riwayat_organisasi = caleg.riwayat_organisasi;
-				adapter.notifyDataSetChanged();
+				for (final Pair<LinearLayout, JenisTimeline> willupdatewhendetailinfocompleted : willupdatewhendetailinfocompleteds) {
+					final Papi.IdRingkasan[] idringkasans;
+					switch (willupdatewhendetailinfocompleted.second) {
+						case pendidikan: idringkasans = info.riwayat_pendidikan; break;
+						case pekerjaan: idringkasans = info.riwayat_pekerjaan; break;
+						case organisasi: idringkasans = info.riwayat_organisasi; break;
+						default: idringkasans = null; break;
+					}
+
+					displayTimeline(willupdatewhendetailinfocompleted.first, idringkasans);
+				}
 			}
 
 			@Override
@@ -375,7 +393,8 @@ public class CalegActivity extends BaseActivity {
 		LinearLayout wadah = V.get(res, R.id.wadah);
 		final Papi.IdRingkasan[] idringkasans = info.riwayat_organisasi;
 
-		addrows(wadah, idringkasans);
+		displayTimeline(wadah, idringkasans);
+		willupdatewhendetailinfocompleteds.add(Pair.create(wadah, JenisTimeline.organisasi));
 
 		return res;
 	}
@@ -386,7 +405,8 @@ public class CalegActivity extends BaseActivity {
 		LinearLayout wadah = V.get(res, R.id.wadah);
 		final Papi.IdRingkasan[] idringkasans = info.riwayat_pendidikan;
 
-		addrows(wadah, idringkasans);
+		displayTimeline(wadah, idringkasans);
+		willupdatewhendetailinfocompleteds.add(Pair.create(wadah, JenisTimeline.pendidikan));
 
 		return res;
 	}
@@ -412,9 +432,20 @@ public class CalegActivity extends BaseActivity {
 		}
 	}
 
-	void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
-		if (idringkasans != null && idringkasans.length > 0) {
+	void displayTimeline(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
+		// clear first
+		wadah.removeAllViews();
 
+		// case 1: not loaded
+		if (idringkasans == null) {
+			wadah.addView(getLayoutInflater().inflate(R.layout.item_riwayat_masihloading, wadah, false));
+		}
+		// case 2: loaded but no data
+		else if (idringkasans.length == 0) {
+			wadah.addView(getLayoutInflater().inflate(R.layout.item_riwayat_kosong, wadah, false));
+		}
+		// case 3: loaded and have some data
+		else {
 			Papi.IdRingkasan[] dua = idringkasans.clone();
 			Arrays.sort(dua, Collections.reverseOrder(new Comparator<Papi.IdRingkasan>() {
 				@Override
@@ -451,9 +482,6 @@ public class CalegActivity extends BaseActivity {
 
 				wadah.addView(v);
 			}
-		} else {
-			final View v = getLayoutInflater().inflate(R.layout.item_riwayat_kosong, wadah, false);
-			wadah.addView(v);
 		}
 	}
 
@@ -463,7 +491,8 @@ public class CalegActivity extends BaseActivity {
 		LinearLayout wadah = V.get(res, R.id.wadah);
 		final Papi.IdRingkasan[] idringkasans = info.riwayat_pekerjaan;
 
-		addrows(wadah, idringkasans);
+		displayTimeline(wadah, idringkasans);
+		willupdatewhendetailinfocompleteds.add(Pair.create(wadah, JenisTimeline.pekerjaan));
 
 		return res;
 	}
