@@ -22,15 +22,13 @@
                   android:theme="@android:style/Theme.Holo.NoActionBar"/>
         <activity android:name="lomba.app.ac.BandingActivity"
                   android:theme="@android:style/Theme.Holo.NoActionBar"/>
-        <activity android:name="lomba.app.ac.SplashActivity"
-                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
-        <activity-alias android:name="lomba.app.SplashActivity"
-                        android:targetActivity="lomba.app.ac.SplashActivity">
+        <activity android:name="lomba.app.SplashActivity"
+                  android:theme="@android:style/Theme.Holo.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity-alias>
+        </activity>
         <activity android:name="lomba.app.ac.AboutActivity"/>
     </application>
 </manifest>

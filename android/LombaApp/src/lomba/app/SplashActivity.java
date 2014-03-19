@@ -1,4 +1,4 @@
-package lomba.app.ac;
+package lomba.app;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.thnkld.calegstore.app.R;
 import lomba.app.App;
 import lomba.app.F;
+import lomba.app.ac.MainActivity;
 import lomba.app.ac.base.BaseActivity;
 import lomba.app.data.Dapil;
 import lomba.app.rpc.Papi;
