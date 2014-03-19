@@ -2,7 +2,6 @@ package lomba.app.ac;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -17,6 +16,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +51,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -73,7 +74,7 @@ public class CalegActivity extends BaseActivity {
 	private ImageButton bP4;
 	private ImageButton bP5;
 	private ImageButton bP6;
-	int sortcode = 1;
+	int orderbycode = 1;
 	Papi.Saklar commentloader;
 
 	public static Intent create(String id, byte[] dt) {
@@ -183,8 +184,8 @@ public class CalegActivity extends BaseActivity {
 	}
 
 	void loadComments() {
-		String sort = sortcode == 1? "jempoled": "updated";
-		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, sort, new Papi.Clbk<Papi.Comment[]>() {
+		String order_by = orderbycode == 1? "jempoled": "updated";
+		commentloader = Papi.ganti(commentloader, Papi.comments(info.id, accountName, order_by, new Papi.Clbk<Papi.Comment[]>() {
 			@Override
 			public void success(final Papi.Comment[] comments) {
 				commentsAdapter.setData(comments);
@@ -341,12 +342,12 @@ public class CalegActivity extends BaseActivity {
 			anakcontainer.addView(img);
 		}
 
-		tLokasi.setText(U.toTitleCase(gabung(info)));
+		tLokasi.setText(U.toTitleCase(gabungTinggal(info)));
 
 		return res;
 	}
 
-	public static String gabung(Papi.Caleg info) {
+	public static String gabungTinggal(Papi.Caleg info) {
 		StringBuilder sb = new StringBuilder();
 		if (!TextUtils.isEmpty(info.kelurahan_tinggal)) {
 			if (sb.length() != 0) sb.append(", ");
@@ -390,16 +391,48 @@ public class CalegActivity extends BaseActivity {
 		return res;
 	}
 
-	private void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
+	static Matcher mtoint = Pattern.compile("[^0-9]").matcher("");
+
+	static int toint(String s) {
+		if (s == null || s.length() == 0) return 0;
+
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			mtoint.reset(s);
+			if (mtoint.find()) {
+				try {
+					return Integer.parseInt(s.substring(0, mtoint.start()));
+				} catch (NumberFormatException e1) {
+					return 0;
+				}
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	void addrows(final LinearLayout wadah, final Papi.IdRingkasan[] idringkasans) {
 		if (idringkasans != null && idringkasans.length > 0) {
 
 			Papi.IdRingkasan[] dua = idringkasans.clone();
-			Arrays.sort(dua, new Comparator<Papi.IdRingkasan>() {
+			Arrays.sort(dua, Collections.reverseOrder(new Comparator<Papi.IdRingkasan>() {
 				@Override
 				public int compare(final Papi.IdRingkasan lhs, final Papi.IdRingkasan rhs) {
-					return rhs.ringkasan.compareTo(lhs.ringkasan);
+					final String[] lhpisah = pisah(lhs.ringkasan);
+					final String[] rhpisah = pisah(rhs.ringkasan);
+
+					int lhtahun = toint(lhpisah[0]);
+					int rhtahun = toint(rhpisah[0]);
+
+					if (lhtahun != rhtahun) {
+						return lhtahun - rhtahun;
+					}
+
+					// original
+					return 0;
 				}
-			});
+			}));
 
 			for (int i = 0; i < dua.length; i++) {
 				final Papi.IdRingkasan row = dua[i];
@@ -469,7 +502,7 @@ public class CalegActivity extends BaseActivity {
 				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					@Override
 					public boolean onMenuItemClick(final MenuItem item) {
-						sortcode = item.getItemId();
+						orderbycode = item.getItemId();
 						bSort.setText(item.getTitle());
 						loadComments();
 						return true;
@@ -508,21 +541,33 @@ public class CalegActivity extends BaseActivity {
 
 	static Matcher m1 = Pattern.compile("^([0-9]+(?:-[0-9]+|-\\w+)?)(?:,?\\s*)(.*)$", Pattern.CASE_INSENSITIVE).matcher("");
 	// tahun di blk
-	static Matcher m2 = Pattern.compile("^(.*?)(?:[,-]?\\s*)\\s*(?:\\(?)([0-9]{4,}(?:\\s*-\\s*[0-9]+|\\s*-\\s*\\w+)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
+	static Matcher m2 = Pattern.compile("^(.*?)(?:[,-]?\\s*)\\s*(?:\\(?)([0-9]{4,}(?:\\s*-\\s*[0-9]+|\\s*-\\s*(?:\\w+)?)?)(?:\\)?)\\s*$", Pattern.CASE_INSENSITIVE).matcher("");
+
+	static LruCache<String, String[]> pisahcache = new LruCache<>(100);
 
 	String[] pisah(String r) {
+		String[] v = pisahcache.get(r);
+		if (v != null) {
+			return v;
+		}
+		v = pisah0(r);
+		pisahcache.put(r, v);
+		return v;
+	}
+
+	String[] pisah0(String r) {
 		m1.reset(r);
 		if (m1.matches()) {
-			return new String[] {m1.group(1).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.toTitleCase(m1.group(2))};
+			return new String[] {m1.group(1).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.formatRiwayat(m1.group(2))};
 		}
 
 		// try 2
 		m2.reset(r);
 		if (m2.matches()) {
-			return new String[] {m2.group(2).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.toTitleCase(m2.group(1))};
+			return new String[] {m2.group(2).replaceAll("(?i)(SEKARANG|KINI)", "skrg"), U.formatRiwayat(m2.group(1))};
 		}
 
-		return new String[] {"", U.toTitleCase(r)};
+		return new String[] {"", U.formatRiwayat(r)};
 	}
 
 	class CommentAdapter extends EasyAdapter {

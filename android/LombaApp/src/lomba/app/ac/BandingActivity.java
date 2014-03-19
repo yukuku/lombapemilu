@@ -1,6 +1,5 @@
 package lomba.app.ac;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -208,8 +207,8 @@ public class BandingActivity extends BaseActivity {
 		}
 
 
-		tLokasiJuga1.setText(U.toTitleCase(CalegActivity.gabung(info1)));
-		tLokasiJuga2.setText(U.toTitleCase(CalegActivity.gabung(info2)));
+		tLokasiJuga1.setText(U.toTitleCase(CalegActivity.gabungTinggal(info1)));
+		tLokasiJuga2.setText(U.toTitleCase(CalegActivity.gabungTinggal(info2)));
 
 		tPendidikan1.setText(sum(info1.riwayat_pendidikan));
 		tPendidikan2.setText(sum(info2.riwayat_pendidikan));
@@ -236,7 +235,7 @@ public class BandingActivity extends BaseActivity {
 				if (sb.length() != 0) {
 					sb.append("\n\n");
 				}
-				sb.append(U.toTitleCase(row.ringkasan));
+				sb.append(U.formatRiwayat(row.ringkasan));
 			}
 		}
 		return sb.toString();
