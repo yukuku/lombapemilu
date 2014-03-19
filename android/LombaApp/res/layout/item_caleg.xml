@@ -54,6 +54,11 @@
                    android:id="@+id/imgFoto"
                    android:scaleType="centerCrop"/>
 
+        <lomba.app.widget.FontTextView
+                android:id="@+id/tUrutan"
+                android:text="15"
+                style="@style/NomerUrut"/>
+
         <ImageView android:layout_width="96dp"
                    android:layout_height="96dp"
                    android:id="@+id/imgCentang"

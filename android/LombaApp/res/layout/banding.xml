@@ -43,13 +43,9 @@
                             android:id="@+id/imgFoto1"/>
 
                     <lomba.app.widget.FontTextView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:gravity="center"
                             android:id="@+id/tUrutan1"
-                            android:background="#8000"
-                            android:textColor="#fff"
-                            android:text="15"/>
+                            android:text="15"
+                            style="@style/NomerUrut"/>
 
                 </FrameLayout>
 
@@ -66,13 +62,9 @@
                             android:id="@+id/imgFoto2"/>
 
                     <lomba.app.widget.FontTextView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:gravity="center"
                             android:id="@+id/tUrutan2"
-                            android:background="#8000"
-                            android:textColor="#fff"
-                            android:text="15"/>
+                            android:text="15"
+                            style="@style/NomerUrut"/>
 
                 </FrameLayout>
             </LinearLayout>

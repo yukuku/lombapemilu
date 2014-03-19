@@ -288,6 +288,7 @@ public class CalegActivity extends BaseActivity {
 
 	View datadiri(final ViewGroup container) {
 		View res = getLayoutInflater().inflate(R.layout.info_datadiri, container, false);
+		TextView tUrutan = V.get(res, R.id.tUrutan);
 		TextView tUsia = V.get(res, R.id.tUsia);
 		TextView tAgama = V.get(res, R.id.tAgama);
 		TextView tGender = V.get(res, R.id.tGender);
@@ -296,6 +297,8 @@ public class CalegActivity extends BaseActivity {
 		TextView tPartai = V.get(res, R.id.tPartai);
 		ImageView imgPartai = V.get(res, R.id.imgPartai);
 		ImageView imgFoto = V.get(res, R.id.imgFoto);
+
+		tUrutan.setText("" + info.urutan);
 
 		int umur = 0;
 		if (info.tanggal_lahir != null) {
