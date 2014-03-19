@@ -1,6 +1,5 @@
-package lomba.app;
+package lomba.app.ac;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -24,7 +23,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
-import lomba.app.ac.AboutActivity;
+import lomba.app.App;
+import lomba.app.F;
+import lomba.app.ac.base.BaseActivity;
 import lomba.app.data.Dapil;
 import lomba.app.fr.BerandaFragment;
 import lomba.app.fr.CalegListFragment;
@@ -39,7 +40,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 	private static final String TAG = MainActivity.class.getSimpleName();
 	public static final String KRITERIA_CALEG_BERUBAH = "KRITERIA_CALEG_BERUBAH";
 

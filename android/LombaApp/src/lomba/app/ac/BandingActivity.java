@@ -1,4 +1,4 @@
-package lomba.app;
+package lomba.app.ac;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
+import lomba.app.App;
+import lomba.app.U;
+import lomba.app.ac.base.BaseActivity;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.RatingView;
 import yuku.afw.V;
@@ -20,7 +23,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
-public class BandingActivity extends Activity {
+public class BandingActivity extends BaseActivity {
 	public static final String TAG = BandingActivity.class.getSimpleName();
 
 	String id1;

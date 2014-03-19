@@ -9,25 +9,28 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application android:label="@string/app_name"
                  android:icon="@drawable/ic_launcher"
                  android:theme="@style/Theme.Lomba"
                  android:name="lomba.app.App">
-        <activity android:name="lomba.app.MainActivity"
+        <activity android:name="lomba.app.ac.MainActivity"
                   android:exported="true"
                   android:label="@string/app_name"/>
-        <activity android:name="lomba.app.CalegActivity"
-                  android:label="@string/app_name"
+        <activity android:name="lomba.app.ac.CalegActivity"
                   android:theme="@android:style/Theme.Holo.NoActionBar"/>
-        <activity android:name="lomba.app.BandingActivity"
+        <activity android:name="lomba.app.ac.BandingActivity"
                   android:theme="@android:style/Theme.Holo.NoActionBar"/>
-        <activity android:name="lomba.app.SplashActivity"
-                  android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+        <activity android:name="lomba.app.ac.SplashActivity"
+                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
+        <activity-alias android:name="lomba.app.SplashActivity"
+                        android:targetActivity="lomba.app.ac.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
+        </activity-alias>
         <activity android:name="lomba.app.ac.AboutActivity"/>
     </application>
 </manifest>

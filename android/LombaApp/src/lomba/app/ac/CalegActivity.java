@@ -1,4 +1,4 @@
-package lomba.app;
+package lomba.app.ac;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -34,6 +34,9 @@ import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
+import lomba.app.App;
+import lomba.app.U;
+import lomba.app.ac.base.BaseActivity;
 import lomba.app.rpc.Papi;
 import lomba.app.widget.FontButton;
 import lomba.app.widget.FontEditTextView;
@@ -53,7 +56,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CalegActivity extends Activity {
+public class CalegActivity extends BaseActivity {
 	public static final String TAG = CalegActivity.class.getSimpleName();
 
 	ViewPager jazzy;

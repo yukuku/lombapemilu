@@ -1,16 +1,16 @@
 package lomba.app.ac;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.thnkld.calegstore.app.R;
 import lomba.app.F;
+import lomba.app.ac.base.BaseActivity;
 import yuku.afw.App;
 import yuku.afw.V;
 
-public class AboutActivity extends Activity {
+public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
 
 	@Override
