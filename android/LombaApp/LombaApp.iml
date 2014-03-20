@@ -16,7 +16,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="android-support-v4" level="project" />
-    <orderEntry type="library" name="android-async-http-1.4.4" level="project" />
     <orderEntry type="library" name="google-gson" level="project" />
     <orderEntry type="library" name="picasso-2.2.0" level="project" />
     <orderEntry type="module" module-name="Afw" />
@@ -31,6 +30,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="google-play-services_lib" />
     <orderEntry type="library" name="google-ga" level="project" />
+    <orderEntry type="library" name="okhttp" level="project" />
   </component>
 </module>
 
