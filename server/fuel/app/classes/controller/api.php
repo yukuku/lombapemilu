@@ -28,20 +28,11 @@ class Controller_Api extends Controller_Rest {
 	 */
 	function get_calegs_by_dapil() {
 		//First we try to load results from cache, for a given dapil and partai
-		$cacheKey = __FUNCTION__ . '_' . md5(Input::get('dapil', '') . '|' . Input::get('partai', '') . '|' . Input::get('lembaga', ''));
 		$calegsJson = '';
 		
 		Log::debug('args: ' . print_r(Input::all(), 1));
-		Log::debug('cache key: ' . $cacheKey);
 		
-		try {
-			$calegsJson = Cache::get($cacheKey);
-			Log::debug('getting from cache');
-		} catch(Exception $e) {
-			$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
-			Cache::set($cacheKey, $calegsJson);
-			Log::debug('getting from network');
-		}
+		$calegsJson = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg?apiKey=' . self::$apiKey . '&tahun=2014&lembaga=' . Input::get('lembaga') . '&partai=' . Input::get('partai') . "&dapil=" . Input::get('dapil')); 
 	
 		//Now we try to decode the json and grab the caleg list from the JSON
 		$calegs = json_decode($calegsJson);
@@ -99,21 +90,12 @@ class Controller_Api extends Controller_Rest {
 		//First we try to load results from cache, for a given lat and lng
 		$dapil = Input::get('dapil');
 		$lembaga = Input::get('lembaga');
-		$cacheKey = __FUNCTION__ . '_' . md5($dapil . '|' . $lembaga);
 
-		try {
-			$calegsJson = Cache::get($cacheKey);
-		} catch(Exception $e) {
-			$calegsJson = file_get_contents(
-				'http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=' 
-				. $lembaga . '&dapil=' . $dapil
-			); 
+		$calegsJson = file_get_contents(
+			'http://api.pemiluapi.org/candidate/api/caleg?apiKey=06ec082d057daa3d310b27483cc3962e&tahun=2014&lembaga=' 
+			. $lembaga . '&dapil=' . $dapil
+		); 
 
-			if(!empty($calegsJson)) {
-				Cache::set($cacheKey, $calegsJson, 3600);
-			}
-		}
-		
 		//Loop thru the calegs we obtained, then generate comments and rating for each caleg if required
 		$results = json_decode($calegsJson);
 		$calegs = array();
@@ -195,19 +177,10 @@ class Controller_Api extends Controller_Rest {
 	 */
 	function get_caleg() {
 		$caleg_id = Input::get('caleg_id');
-		$cacheKey = __FUNCTION__ . '_' . md5($caleg_id);
 
-		try {
-			$calegJson = Cache::get($cacheKey);
-		} catch(Exception $e) {
-			$calegJson = file_get_contents(
-				'http://api.pemiluapi.org/candidate/api/caleg/' . $caleg_id . '?apiKey=06ec082d057daa3d310b27483cc3962e'
-			); 
-
-			if(!empty($calegJson)) {
-				Cache::set($cacheKey, $calegJson, 3600);
-			}
-		}
+		$calegJson = file_get_contents(
+			'http://api.pemiluapi.org/candidate/api/caleg/' . $caleg_id . '?apiKey=06ec082d057daa3d310b27483cc3962e'
+		); 
 		
 		//Loop thru the calegs we obtained, then generate comments and rating for each caleg if required
 		$results = json_decode($calegJson);
