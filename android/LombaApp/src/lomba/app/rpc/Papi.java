@@ -1,17 +1,23 @@
 package lomba.app.rpc;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.squareup.okhttp.OkHttpClient;
 import com.thnkld.calegstore.app.BuildConfig;
-import org.apache.http.Header;
+import lomba.app.util.RequestParams;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Papi {
@@ -21,11 +27,8 @@ public class Papi {
 	// static String BASE = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/api.php";
 	static String BASE_V2 = "http://" + getprop("server", "cs2.anwong.com") + "/lombapemilu/server/public/api";
 
-	static AsyncHttpClient client = new AsyncHttpClient();
-	static {
-		client.setMaxRetriesAndTimeout(1, 20000);
-	}
-
+	static OkHttpClient client = new OkHttpClient();
+	static Handler mainHandler = new Handler(Looper.getMainLooper());
 	static AtomicInteger cnt = new AtomicInteger();
 	static AtomicInteger noseri = new AtomicInteger();
 
@@ -173,7 +176,111 @@ public class Papi {
 
 		final int noseri = Papi.noseri.incrementAndGet();
 		try {
-			client.get(url, params, new AsyncHttpResponseHandler() {
+			final URL url2;
+			String paramstring = params == null? "": params.toString();
+			if (url.contains("?")) {
+				if (paramstring.length() > 0) {
+					url2 = new URL(url + "&" + paramstring);
+				} else {
+					url2 = new URL(url);
+				}
+			} else {
+				if (paramstring.length() > 0) {
+					url2 = new URL(url + "?" + paramstring);
+				} else {
+					url2 = new URL(url);
+				}
+			}
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					final HttpURLConnection conn = client.open(url2);
+					conn.setConnectTimeout(20000);
+					conn.setReadTimeout(20000);
+
+					InputStream stream = null;
+					Throwable e = null;
+					byte[] responseBody = null;
+					boolean error = false;
+					try {
+						final int code = conn.getResponseCode();
+						stream = conn.getInputStream();
+
+						ByteArrayOutputStream os = new ByteArrayOutputStream();
+						byte[] buf = new byte[1024];
+						while (true) {
+							final int read = stream.read(buf);
+							if (read < 0) break;
+							os.write(buf, 0, read);
+						}
+						responseBody = os.toByteArray();
+					} catch (IOException e1) {
+						error = true;
+						e = e1;
+						if (stream == null) {
+							stream = conn.getErrorStream();
+						}
+
+						try {
+							ByteArrayOutputStream os = new ByteArrayOutputStream();
+							byte[] buf = new byte[1024];
+							while (true) {
+								final int read = stream.read(buf);
+								if (read < 0) break;
+								os.write(buf, 0, read);
+							}
+							responseBody = os.toByteArray();
+						} catch (IOException e2) {
+							// still error, oh no
+						}
+					}
+
+					if (!error) {
+						String response = null;
+						try {
+							if (saklar.cancelled) return;
+							response = getResponseString(responseBody, "utf-8");
+							final String responsefinal = response;
+							mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									hasil.success(responsefinal);
+								}
+							});
+						} finally {
+							final int c = cnt.decrementAndGet();
+							if (BuildConfig.DEBUG) {
+								Log.d(TAG, "[get " + noseri + " onSuccess] connections: " + c);
+								Log.d(TAG, ("[" + noseri + "] ") + (saklar.cancelled? "- cancelled": ("- response: " + response)));
+							}
+						}
+					} else {
+						try {
+							if (saklar.cancelled) return;
+							final Throwable efinal = e;
+							mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									hasil.failed(efinal);
+								}
+							});
+						} finally {
+							final int c = cnt.decrementAndGet();
+							if (BuildConfig.DEBUG) {
+								Log.d(TAG, "[get " + noseri + " onFailure] connections: " + c);
+								if (saklar.cancelled) {
+									Log.d(TAG, ("[" + noseri + "] ") + "- cancelled");
+								} else {
+									String response = getResponseString(responseBody, "utf-8");
+									Log.d(TAG, ("[" + noseri + "] ") + "- error: " + error);
+									Log.d(TAG, ("[" + noseri + "] ") + "- response: " + response);
+								}
+							}
+						}
+					}
+				}
+
 				public String getResponseString(byte[] stringBytes, String charset) {
 					try {
 						return stringBytes == null? null: new String(stringBytes, charset);
@@ -181,44 +288,11 @@ public class Papi {
 						throw new RuntimeException(e);
 					}
 				}
+			}).start();
 
-				@Override
-				public void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBody) {
-					String response = null;
-					try {
-						if (saklar.cancelled) return;
-						response = getResponseString(responseBody, "utf-8");
-						hasil.success(response);
-					} finally {
-						final int c = cnt.decrementAndGet();
-						if (BuildConfig.DEBUG) {
-							Log.d(TAG, "[get " + noseri + " onSuccess] connections: " + c);
-							Log.d(TAG, ("[" + noseri + "] ") + (saklar.cancelled? "- cancelled": ("- response: " + response)));
-						}
-					}
-				}
-
-				@Override
-				public void onFailure(final int statusCode, final Header[] headers, final byte[] responseBody, final Throwable error) {
-					try {
-						if (saklar.cancelled) return;
-						hasil.failed(error);
-					} finally {
-						final int c = cnt.decrementAndGet();
-						if (BuildConfig.DEBUG) {
-							Log.d(TAG, "[get " + noseri + " onFailure] connections: " + c);
-							if (saklar.cancelled) {
-								Log.d(TAG, ("[" + noseri + "] ") + "- cancelled");
-							} else {
-								String response = getResponseString(responseBody, "utf-8");
-								Log.d(TAG, ("[" + noseri + "] ") + "- error: " + error);
-								Log.d(TAG, ("[" + noseri + "] ") + "- response: " + response);
-							}
-						}
-					}
-				}
-			});
 			return saklar;
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
 		} finally {
 			final int c = cnt.incrementAndGet();
 			if (BuildConfig.DEBUG) {
