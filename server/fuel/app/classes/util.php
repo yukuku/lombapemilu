@@ -41,8 +41,10 @@ class Util {
 				Util::sendToGCM($headers, $fields);
 			}
 		}
-
-		
+	}
+	
+	public static function gravatar($email, $s = 30) {
+		return 'http://www.gravatar.com/avatar/' . md5(trim(strtolower($email))) . '?s=' . $s . '&d=wavatar';
 	}
 	
 	public static function sendToGCM($headers, $fields) {
