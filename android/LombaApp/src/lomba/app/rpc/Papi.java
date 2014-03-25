@@ -204,8 +204,12 @@ public class Papi {
 					byte[] responseBody = null;
 					boolean error = false;
 					try {
-						final int code = conn.getResponseCode();
+						conn.getResponseCode(); // trigger io
 						stream = conn.getInputStream();
+
+						if (stream == null) {
+							throw new IOException("no input stream");
+						}
 
 						ByteArrayOutputStream os = new ByteArrayOutputStream();
 						byte[] buf = new byte[1024];
@@ -222,25 +226,27 @@ public class Papi {
 							stream = conn.getErrorStream();
 						}
 
-						try {
-							ByteArrayOutputStream os = new ByteArrayOutputStream();
-							byte[] buf = new byte[1024];
-							while (true) {
-								final int read = stream.read(buf);
-								if (read < 0) break;
-								os.write(buf, 0, read);
+						if (stream != null) {
+							try {
+								ByteArrayOutputStream os = new ByteArrayOutputStream();
+								byte[] buf = new byte[1024];
+								while (true) {
+									final int read = stream.read(buf);
+									if (read < 0) break;
+									os.write(buf, 0, read);
+								}
+								responseBody = os.toByteArray();
+							} catch (IOException e2) {
+								Log.e(TAG, "still error, oh no", e);
 							}
-							responseBody = os.toByteArray();
-						} catch (IOException e2) {
-							// still error, oh no
 						}
 					}
 
 					if (!error) {
 						String response = null;
 						try {
-							if (saklar.cancelled) return;
 							response = getResponseString(responseBody, "utf-8");
+							if (saklar.cancelled) return;
 							final String responsefinal = response;
 							mainHandler.post(new Runnable() {
 								@Override
