@@ -33,3 +33,7 @@ body {
 	margin:8px 15px 0 0;
 	list-style-type:none;
 }
+
+.caleg-loader {
+	margin-left:10px;
+}
