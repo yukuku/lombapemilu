@@ -205,6 +205,24 @@ class Controller_Api extends Controller_Rest {
 		
 		$dapils = explode(',', $dapils);
 		
+		//Delete first, we are not using ON DUPLICATE UPDATE as it is MySQL specific and 
+		//fuelphp QB doesn't support dialect specific
+		DB::delete('subscription_dapil')->where('installation_id', $installationId)->execute();
+		DB::delete('installations')->where('id', $installationId)->execute();
+		
+		//Then insert
+		$result = DB::insert('installations')->set(array(
+			'id' => $installationId, 'registration_id' => $registrationId, 'created' => time()
+		))->execute();
+		
+		//Then insert dapils
+		foreach($dapils as $dapil) {
+			DB::insert('subscription_dapil')->set(array(
+				'installation_id' => $installationId, 'dapil_id' => $dapil
+			))->execute();
+		}
+		
+		$this->response(array('status' => true));
 	}
 	
 	//Get comments from the given caleg id, also returns the rate for each comment and whether the logged in user rated already
@@ -299,6 +317,16 @@ class Controller_Api extends Controller_Rest {
 			$return = array('status' => false, 'err' => $err);
 		} else {
 			$return = array('status' => true);
+		}
+
+		//Get dapil id from the given $calegId
+		$caleg = file_get_contents('http://api.pemiluapi.org/candidate/api/caleg/' . $calegId . '?apiKey=' . self::$apiKey);
+		$caleg = json_decode($caleg);
+		$caleg = $caleg->data->results->caleg[0];
+		
+		if(!empty($caleg) && !empty($caleg->dapil)) {
+			$dapilId = $caleg->dapil->id;
+			Util::notifyUsers($dapilId, $caleg, Input::all());
 		}
 		
 		$this->response($return);

@@ -1,5 +1,94 @@
 <?php
+use Fuel\Core\Log;
+
 class Util {
+	/**
+	 * Notify users via GCM
+	 * @param $dapilId id of dapil, this is used to get all related registration ids
+	 * @param $caleg the complete caleg object as returned from pemilu API server
+	 * @param $inputs user inputs. to determine payload to send to client
+	 *         keys: caleg_id user_email title content rating
+	 */
+	public static function notifyUsers($dapilId, $caleg, $inputs) {
+		//Prepare message payload
+		$data = array(
+			'content' => substr($inputs['content'], 0, 500), 'rating' => $inputs['rating'],
+			'lembaga' => $caleg->lembaga, 'caleg_name' => $caleg->nama, 'caleg_id' => $inputs['caleg_id']
+		);
+		
+		
+		//Get list of installation id
+		$results = DB::select('installation_id')->from('subscription_dapil')->where('dapil_id', $dapilId)->execute();
+		
+		$installationIds = array();
+		
+		foreach($results as $result) {
+			$installationIds[] = $result['installation_id'];	
+		}
+		
+		//Get registration ids from installation_id
+		$registrationIds = array();
+		if(!empty($installationIds)) {
+			$registrations = DB::select('registration_id')->from('installations')->where('id', 'in', $installationIds)->execute();
+			foreach($registrations as $registration) {
+				$registrationIds[] = $registration['registration_id'];
+			}
+			
+			//Send to GCM
+			if(!empty($registrationIds)) {
+				$headers = array('Authorization: key=AIzaSyACfvnMtquKKgAPgJJGr__woDIuKYanYNM', 'Content-Type: application/json'); 
+				$fields = array('data' => $data, 'registration_ids' => $registrationIds);
+				Util::sendToGCM($headers, $fields);
+			}
+		}
+
+		
+	}
+	
+	public static function sendToGCM($headers, $fields) {
+		$url = 'https://android.googleapis.com/gcm/send';
+				
+		// Open connection
+		$ch = curl_init();
+		
+		// Set the url
+		curl_setopt( $ch, CURLOPT_URL, $url );
+		
+		// Set request method to POST
+		curl_setopt( $ch, CURLOPT_POST, true );
+		
+		// Set custom headers
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers);
+		
+		// Get response back as string
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		
+		// Set post data
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $fields ) );
+		
+		// cacert
+		curl_setopt( $ch, CURLOPT_CAINFO, DOCROOT . 'assets/cacert.pem');
+		
+		// Send the request
+		$result = curl_exec($ch);
+		
+		$err = curl_error($ch);
+		if(!empty($err)) {
+			Log::debug($err);
+		} else {
+			Log::debug($result);
+		}
+		
+		Log::debug(print_r($headers, 1));
+		Log::debug(print_r($fields, 1));
+		
+		// Close connection
+		curl_close($ch);
+		
+		// Debug GCM response
+		return $result;
+	}
+	
 	public static function setRatingGeneration($state = false) {
 		Cache::set('auto_generate_caleg_rating', $state);
 	}
