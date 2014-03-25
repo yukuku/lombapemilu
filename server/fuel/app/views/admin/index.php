@@ -6,11 +6,15 @@
 		<div class="comment">
 			<ul>
 				<li class="image"><img class="comment-pic" src="<?php echo Util::gravatar($comment['user_email']) ?>"></li>
-				<li><span class="glyphicon glyphicon-envelope"></span> <span class="comment-writer"><a href="mailto:<?php echo $comment['user_email'] ?>"><?php echo $comment['user_email']?></a></span></li>
-				<li><span class="glyphicon glyphicon-time"></span> <span class="comment-time"><?php echo date("D, d.m.Y h:i:s", $comment['created']) ?></span></li>
+				<li><span class="glyphicon glyphicon-envelope"></span> <a href="mailto:<?php echo $comment['user_email'] ?>"><?php echo $comment['user_email']?></a></li>
+				<li><span class="glyphicon glyphicon-time"></span> <span class="comment-time"><?php echo date("D, d M y - h:i", $comment['created']) ?></span></li>
+				<li><span class="glyphicon glyphicon-star"></span> <span class="comment-star"><?php echo $comment['rating'] ?></span></li>
+				<li><span class="glyphicon glyphicon-user"></span> 
+					<a data-caleg-id="<?php echo $comment['caleg_id'] ?>" class="comment-caleg" href="<?php echo Uri::create('api/caleg')?>"><?php echo $comment['caleg_id']?></a>
+				</li>
 			</ul>
-			<strong class="comment-title"><?php echo $comment['title'] ?></strong>
-			<p class="comment-content"><?php echo nl2br($comment['content']) ?></p>
+			<strong class="comment-title"><?php echo empty($comment['title']) ? '(Untitled)' : $comment['title'] ?></strong>
+			<p class="comment-content"><?php echo empty($comment['content']) ? '(No comment)' : nl2br($comment['content']) ?></p>
 		</div>
 	<?php endforeach; ?>
 </div>
