@@ -192,6 +192,21 @@ class Controller_Api extends Controller_Rest {
 		$this->response($results);
 	}
 	
+	/**
+	 * Subscribe user to push notification
+	 * @param dapils csv of dapils
+	 * @param registration_id
+	 * @param installation_id
+	 */
+	function get_subscribe() {
+		$dapils = Input::get('dapils');
+		$registrationId = Input::get('registration_id');
+		$installationId = Input::get('installation_id');
+		
+		$dapils = explode(',', $dapils);
+		
+	}
+	
 	//Get comments from the given caleg id, also returns the rate for each comment and whether the logged in user rated already
 	/**
 	 * @param user_email
