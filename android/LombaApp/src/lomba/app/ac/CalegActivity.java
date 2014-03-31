@@ -1,7 +1,5 @@
 package lomba.app.ac;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -47,8 +45,6 @@ import lomba.app.widget.RatingView2;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -69,7 +65,6 @@ public class CalegActivity extends BaseActivity {
 	InfoAdapter adapter;
 	Papi.Caleg info;
 	private CommentAdapter commentsAdapter;
-	private MessageDigest md5;
 	private String accountName;
 	private PostCommentFragment postCommentFragment;
 	private ImageButton bP1;
@@ -111,10 +106,7 @@ public class CalegActivity extends BaseActivity {
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		// jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
-		final Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
-		if (accounts != null) {
-			accountName = accounts[0].name;
-		}
+		accountName = U.getPrimaryAccountName();
 
 		jazzy.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
@@ -572,21 +564,7 @@ public class CalegActivity extends BaseActivity {
 	}
 
 	String grava(String email) {
-		if (md5 == null) {
-			try {
-				md5 = MessageDigest.getInstance("md5");
-			} catch (NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		byte[] bb = md5.digest(email.trim().toLowerCase().getBytes());
-		StringBuilder sb = new StringBuilder();
-		for (byte b : bb) {
-			if (b >= 0 && b < 16) sb.append("0").append(Integer.toHexString(b));
-			else sb.append(Integer.toHexString(b & 0xff));
-		}
-		String hasil = sb.toString();
+		String hasil = U.md5(email);
 
 		return "http://www.gravatar.com/avatar/" + hasil + "?s=80&d=identicon";
 	}
