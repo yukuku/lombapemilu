@@ -10,6 +10,8 @@ import com.google.android.gms.location.LocationRequest;
 import lomba.app.storage.Prefkey;
 import yuku.afw.storage.Preferences;
 
+import java.util.UUID;
+
 public class App extends yuku.afw.App implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	public static final String TAG = App.class.getSimpleName();
 
@@ -57,5 +59,14 @@ public class App extends yuku.afw.App implements GooglePlayServicesClient.Connec
 			Preferences.setFloat(Prefkey.loc_lat, (float) lat);
 			Preferences.setFloat(Prefkey.loc_lng, (float) lng);
 		}
+	}
+
+	public synchronized static String getInstallationId() {
+		String res = Preferences.getString(Prefkey.installation_id, null);
+		if (res == null) {
+			res = "u2:" + UUID.randomUUID().toString();
+			Preferences.setString(Prefkey.installation_id, res);
+		}
+		return res;
 	}
 }

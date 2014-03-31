@@ -429,6 +429,21 @@ public class Papi {
 		});
 	}
 
+	public static Saklar subscribe(String dapils, String registration_id, String installation_id, final Clbk<Void> clbk) {
+		return get(BASE_V2 + "/subscribe", new RequestParams("dapils", dapils, "registration_id", registration_id, "installation_id", installation_id), new Hasil() {
+			@Override
+			public void success(final String s) {
+				Log.d(TAG, "@@subscribe response: " + s);
+				clbk.success(null);
+			}
+
+			@Override
+			public void failed(final Throwable e) {
+				clbk.failed(e);
+			}
+		});
+	}
+
 	/** jangan peduli lg dengan ini */
 	public static void lupakan(Saklar saklar) {
 		if (saklar == null) return;

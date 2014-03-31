@@ -1,5 +1,7 @@
 package lomba.app;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.net.Uri;
 import android.text.TextUtils;
 import lomba.app.storage.Prefkey;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class U {
 	public static final String TAG = U.class.getSimpleName();
@@ -106,5 +110,33 @@ public class U {
 
 	public static String getDapilDariLembaga(final int lembaga) {
 		return Preferences.getString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1);
+	}
+
+	private static MessageDigest md5;
+
+	public static String md5(final String s) {
+		if (md5 == null) {
+			try {
+				md5 = MessageDigest.getInstance("md5");
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		byte[] bb = md5.digest(s.trim().toLowerCase().getBytes());
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bb) {
+			if (b >= 0 && b < 16) sb.append("0").append(Integer.toHexString(b));
+			else sb.append(Integer.toHexString(b & 0xff));
+		}
+		return sb.toString();
+	}
+
+	public static String getPrimaryAccountName() {
+		final Account[] accounts = AccountManager.get(App.context).getAccountsByType("com.google");
+		if (accounts != null) {
+			return accounts[0].name;
+		}
+		return null;
 	}
 }

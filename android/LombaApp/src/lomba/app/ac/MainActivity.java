@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.squareup.picasso.Picasso;
 import com.thnkld.calegstore.app.R;
 import lomba.app.App;
@@ -35,6 +37,7 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -56,6 +59,7 @@ public class MainActivity extends BaseActivity {
 	Papi.Saklar partailoader;
 	Button cbDapilDpr;
 	Button cbDapilDprd1;
+	Papi.Saklar subscribeloader;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -155,6 +159,40 @@ public class MainActivity extends BaseActivity {
 
 		setAbtitle(getString(R.string.app_name));
 		displayDrawerDapil();
+
+		sendGcmRegistration();
+	}
+
+	void sendGcmRegistration() {
+		final GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String registration_id = gcm.register("928687239792");
+
+					final String dapil_dpr = Preferences.getString(Prefkey.dapil_dpr);
+					final String dapil_dprd1 = Preferences.getString(Prefkey.dapil_dprd1);
+
+					if (registration_id != null && dapil_dpr != null && dapil_dprd1 != null) {
+						subscribeloader = Papi.ganti(subscribeloader, Papi.subscribe(dapil_dpr + "," + dapil_dprd1, registration_id, App.getInstallationId(), new Papi.Clbk<Void>() {
+							@Override
+							public void success(final Void v) {
+
+							}
+
+							@Override
+							public void failed(final Throwable e) {
+
+							}
+						}));
+					}
+				} catch (IOException e) {
+					Log.e(TAG, "gagal register gcm", e);
+				}
+			}
+		}).start();
 	}
 
 	private void popupDapil(final Button button, final int lembaga) {
@@ -175,6 +213,7 @@ public class MainActivity extends BaseActivity {
 				Preferences.setString(lembaga == 1? Prefkey.dapil_dpr: Prefkey.dapil_dprd1, row.kode);
 				displayDrawerDapil();
 				LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(CALEG_BERUBAH));
+				sendGcmRegistration();
 				return true;
 			}
 		});
@@ -190,6 +229,7 @@ public class MainActivity extends BaseActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		Papi.lupakan(partailoader);
+		Papi.lupakan(subscribeloader);
 	}
 
 	private void setLembaga(final int lembaga) {
@@ -328,37 +368,6 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public int getCount() {
 			return 1 + (partais == null? 0: partais.size());
-		}
-	}
-
-
-	class DapilAdapter extends EasyAdapter {
-		private final List<Dapil.Row> rows;
-
-		public DapilAdapter(final int lembaga) {
-			rows = Dapil.getRows(lembaga);
-		}
-
-		@Override
-		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_spinner_item, parent, false);
-		}
-
-		@Override
-		public View newDropDownView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-		}
-
-		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView textView = (TextView) view;
-			final Dapil.Row row = rows.get(position);
-			textView.setText(row.desc);
-		}
-
-		@Override
-		public int getCount() {
-			return rows.size();
 		}
 	}
 }
