@@ -9,3 +9,31 @@ body {
 	padding:20px;
 	padding-top:0;
 }
+
+#comments {
+	margin-top:20px;
+}
+
+.comment {
+	margin-bottom:20px;
+	border-bottom:1px solid #abcdef;
+}
+
+.comment ul {
+	padding:0;
+	overflow:hidden;
+}
+
+.comment ul li.image {
+	margin-top:0;
+}
+
+.comment ul li {
+	float:left;
+	margin:8px 15px 0 0;
+	list-style-type:none;
+}
+
+.caleg-loader {
+	margin-left:10px;
+}
