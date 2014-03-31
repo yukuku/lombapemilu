@@ -19,6 +19,7 @@ class Util {
 			'rating' => $inputs['rating'],
 			'lembaga' => $caleg->lembaga, 
 			'caleg_name' => $caleg->nama, 
+			'user_email' => $inputs['user_email'], 
 			'caleg_id' => $inputs['caleg_id']
 		);
 		
