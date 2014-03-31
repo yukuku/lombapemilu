@@ -14,7 +14,7 @@ class Util {
 	 */
 	public static function notifyUsers($dapilId, $caleg, $inputs, $foto_url, $partai_nama, $urutan) {
 		//Prepare message payload
-
+		Log::debug("Args passed in " . print_r(func_get_args(), 1));
 		$data = array(
 			'kind' => 'new_caleg_rating',
 			'content' => substr($inputs['content'], 0, 500), 
