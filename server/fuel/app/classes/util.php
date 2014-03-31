@@ -8,8 +8,9 @@ class Util {
 	 * @param $caleg the complete caleg object as returned from pemilu API server
 	 * @param $inputs user inputs. to determine payload to send to client
 	 *         keys: caleg_id user_email title content rating
+	 * @param $foto_url
 	 */
-	public static function notifyUsers($dapilId, $caleg, $inputs) {
+	public static function notifyUsers($dapilId, $caleg, $inputs, $foto_url) {
 		//Prepare message payload
 
 		$data = array(
@@ -20,6 +21,7 @@ class Util {
 			'lembaga' => $caleg->lembaga, 
 			'caleg_name' => $caleg->nama, 
 			'user_email' => $inputs['user_email'], 
+			'foto_url' => $foto_url,
 			'caleg_id' => $inputs['caleg_id']
 		);
 		
