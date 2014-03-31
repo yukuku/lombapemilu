@@ -13,8 +13,8 @@ class Util {
 		//Prepare message payload
 		$data = array(
 			'kind' => 'new_caleg_rating',
-			'content' => substr($inputs['content'] or '', 0, 500), 
-			'title' => substr($inputs['title'] or '', 0, 500), 
+			'content' => substr($inputs['content']? $inputs['content']: '', 0, 500), 
+			'title' => substr($inputs['title']? $inputs['title']: '', 0, 500), 
 			'rating' => $inputs['rating'],
 			'lembaga' => $caleg->lembaga, 
 			'caleg_name' => $caleg->nama, 
