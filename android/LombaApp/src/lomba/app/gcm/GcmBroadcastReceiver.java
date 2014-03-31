@@ -47,7 +47,7 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 		String urutan = intent.getStringExtra("urutan");
 		float rating = Float.parseFloat(intent.getStringExtra("rating"));
 
-		if (user_email != null /*&& !user_email.equals(U.getPrimaryAccountName())*/) {
+		if (user_email != null && !user_email.equals(U.getPrimaryAccountName())) {
 			if ("new_caleg_rating".equals(kind)) {
 				StringBuilder stars = new StringBuilder();
 				for (int i = 0; i < rating; i++) {
