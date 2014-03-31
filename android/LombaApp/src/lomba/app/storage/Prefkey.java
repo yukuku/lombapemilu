@@ -12,4 +12,6 @@ public enum Prefkey {
 
 	// lembaga yang aktif. 1=dpr, 2=dprd1
 	lembaga_aktif,
+
+	installation_id,
 }
