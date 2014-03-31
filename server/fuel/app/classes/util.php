@@ -83,6 +83,7 @@ class Util {
 		
 		Log::debug(print_r($headers, 1));
 		Log::debug(print_r($fields, 1));
+		Log::debug(print_r(json_encode($fields), 1));
 		
 		// Close connection
 		curl_close($ch);
