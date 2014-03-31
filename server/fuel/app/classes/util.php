@@ -11,6 +11,10 @@ class Util {
 	 */
 	public static function notifyUsers($dapilId, $caleg, $inputs) {
 		//Prepare message payload
+
+		Log::debug('content: ' . var_dump($inputs['content']));
+		Log::debug('title: ' . var_dump($inputs['title']));
+
 		$data = array(
 			'kind' => 'new_caleg_rating',
 			'content' => substr($inputs['content']? $inputs['content']: '', 0, 500), 
