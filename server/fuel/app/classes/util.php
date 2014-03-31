@@ -12,8 +12,13 @@ class Util {
 	public static function notifyUsers($dapilId, $caleg, $inputs) {
 		//Prepare message payload
 		$data = array(
-			'content' => substr($inputs['content'], 0, 500), 'rating' => $inputs['rating'],
-			'lembaga' => $caleg->lembaga, 'caleg_name' => $caleg->nama, 'caleg_id' => $inputs['caleg_id']
+			'kind' => 'new_caleg_rating',
+			'content' => substr($inputs['content'] or '', 0, 500), 
+			'title' => substr($inputs['title'] or '', 0, 500), 
+			'rating' => $inputs['rating'],
+			'lembaga' => $caleg->lembaga, 
+			'caleg_name' => $caleg->nama, 
+			'caleg_id' => $inputs['caleg_id']
 		);
 		
 		
