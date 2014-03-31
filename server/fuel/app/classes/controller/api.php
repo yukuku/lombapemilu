@@ -326,7 +326,7 @@ class Controller_Api extends Controller_Rest {
 		
 		if(!empty($caleg) && !empty($caleg->dapil)) {
 			$dapilId = $caleg->dapil->id;
-			Util::notifyUsers($dapilId, $caleg, Input::all(), $caleg->foto_url);
+			Util::notifyUsers($dapilId, $caleg, Input::all(), $caleg->foto_url, $caleg->partai->nama, $caleg->urutan);
 		}
 		
 		$this->response($return);

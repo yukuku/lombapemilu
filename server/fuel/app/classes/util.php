@@ -9,8 +9,10 @@ class Util {
 	 * @param $inputs user inputs. to determine payload to send to client
 	 *         keys: caleg_id user_email title content rating
 	 * @param $foto_url
+	 * @param $partai_nama
+	 * @param $urutan
 	 */
-	public static function notifyUsers($dapilId, $caleg, $inputs, $foto_url) {
+	public static function notifyUsers($dapilId, $caleg, $inputs, $foto_url, $partai_nama, $urutan) {
 		//Prepare message payload
 
 		$data = array(
@@ -22,6 +24,8 @@ class Util {
 			'caleg_name' => $caleg->nama, 
 			'user_email' => $inputs['user_email'], 
 			'foto_url' => $foto_url,
+			'partai_nama' => $partai_nama,
+			'urutan' => $urutan,
 			'caleg_id' => $inputs['caleg_id']
 		);
 		
