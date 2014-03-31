@@ -12,13 +12,10 @@ class Util {
 	public static function notifyUsers($dapilId, $caleg, $inputs) {
 		//Prepare message payload
 
-		Log::debug('content: ' . var_export($inputs['content'], 1));
-		Log::debug('title: ' . var_export($inputs['title'], 1));
-
 		$data = array(
 			'kind' => 'new_caleg_rating',
-			'content' => substr($inputs['content']? $inputs['content']: '', 0, 500), 
-			'title' => substr($inputs['title']? $inputs['title']: '', 0, 500), 
+			'content' => substr($inputs['content'], 0, 500), 
+			'title' => substr($inputs['title'], 0, 500), 
 			'rating' => $inputs['rating'],
 			'lembaga' => $caleg->lembaga, 
 			'caleg_name' => $caleg->nama, 
