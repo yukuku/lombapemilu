@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -70,7 +71,11 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 				final NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 				if (!TextUtils.isEmpty(foto_url)) {
-					Picasso.with(context).load(U.bc(144, 144, foto_url)).into(new Target() {
+					Resources resources = context.getResources();
+					int height = (int) resources.getDimension(android.R.dimen.notification_large_icon_height);
+					int width = (int) resources.getDimension(android.R.dimen.notification_large_icon_width);
+
+					Picasso.with(context).load(U.bc(width, height, foto_url)).into(new Target() {
 						@Override
 						public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
 							builder.setLargeIcon(bitmap);
