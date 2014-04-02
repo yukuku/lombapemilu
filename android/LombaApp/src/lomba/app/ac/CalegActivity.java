@@ -773,12 +773,25 @@ public class CalegActivity extends BaseActivity {
 			submitB.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
+
+					final String title = judulK.getText().toString();
+					final String content = isiK.getText().toString();
+
+					// validasi isi dulu
+					if (TextUtils.isEmpty(title) || TextUtils.isEmpty(content)) {
+						new AlertDialog.Builder(getDialog().getContext())
+						.setMessage("Tulis judul dan isi komentarnya dong, biar berguna bagi yang lain :)")
+						.setPositiveButton("OK", null)
+						.show();
+						return;
+					}
+
 					final FontButton fb = (FontButton) view;
 					final CharSequence sebelumnya = fb.getText();
 					fb.setText("Mengirim...");
 					fb.setEnabled(false);
 
-					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountName, new Papi.Clbk<Object>() {
+					Papi.postComment(info.id, ratingV.getRating(), title, content, accountName, new Papi.Clbk<Object>() {
 
 						@Override
 						public void success(Object o) {
