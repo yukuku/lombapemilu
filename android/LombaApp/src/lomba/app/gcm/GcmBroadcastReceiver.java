@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.thnkld.calegstore.app.R;
 import lomba.app.U;
+import lomba.app.ac.CalegActivity;
 import lomba.app.ac.MainActivity;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
@@ -58,7 +59,9 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 					stars.append('\u2606');
 				}
 
-				final PendingIntent pi = PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+				Intent ca = new Intent(context, CalegActivity.class);
+				ca.putExtra("id", caleg_id);
+				final PendingIntent pi = PendingIntent.getActivity(context, 1, ca, PendingIntent.FLAG_ONE_SHOT);
 
 				final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 				.setSmallIcon(R.drawable.ic_stat_notif)

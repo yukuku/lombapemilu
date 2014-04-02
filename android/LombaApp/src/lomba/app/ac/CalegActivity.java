@@ -104,6 +104,32 @@ public class CalegActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.caleg);
 
+		this.id = getIntent().getStringExtra("id");
+
+		if(getIntent().hasExtra("dt")) {
+			this.info = U.unser(getIntent().getByteArrayExtra("dt"));
+		}
+
+		if(this.info == null) {
+			Papi.ganti(lengkaploader, Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
+
+				@Override
+				public void success(Papi.Caleg caleg) {
+					CalegActivity.this.info = caleg;
+					isiView();
+				}
+
+				@Override
+				public void failed(Throwable e) {
+
+				}
+			}));
+		} else {
+			isiView();
+		}
+	}
+
+	private void isiView() {
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		// jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
@@ -127,9 +153,6 @@ public class CalegActivity extends BaseActivity {
 		});
 
 		commentsAdapter = new CommentAdapter();
-
-		this.id = getIntent().getStringExtra("id");
-		this.info = U.unser(getIntent().getByteArrayExtra("dt"));
 
 		bP1 = V.get(this, R.id.bP1);
 		bP2 = V.get(this, R.id.bP2);
