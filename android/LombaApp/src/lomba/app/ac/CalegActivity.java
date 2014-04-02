@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
@@ -111,22 +112,30 @@ public class CalegActivity extends BaseActivity {
 		}
 
 		if(this.info == null) {
-			Papi.ganti(lengkaploader, Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
-
-				@Override
-				public void success(Papi.Caleg caleg) {
-					CalegActivity.this.info = caleg;
-					isiView();
-				}
-
-				@Override
-				public void failed(Throwable e) {
-
-				}
-			}));
+			loadDariInfoKosong();
 		} else {
 			isiView();
 		}
+	}
+
+	private void loadDariInfoKosong() {
+		lengkaploader = Papi.ganti(lengkaploader, Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
+			@Override
+			public void success(Papi.Caleg caleg) {
+				CalegActivity.this.info = caleg;
+				isiView();
+			}
+
+			@Override
+			public void failed(Throwable e) {
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						loadDariInfoKosong();
+					}
+				}, 2000);
+			}
+		}));
 	}
 
 	private void isiView() {
