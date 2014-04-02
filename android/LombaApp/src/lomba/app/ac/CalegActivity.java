@@ -1,5 +1,6 @@
 package lomba.app.ac;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -647,6 +648,7 @@ public class CalegActivity extends BaseActivity {
 			final TextView commentRate = V.get(view, R.id.sum_comment_rating);
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
+			final RatingView2 rating = V.get(view, R.id.rating);
 
 			final Papi.Comment comment = comments[position];
 
@@ -664,6 +666,8 @@ public class CalegActivity extends BaseActivity {
 
 			commentTitle.setText(Html.fromHtml("<b>" + comment.title + "</b>"));
 			commentContent.setText(comment.content);
+
+			rating.setRating(comment.rating);
 
 			int sum = comment.sum;
 			if (comment.is_up == 1) {

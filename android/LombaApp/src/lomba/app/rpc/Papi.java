@@ -165,6 +165,7 @@ public class Papi {
 		public String content;
 		public int is_up;
 		public int sum;
+		public float rating;
 
 		// ini dipake buat listview ajaa... custom data gitu
 		public boolean _jempol_atas;
