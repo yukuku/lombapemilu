@@ -1,11 +1,13 @@
 package lomba.app.ac;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
@@ -103,6 +105,40 @@ public class CalegActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.caleg);
 
+		this.id = getIntent().getStringExtra("id");
+
+		if(getIntent().hasExtra("dt")) {
+			this.info = U.unser(getIntent().getByteArrayExtra("dt"));
+		}
+
+		if(this.info == null) {
+			loadDariInfoKosong();
+		} else {
+			isiView();
+		}
+	}
+
+	private void loadDariInfoKosong() {
+		lengkaploader = Papi.ganti(lengkaploader, Papi.candidate_caleg_detail(id, new Papi.Clbk<Papi.Caleg>() {
+			@Override
+			public void success(Papi.Caleg caleg) {
+				CalegActivity.this.info = caleg;
+				isiView();
+			}
+
+			@Override
+			public void failed(Throwable e) {
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						loadDariInfoKosong();
+					}
+				}, 2000);
+			}
+		}));
+	}
+
+	private void isiView() {
 		jazzy = V.get(this, R.id.jazzy);
 		jazzy.setAdapter(adapter = new InfoAdapter());
 		// jazzy.setTransitionEffect(JazzyViewPager.TransitionEffect.CubeIn);
@@ -126,9 +162,6 @@ public class CalegActivity extends BaseActivity {
 		});
 
 		commentsAdapter = new CommentAdapter();
-
-		this.id = getIntent().getStringExtra("id");
-		this.info = U.unser(getIntent().getByteArrayExtra("dt"));
 
 		bP1 = V.get(this, R.id.bP1);
 		bP2 = V.get(this, R.id.bP2);
@@ -647,6 +680,7 @@ public class CalegActivity extends BaseActivity {
 			final TextView commentRate = V.get(view, R.id.sum_comment_rating);
 			final CheckBox thumbsUp = V.get(view, R.id.thumbs_up);
 			final CheckBox thumbsDown = V.get(view, R.id.thumbs_down);
+			final RatingView2 rating = V.get(view, R.id.rating);
 
 			final Papi.Comment comment = comments[position];
 
@@ -664,6 +698,8 @@ public class CalegActivity extends BaseActivity {
 
 			commentTitle.setText(Html.fromHtml("<b>" + comment.title + "</b>"));
 			commentContent.setText(comment.content);
+
+			rating.setRating(comment.rating);
 
 			int sum = comment.sum;
 			if (comment.is_up == 1) {
@@ -773,12 +809,25 @@ public class CalegActivity extends BaseActivity {
 			submitB.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
+
+					final String title = judulK.getText().toString();
+					final String content = isiK.getText().toString();
+
+					// validasi isi dulu
+					if (TextUtils.isEmpty(title) || TextUtils.isEmpty(content)) {
+						new AlertDialog.Builder(getDialog().getContext())
+						.setMessage("Tulis judul dan isi komentarnya dong, biar berguna bagi yang lain :)")
+						.setPositiveButton("OK", null)
+						.show();
+						return;
+					}
+
 					final FontButton fb = (FontButton) view;
 					final CharSequence sebelumnya = fb.getText();
 					fb.setText("Mengirim...");
 					fb.setEnabled(false);
 
-					Papi.postComment(info.id, ratingV.getRating(), judulK.getText().toString(), isiK.getText().toString(), accountName, new Papi.Clbk<Object>() {
+					Papi.postComment(info.id, ratingV.getRating(), title, content, accountName, new Papi.Clbk<Object>() {
 
 						@Override
 						public void success(Object o) {

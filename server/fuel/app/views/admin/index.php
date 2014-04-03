@@ -1,5 +1,3 @@
-<a class="btn btn-danger" data-target="#hapusSemua" role="button" data-toggle="modal">Hapus semua data</a>
-
 <div class="content" id="comments">
 	<?php foreach($comments as $comment): ?>
 		<!-- <?php echo print_r($comment, 1) ?> -->

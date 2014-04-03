@@ -12,20 +12,23 @@ class Util {
 	 * @param $partai_nama
 	 * @param $urutan
 	 */
-	public static function notifyUsers($dapilId, $caleg, $inputs, $foto_url, $partai_nama, $urutan) {
+	public static function notifyUsers($dapilId, $caleg, $inputs) {
 		//Prepare message payload
-
+		Log::debug("Args passed in " . print_r(func_get_args(), 1));
+		$title = substr($inputs['title'], 0, 500);
+		$content = substr($inputs['content'], 0, 500);
+		
 		$data = array(
 			'kind' => 'new_caleg_rating',
-			'content' => substr($inputs['content'], 0, 500), 
-			'title' => substr($inputs['title'], 0, 500), 
+			'content' => $content !== false ? $content : "", 
+			'title' => $title !== false ? $title : "", 
 			'rating' => $inputs['rating'],
 			'lembaga' => $caleg->lembaga, 
 			'caleg_name' => $caleg->nama, 
 			'user_email' => $inputs['user_email'], 
-			'foto_url' => $foto_url,
-			'partai_nama' => $partai_nama,
-			'urutan' => $urutan,
+			'foto_url' => $caleg->foto_url,
+			'partai_nama' => $caleg->partai->nama,
+			'urutan' => $caleg->urutan,
 			'caleg_id' => $inputs['caleg_id']
 		);
 		
@@ -96,6 +99,7 @@ class Util {
 		
 		Log::debug(print_r($headers, 1));
 		Log::debug(print_r($fields, 1));
+		Log::debug(print_r(json_encode($fields), 1));
 		
 		// Close connection
 		curl_close($ch);

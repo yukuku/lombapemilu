@@ -5,8 +5,10 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
@@ -16,6 +18,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.thnkld.calegstore.app.R;
 import lomba.app.U;
+import lomba.app.ac.CalegActivity;
 import lomba.app.ac.MainActivity;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
@@ -57,7 +60,12 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 					stars.append('\u2606');
 				}
 
-				final PendingIntent pi = PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+				// make array of activities
+				Intent ac1 = new Intent(context, MainActivity.class);
+				Intent ac2 = new Intent(context, CalegActivity.class);
+				ac2.putExtra("id", caleg_id);
+				ac2.setData(Uri.parse("caleg_id:" + caleg_id));
+				final PendingIntent pi = PendingIntent.getActivities(context, 1, new Intent[] {ac1, ac2}, PendingIntent.FLAG_ONE_SHOT);
 
 				final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 				.setSmallIcon(R.drawable.ic_stat_notif)
@@ -70,20 +78,30 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 				final NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 				if (!TextUtils.isEmpty(foto_url)) {
-					Picasso.with(context).load(U.bc(144, 144, foto_url)).into(new Target() {
+					Resources resources = context.getResources();
+					int height = (int) resources.getDimension(android.R.dimen.notification_large_icon_height);
+					int width = (int) resources.getDimension(android.R.dimen.notification_large_icon_width);
+
+					Log.d(TAG, "@@onReceive 1");
+
+					Picasso.with(context).load(U.bc(width, height, foto_url)).into(new Target() {
 						@Override
 						public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
+							Log.d(TAG, "@@onReceive 2");
 							builder.setLargeIcon(bitmap);
 							nm.notify("new_caleg_rating:" + caleg_id, 1, builder.build());
 						}
 
 						@Override
 						public void onBitmapFailed(final Drawable errorDrawable) {
+							Log.d(TAG, "@@onReceive 3");
 							nm.notify("new_caleg_rating:" + caleg_id, 1, builder.build());
 						}
 
 						@Override
-						public void onPrepareLoad(final Drawable placeHolderDrawable) {}
+						public void onPrepareLoad(final Drawable placeHolderDrawable) {
+							Log.d(TAG, "@@onReceive 4");
+						}
 					});
 				}
 			}
