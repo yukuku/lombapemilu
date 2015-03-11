@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import com.nineoldandroids.view.ViewHelper;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

@@ -16,7 +16,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 import lomba.app.U;
 import lomba.app.ac.CalegActivity;
 import lomba.app.ac.MainActivity;

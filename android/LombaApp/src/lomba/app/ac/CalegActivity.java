@@ -35,7 +35,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import com.jfeinstein.jazzyviewpager.OutlineContainer;
 import com.squareup.picasso.Picasso;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 import lomba.app.App;
 import lomba.app.U;
 import lomba.app.ac.base.BaseActivity;

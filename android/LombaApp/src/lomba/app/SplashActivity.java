@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 import lomba.app.App;
 import lomba.app.F;
 import lomba.app.ac.MainActivity;

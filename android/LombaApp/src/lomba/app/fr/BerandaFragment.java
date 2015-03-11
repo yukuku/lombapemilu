@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 import lomba.app.App;
 import lomba.app.ac.CalegActivity;
 import lomba.app.ac.MainActivity;

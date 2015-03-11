@@ -4,7 +4,7 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 import lomba.app.F;
 import lomba.app.ac.base.BaseActivity;
 import yuku.afw.App;

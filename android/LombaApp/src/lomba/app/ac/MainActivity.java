@@ -24,7 +24,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.squareup.picasso.Picasso;
-import com.thnkld.calegstore.app.R;
+import com.lomba.calegstore.R;
 import lomba.app.App;
 import lomba.app.F;
 import lomba.app.ac.base.BaseActivity;

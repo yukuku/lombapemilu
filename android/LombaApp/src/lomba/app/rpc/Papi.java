@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.OkHttpClient;
-import com.thnkld.calegstore.app.BuildConfig;
+import com.lomba.calegstore.BuildConfig;
 import lomba.app.util.RequestParams;
 
 import java.io.ByteArrayOutputStream;
